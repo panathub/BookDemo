@@ -137,7 +137,7 @@ class ManageBookingController extends Controller
     LEFT JOIN department ON department.DepartmentID = users.DepartmentID OR department.DepartmentID = bookings.DepartmentID
     WHERE bookings.BookingID ='$booking_id'";
     $bookingDetails=DB::select($sql)[0];
-
+//dad///
     return response()->json(['details'=>$bookingDetails]);
     
 }
