@@ -139,7 +139,7 @@ class ManageBookingController extends Controller
     $bookingDetails=DB::select($sql)[0];
 
     return response()->json(['details'=>$bookingDetails]);
-    ///////
+    
 }
 
     //UPDATE BOOKING DETAILS
