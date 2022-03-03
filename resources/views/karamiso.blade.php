@@ -172,6 +172,8 @@ display_c5();
              }
          });
       $(function() {
+      if(!document.hidden){
+
       $(document).ready(function(){
         var booking_id = $(this).data('id');
         var today = new Date();
@@ -324,7 +326,9 @@ display_c5();
                     }, 5000);
                    
             };
-
+          }else{
+            $(window).on('focus', function() { window.location.reload(); });
+          }
           });
           
 </script> 
