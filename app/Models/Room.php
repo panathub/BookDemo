@@ -12,7 +12,7 @@ class Room extends Model
     protected $primaryKey='RoomID'; //Ignore automatically query with id as primary key
     public $timestamps = false; // Ignore automatically add create_at/update_at fields into tabl 
    
-    protected $fillable = ['RoomName','RoomNumber','RoomStatus','Image_room'];
+    protected $fillable = ['RoomName','RoomNumber','RoomStatus','RoomAmount','Image_room'];
 
     public function bookings() {
         return $this->hasMany(Bookings::class,'BookingID','RoomID');

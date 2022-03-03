@@ -18,12 +18,12 @@ class CheckRoomController extends Controller
     //GET BOOKING DETAILS 
     public function view($RoomID){
         
-        $sql="SELECT users.*,rooms.RoomName,department.DepartmentName,bookings.*,
+        $sql="SELECT users.*,rooms.*,department.DepartmentName,bookings.*,
         DATE_FORMAT(bookings.Booking_start,'%d/%m/%Y %H:%i')As MyStart,DATE_FORMAT(bookings.Booking_end,'%d/%m/%Y %H:%i')As MyEnd
         FROM bookings 
-        LEFt JOIN users ON users.id = bookings.id
+        LEFT JOIN users ON users.id = bookings.id
         RIGHT JOIN rooms ON rooms.RoomID = bookings.RoomID
-        LEFT JOIN department ON department.DepartmentID = users.DepartmentID OR department.DepartmentID = bookings.DepartmentID
+        LEFT JOIN department ON department.DepartmentID = users.DepartmentID 
         WHERE rooms.RoomID ='$RoomID'
         ORDER BY Booking_start";
         $data=DB::select($sql);

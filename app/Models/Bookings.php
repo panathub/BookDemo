@@ -22,16 +22,11 @@ class Bookings extends Model
         'VerifyStatus',
         'id',
         'RoomID',
-        'DepartmentID',
         'ReportID',
     ];
 
     public function user() {
         return $this->belongsTo(User::class, 'id');
-    }
-
-    public function department() {
-        return $this->belongsTo(Department::class, 'DepartmentID');
     }
 
     public function room() {

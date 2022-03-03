@@ -21,7 +21,6 @@
 <body>
   <header style="background: rgba(255, 255, 255, 0.3);">
     <div class="container-fluid p-3">
-  testdddddddddddddddddddddddddddddddddddd
       <navmon class="navbar navbar-expand-lg">
       
           <img src="img/Noble.png"  alt="logo" style="max-width:15%;margin-left: 25px;">
@@ -74,7 +73,7 @@
     <div class="contaibner-fluid p-4">
       <div class="row justify-content-center">
         <div class="col-md-6">
-          <h4 class="text-center">Copyright © 2021</h4>
+          <h4 class="text-center">Copyright © 2022</h4>
           <p class="text-muted text-center">Development By PanatHub</p>
           <div class="column text-light text-center">
           <a href="https://www.facebook.com/mzero.bangsangoon/" target="_blank"><i class="fab fa-facebook-f"></i></a>
@@ -105,12 +104,12 @@
                 //alert(room_id);   
              $('.NotiModal').find('input[name="mid"]').val(data.details.id);
              $('.NotiModal').find('.text').text(data.details.text);
-             $("#image").html(`<img src="img/Image_Room/${data.details.image}" width="25%" height="25%" class="img-center">`); 
+             $("#image").html(`<img src="img/Image_Room/${data.details.image}" width="55%" height="55%" class="img-center">`); 
              $('.NotiModal').modal('show');      
               },'json');
               setTimeout(function(){
                 $('.NotiModal').modal('hide')
-                    }, 5000);
+                    }, 6000);
                    
             
   })

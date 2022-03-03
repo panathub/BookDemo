@@ -52,6 +52,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
   //!-----------------------------------------FullCalendar-------------------------------
   Route::get('index',[FullCalendarController::class,'index'])->name('index');
   Route::get('/getBookingIndex',[FullCalendarController::class,'getBookingIndex'])->name('get.booking.index');
+  Route::get('/getBookingIndexAdmin',[FullCalendarController::class,'getBookingIndexAdmin'])->name('get.booking.index.admin');
   Route::get('/getBookingIndexDetails',[FullCalendarController::class,'getBookingIndexDetails'])->name('get.booking.index.details');
 
 //!-----------------------------------------Karamiso Index Room---------------------------------------
@@ -128,6 +129,7 @@ Route::group(['prefix'=>'admin', 'middleware'=>['isAdmin','auth','PreventBackHis
         Route::get('/getReportList',[ReportController::class,'getReportList'])->name('get.report.list');
         Route::post('/getReportDetails',[ReportController::class,'getReportDetails'])->name('get.report.details');
         Route::post('/deleteReport',[ReportController::class,'deleteReport'])->name('delete.report');
+        Route::post('/deleteSelectedReports',[ReportController::class,'deleteSelectedReports'])->name('delete.selected.reports');
 
          //!-----------------------------------------Accessories-----------------------------*/
         Route::get('/accessories',[AccessoriesController::class,'index'])->name('admin.accessories');

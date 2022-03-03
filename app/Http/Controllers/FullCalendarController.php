@@ -45,7 +45,6 @@ class FullCalendarController extends Controller
             INNER JOIN users ON users.id = bookings.id
             INNER JOIN rooms ON rooms.RoomID = bookings.RoomID
             LEFT JOIN department ON department.DepartmentID = users.DepartmentID 
-            OR department.DepartmentID = bookings.DepartmentID 
             WHERE MONTH(Booking_start) = $month";  
             $databookings=DB::select($sql); 
                      return DataTables::of($databookings)
@@ -60,17 +59,54 @@ class FullCalendarController extends Controller
             
       }    
 
+       // GET ALL BOOKING ADMIN
+       public function getBookingIndexAdmin(Request $request){
+
+        date_default_timezone_set('Asia/Bangkok');
+        $month = date('m');
+
+        $sql="SELECT users.name,rooms.*,department.DepartmentName,bookings.* FROM bookings 
+        INNER JOIN users ON users.id = bookings.id
+        INNER JOIN rooms ON rooms.RoomID = bookings.RoomID
+        LEFT JOIN department ON department.DepartmentID = users.DepartmentID
+        WHERE MONTH(Booking_start) = $month";  
+        $databookings=DB::select($sql); 
+                 return DataTables::of($databookings)
+                 ->addIndexColumn()
+                 ->addColumn('actions', function($row){
+                     if($row->VerifyStatus == 1){
+                        return ' <button class="btn btn-sm btn-info" data-id="'.$row->BookingID.'" id="infoBookingBtn">
+                             <i class="fas fa-info-circle"></i> รายละเอียด</button>
+                             <button class="btn btn-sm btn-primary" data-id="'.$row->BookingID.'" id="editBookingBtn">
+                             <i class="fas fas fa-edit"></i> แก้ไข</button>
+                             <button class="btn btn-sm btn-danger" data-id="'.$row->BookingID.'" id="deleteBookingBtn">
+                             <i class="fas fa-trash-alt"></i> ลบ</button>
+                             ';
+                     }else{
+                        return ' <button class="btn btn-sm btn-info" data-id="'.$row->BookingID.'" id="infoBookingBtn">
+                        <i class="fas fa-info-circle"></i> รายละเอียด</button>
+                        ';
+                     }
+                     
+                 })
+                 ->rawColumns(['actions'])
+                 ->make(true);    
+        
+  }        
+
                 //GET BOOKING DETAILS
     public function getBookingIndexDetails(Request $request){
         $booking_id = $request->booking_id;
     
-        $sql="SELECT users.*,rooms.RoomName,department.DepartmentName,bookings.* FROM bookings 
+        $sql="SELECT users.*,rooms.*,department.DepartmentName,bookings.* FROM bookings 
         INNER JOIN users ON users.id = bookings.id
         INNER JOIN rooms ON rooms.RoomID = bookings.RoomID
-        LEFT JOIN department ON department.DepartmentID = users.DepartmentID OR department.DepartmentID = bookings.DepartmentID
+        LEFT JOIN department ON department.DepartmentID = users.DepartmentID
         WHERE bookings.BookingID ='$booking_id'";
         $bookingDetails=DB::select($sql)[0];
     
         return response()->json(['details'=>$bookingDetails]);
     }
+
+    
 }

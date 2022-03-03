@@ -172,7 +172,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
                 //alert(room_id);   
             $('.NotiModal').find('input[name="mid"]').val(data.details.id);
             $('.NotiModal').find('.text').text(data.details.text);
-            $("#image").html(`<img src="img/Image_Room/${data.details.image}" width="25%" height="25%" class="img-center">`); 
+            $("#image").html(`<img src="img/Image_Room/${data.details.image}" width="55%" height="55%" class="img-center">`); 
             $('.NotiModal').modal('show');      
             },'json');
               setTimeout(function(){
@@ -233,14 +233,20 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
            ajax:"{{ route('get.booking.index') }}",
            "pageLength":5,
            "aLengthMenu":[[5,10,25,50,-1],[5,10,25,50,"All"]],
+           "order": [[ 2, "asc" ]], 
            columns:[
             {data:'Image_room', render: function(data){       
               return '<img src="img/Image_Room/'+data+'"style="width:150px;height:105px">'
                     }},
             {data:'RoomName',
             render:function(data,type,row,meta){
+              if(row.DepartmentName == null){
+                return '<b>ห้อง</b> '+row.RoomName +'<p></p><b>ผู้ขอใช้</b> '+row.name
+              }else{
                 return '<b>ห้อง</b> '+row.RoomName +'<p></p><b>ผู้ขอใช้</b> '+row.name +
-                        '<p></p><b>สำหรับแผนก </b>' +row.DepartmentName 
+                        '<p></p><b>สำหรับแผนก </b>' + row.DepartmentName 
+              }
+                
             }},
             {data:"Booking_start",
                     render: function(data,type,row,meta){

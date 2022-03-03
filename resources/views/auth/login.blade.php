@@ -84,9 +84,6 @@
 
   </div>
 </div>
-	<script src="bootstrap/js/popper.js"></script>
-	<script src="bootstrap/js/bootstrap.js"></script>
-	<script src="js_login/my-login.js"></script>
 
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
                     @if (Session::has('success'))

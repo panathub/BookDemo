@@ -17,7 +17,7 @@ class ReportController extends Controller
                 $sql="SELECT users.name,rooms.RoomName,department.DepartmentName,reports.* FROM reports 
                 INNER JOIN users ON users.id = reports.id
                 INNER JOIN rooms ON rooms.RoomID = reports.RoomID
-                LEFT OUTER JOIN department ON department.DepartmentID = reports.DepartmentID OR department.DepartmentID = users.DepartmentID";  
+                LEFT  JOIN department ON department.DepartmentID = users.DepartmentID";  
                 $datareports=DB::select($sql); 
                          return DataTables::of($datareports)
                          ->addIndexColumn()
@@ -29,7 +29,10 @@ class ReportController extends Controller
                                     <i class="fas fa-trash-alt"></i></button>
                                     ';
                         })
-                        ->rawColumns(['actions'])
+                        ->addColumn('checkbox', function($row){
+                            return '<input type="checkbox" name="report_checkbox" data-id="'.$row->ReportID.'"><label></label>';
+                        })
+                        ->rawColumns(['actions','checkbox'])
                          ->make(true);      
                 
           }
@@ -41,7 +44,7 @@ class ReportController extends Controller
         $sql="SELECT users.name,rooms.*,department.DepartmentName,reports.* FROM reports 
         INNER JOIN users ON users.id = reports.id
         INNER JOIN rooms ON rooms.RoomID = reports.RoomID
-        LEFT OUTER JOIN department ON department.DepartmentID = reports.DepartmentID OR department.DepartmentID = users.DepartmentID 
+        LEFT JOIN department ON department.DepartmentID = users.DepartmentID 
         WHERE reports.ReportID ='$report_id'";
         $reportDetails=DB::select($sql)[0];
     
@@ -58,5 +61,11 @@ class ReportController extends Controller
             }else{
                 return response()->json(['code'=>0, 'msg'=>'Something went wrong']);
             }
+        }
+
+        public function deleteSelectedReports(Request $request){
+            $report_ids = $request->report_ids;
+            Report::whereIn('ReportID', $report_ids)->delete();
+            return response()->json(['code'=>1, 'msg'=>'Reports have been delete']);
         }
 }

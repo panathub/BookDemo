@@ -18,6 +18,7 @@ class RoomController extends Controller
     $validator = \Validator::make($request->all(),[
         'RoomName'=>'required',
         'RoomNumber'=>'required',
+        'RoomAmount'=>'required',
         'Image_room'=>'required|image|mimes:jpeg,png,jpg,|max:2048',
     ]);
 
@@ -35,6 +36,7 @@ class RoomController extends Controller
         $room = new Room();
         $room->RoomName = $request->RoomName;
         $room->RoomNumber = $request->RoomNumber;
+        $room->RoomAmount = $request->RoomAmount;
         $room->Image_room = $imageFileName;
         $room->RoomStatus = 0;
         
@@ -86,6 +88,7 @@ class RoomController extends Controller
     $validator = \Validator::make($request->all(),[
         'RoomName'=>'required',
         'RoomNumber'=>'required',
+        'RoomAmount'=>'required',
         'Image_room_update'=>'image',
     ],[
         'Image_room_update.image'=>'รูปภาพเท่านั้น'
@@ -112,6 +115,7 @@ class RoomController extends Controller
                 $room->update([
                     'RoomName'=>$request->RoomName,
                     'RoomNumber'=>$request->RoomNumber,
+                    'RoomAmount'=>$request->RoomAmount,
                     'Image_room' => $file_name,
                 ]);
 
@@ -122,6 +126,7 @@ class RoomController extends Controller
         
         $room->RoomName = $request->RoomName;
         $room->RoomNumber = $request->RoomNumber;
+        $room->RoomAmount = $request->RoomAmount;
         $query = $room->save();
 
         if($query){

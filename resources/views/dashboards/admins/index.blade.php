@@ -35,7 +35,7 @@
           
         </div>
             <div class="card-body p-0">
-            <div id='calendar'></div>
+            <div id=calendar></div>
     </div>
     </div>
 
@@ -156,6 +156,109 @@
                            <span class="text-center VerifyStatus"></span> 
                                   </div>
                            </div>
+                           <div class="mt-2" id="img_room"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!------------------------------------Modal Edit ----------------------------------------->
+        <div class="modal fade editBooking" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header pb-0">
+                <h5 class="modal-title" id="exampleModalLabel">แก้ไขการจอง</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            <form action="<?= route('update.booking.details') ?>" method="POST" enctype="multipart/form-data" id="update-booking-form">
+                    @csrf
+                     <input type="hidden" name="bkid">
+                     <input type="hidden" name="rpid">
+                           <div class="row">
+                              <div class="col-6 col-md-5">
+                                      <h3 class="text-center">ประชุมเรื่อง</h3>
+                              </div>
+                           <div class="col-6 ">
+                           <input type="text" class="form-control" name="BookingTitle">
+                           <span class="text-danger error-text BookingTitle_error"></span> 
+                                  </div>
+                           </div>
+                           <p></p>
+                           <div class="row">
+                              <div class="col-6 col-md-5">
+                                      <h3 class="text-center">จำนวนผู้เข้าร่วมประชุม</h3>
+                              </div>
+                           <div class="col-6 ">
+                           <input type="number" class="form-control" min="1" name="BookingAmount">
+                           <span class="text-danger error-text BookingAmount_error"></span> 
+                                  </div>
+                           </div>
+                           <p></p>
+                           <!-- php  -->
+                           <?php $partsR = DB::connection('mysql')->select('select * from rooms'); ?> 
+                           <!-- end php  -->
+                           <div class="row">
+                              <div class="col-6 col-md-5">
+                                      <h3 class="text-center">ห้องที่ใช้ประชุม</h3>
+                              </div>
+                           <div class="col-6 ">
+                           <select class="form-control" name="RoomID" id="RoomID">
+                            <option value=""></option>
+                            <option value="{{ isset($user->RoomID) ? $user->RoomID : ''}}">{{ isset($user->RoomID) ? $user->RoomID : 'เลือกห้องประชุม'}}</option>
+                            @foreach($partsR as $row)
+           	                <option value="{{$row->RoomID}}">{{$row->RoomName}}</option>
+                            @endforeach
+                        </select>
+                        <span class="text-danger error-text RoomID_error"></span>
+                                  </div>
+                           </div>
+                           <p></p>
+                           <div class="row">
+                              <div class="col-6 col-md-5">
+                                      <h3 class="text-center">เริ่มเวลา</h3>
+                              </div>
+                           <div class="col-6 ">
+                                <div class="input-group">
+                                    <input type="text" id="datetimepicker2" class="form-control" name="Booking_start">
+                                    <div class="input-group-append">
+                                    <span class="input-group-text" id="dateicon2"><i class="fas fa-calendar-alt"></i></span>
+                                    </div>
+                                </div>    
+                                <span class="text-danger error-text Booking_start_error"></span>                              
+                            </div>
+                           </div>
+                           <p></p>
+                           <div class="row">
+                              <div class="col-6 col-md-5">
+                                      <h3 class="text-center">สิ้นสุดเวลา</h3>
+                              </div>
+                              <div class="col-6 ">
+                                <div class="input-group">
+                                    <input type="text" id="datetimepicker3" class="form-control" name="Booking_end">
+                                    <div class="input-group-append">
+                                    <span class="input-group-text" id="dateicon3"><i class="fas fa-calendar-alt"></i></span>
+                                    </div>
+                                </div>
+                                <span class="text-danger error-text Booking_end_error"></span>                                    
+                            </div>
+                           </div>
+                           <p></p>
+                           <div class="row">
+                              <div class="col-6 col-md-5">
+                                      <h3 class="text-center">รายละเอียดการประชุม</h3>
+                              </div>
+                           <div class="col-6 ">
+                           <textarea class="form-control"  rows="3" name="BookingDetail"></textarea>
+                                  </div>
+                           </div>
+                           <p></p>
+                     <div class="form-group">
+                         <button type="submit" class="btn btn-block btn-success">Save Changes</button>
+                     </div>
+                 </form>
             </div>
         </div>
     </div>
@@ -170,6 +273,8 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
 <script src="assets/vendor/moment/min/moment-with-locales.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/fullcalendar@5.10.1/locales-all.js"></script>
+<script src="jquery/jquery.datetimepicker.full.min.js"></script>
+<link rel="stylesheet" href="jquery/jquery.datetimepicker.css" type="text/css">
 
  
     @if (Session::has('success'))
@@ -179,7 +284,7 @@
                 //alert(room_id);   
           $('.NotiModal').find('input[name="mid"]').val(data.details.id);
           $('.NotiModal').find('.text').text(data.details.text);
-          $("#image").html(`<img src="img/Image_Room/${data.details.image}" width="25%" height="25%" class="img-center">`); 
+          $("#image").html(`<img src="img/Image_Room/${data.details.image}" width="55%" height="55%" class="img-center">`); 
           $('.NotiModal').modal('show');      
         },'json');
             setTimeout(function(){
@@ -219,8 +324,10 @@ $(document).ready(function() {
          
     },
         });
-      
+        
         calendar.render();
+
+        
       });       
 </script>
 
@@ -232,25 +339,79 @@ $(document).ready(function() {
          }); 
 
          $(function() {
+
+          jQuery.datetimepicker.setLocale('th');
+
+jQuery('#dateicon').click(function(){
+  jQuery('#datetimepicker').datetimepicker('show'); //support hide,show and destroy command
+});
+
+jQuery('#dateicon1').click(function(){
+  jQuery('#datetimepicker1').datetimepicker('show'); //support hide,show and destroy command
+});
+
+jQuery('#dateicon2').click(function(){
+  jQuery('#datetimepicker2').datetimepicker('show'); //support hide,show and destroy command
+});
+
+jQuery('#dateicon3').click(function(){
+  jQuery('#datetimepicker3').datetimepicker('show'); //support hide,show and destroy command
+});
+
+        jQuery('#datetimepicker').datetimepicker({
+            minDate:'-1970/01/01',
+            allowTimes:[
+            '08:00', '08:15', '08:30','08:45','09:00','09:15', '09:30', '09:45',  
+            '10:00', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
+            '12:00', '12:15', '12:30','12:45','13:00','13:15', '13:30', '13:45',
+            '14:00', '14:15', '14:30','14:45','15:00','15:15', '15:30', '15:45',
+            '16:00', '16:15', '16:30','16:45','17:00','17:15', '17:30', '17:45',
+            '18:00',
+             ]
+        });
+        jQuery('#datetimepicker1').datetimepicker({         
+            minDate:'-1970/01/01',
+            allowTimes:[
+            '08:00', '08:15', '08:30','08:45','09:00','09:15', '09:30', '09:45',  
+            '10:00', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
+            '12:00', '12:15', '12:30','12:45','13:00','13:15', '13:30', '13:45',
+            '14:00', '14:15', '14:30','14:45','15:00','15:15', '15:30', '15:45',
+            '16:00', '16:15', '16:30','16:45','17:00','17:15', '17:30', '17:45',
+            '18:00',
+             ]
+        });
+        jQuery('#datetimepicker2').datetimepicker({
+            minDate:'-1970/01/01',
+            allowTimes:[
+            '08:00', '08:15', '08:30','08:45','09:00','09:15', '09:30', '09:45',  
+            '10:00', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
+            '12:00', '12:15', '12:30','12:45','13:00','13:15', '13:30', '13:45',
+            '14:00', '14:15', '14:30','14:45','15:00','15:15', '15:30', '15:45',
+            '16:00', '16:15', '16:30','16:45','17:00','17:15', '17:30', '17:45',
+            '18:00',
+             ]
+        });
+        jQuery('#datetimepicker3').datetimepicker({         
+            minDate:'-1970/01/01',
+            allowTimes:[
+            '08:00', '08:15', '08:30','08:45','09:00','09:15', '09:30', '09:45',  
+            '10:00', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
+            '12:00', '12:15', '12:30','12:45','13:00','13:15', '13:30', '13:45',
+            '14:00', '14:15', '14:30','14:45','15:00','15:15', '15:30', '15:45',
+            '16:00', '16:15', '16:30','16:45','17:00','17:15', '17:30', '17:45',
+            '18:00',
+             ]
+        });
                       //GET ALL BOOKIng
           var table =  $('#bookings-table').DataTable({
            responsive: true,
            processing:true,
            info:true,
-           ajax:"{{ route('get.booking.index') }}",
+           ajax:"{{ route('get.booking.index.admin') }}",
            "pageLength":5,
-           "aLengthMenu":[[5,10,25,50,-1],[5,10,25,50,"All"]],
- 
-           
+           "aLengthMenu":[[5,10,25,50,-1],[5,10,25,50,"All"]],   
+           "order": [[ 3, "asc" ]],   
            columns:[
-            /*{data:'Image_room', render: function(data){       
-              return '<img src="img/Image_Room/'+data+'"style="width:150px;height:105px">'
-                    }},
-            {data:'RoomName',
-            render:function(data,type,row,meta){
-                return '<b>ห้อง</b> '+row.RoomName +'<p></p><b>ผู้จอง</b> '+row.name +
-                        '<p></p><b>สำหรับแผนก</b> '+row.DepartmentName 
-            }},*/
             {data:'RoomName', name:'RoomName'},
             {data:'name', name:'name'},
             {data:'DepartmentName', name:'DepartmentName'},
@@ -302,6 +463,109 @@ $(document).ready(function() {
            
       });
 
+      
+      $(document).on('click','#editBookingBtn', function(){
+          var booking_id = $(this).data('id');
+          var report_id = $(this).data('id');
+          $('.editBooking').find('form')[0].reset();
+          $('.editBooking').find('span.error-text').text('');
+
+         $.post('<?= route("get.booking.details") ?>',{booking_id:booking_id}, function(data){
+              // alert(data.details.RoomNumber);   
+              $('.editBooking').find('input[name="bkid"]').val(data.details.BookingID);
+              $('.editBooking').find('input[name="rpid"]').val(data.details.ReportID);
+              $('.editBooking').find('input[name="BookingTitle"]').val(data.details.BookingTitle); 
+              $('.editBooking').find('input[name="BookingAmount"]').val(data.details.BookingAmount); 
+              $('.editBooking').find('select[name=RoomID] option').filter(':selected').text(data.details.RoomName); 
+              $('.editBooking').find('select[name=RoomID] option').filter(':selected').val(data.details.RoomID); 
+              $('.editBooking').find('input[name="Booking_start"]').val(data.details.Booking_start);
+              $('.editBooking').find('input[name="Booking_end"]').val(data.details.Booking_end);   
+              $('.editBooking').find('textarea[name="BookingDetail"]').val(data.details.BookingDetail);         
+              $('.editBooking').modal('show');
+              },'json');
+
+            });
+
+                          //UPDATE ฺBooking DETAILS
+                          $('#update-booking-form').on('submit', function(e){
+                    e.preventDefault();
+                    var form = this;
+                    $.ajax({
+                        url:$(form).attr('action'),
+                        method:'POST',
+                        data:new FormData(form),
+                        processData:false,
+                        dataType:'json',
+                        contentType:false,
+                        beforeSend: function(){
+                             $(form).find('span.error-text').text('');
+                        },
+                        success: function(data){
+                              if(data.code == 0){
+                                  $.each(data.error, function(prefix, val){
+                                      $(form).find('span.'+prefix+'_error').text(val[0]);
+                                  });
+                                }else if(data.code == 2){
+                                    Swal.fire({                       
+                                    icon: 'error',
+                                    title: (data.msg),  
+                                    timerProgressBar: true,
+                                    timer: 1500
+                                })    
+                              }else{
+                                  $('#bookings-table').DataTable().ajax.reload(null, false);
+                                  $('#reports-table').DataTable().ajax.reload(null, false);
+                                  $('.editBooking').modal('hide');
+                                  $('.editBooking').find('form')[0].reset();
+                                  Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: (data.msg),
+                                    showConfirmButton: false,
+                                    timerProgressBar: true,
+                                timer: 1500
+                                })
+                              }
+                        }
+                    });
+                });   
+                
+                    //DELETE BOOKING RECORD
+                    $(document).on('click','#deleteBookingBtn', function(){
+                    var booking_id = $(this).data('id');
+                    var url = '<?= route("delete.booking") ?>';
+                    swal.fire({
+                         title:'Are you sure?',
+                         html:'ลบการจองนี้หรือไม่',
+                         icon: 'warning',
+                         showCancelButton:true,
+                         showCloseButton:true,
+                         cancelButtonText:'ยกเลิก',
+                         confirmButtonText:'ใช่, ลบเลย',
+                         cancelButtonColor:'#d33',
+                         confirmButtonColor:'#556ee6',
+                         allowOutsideClick:false
+                    }).then(function(result){
+                          if(result.value){
+                              $.post(url,{booking_id:booking_id}, function(data){
+                                   if(data.code == 1){
+                                       $('#bookings-table').DataTable().ajax.reload(null, false);
+                                       Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: (data.msg),
+                                    showConfirmButton: false,
+                                    timerProgressBar: true,
+                                    timer: 1500
+                                        });
+                                   }else{
+                                       toastr.error(data.msg);
+                                   }
+                              },'json');
+                          }
+                    });
+                });  
+
       $(document).on('click','#infoBookingBtn', function(){
                 var booking_id = $(this).data('id');
                 $.get('<?= route("get.booking.index.details") ?>',{booking_id:booking_id}, function(data){
@@ -320,7 +584,8 @@ $(document).ready(function() {
                     $('.infoBooking').find('.VerifyStatus').html('<span class="text-danger">'+'<i class="fas fa-times text-danger"></i>'+' ไม่อนุมัติ'+'</span>');
                   }else
                     $('.infoBooking').find('.VerifyStatus').html('<span class="text-warning">'+'<i class="fas fa-clock text-warning"></i>'+' รอยืนยัน'+'</span>');
-              $('.infoBooking').modal('show');    
+                    $("#img_room").html(`<img src="img/Image_Room/${data.details.Image_room}" width="60%" height="60%" class="img-center">`);
+                    $('.infoBooking').modal('show');    
               //console.log(data.details.DepartmentName);   
               },'json'); 
             });

@@ -34,6 +34,7 @@ class BookingController extends Controller
     $check_start = $request->Booking_start;
     $check_end = $request->Booking_end;
     $check_room = $request->RoomID;
+    $check_amount = $request->BookingAmount;
 
     $check = "SELECT * FROM `bookings` WHERE RoomID = '$check_room' AND RoomStatus != '0'
     AND ( 
@@ -47,14 +48,34 @@ class BookingController extends Controller
 
     $datacheck = DB::select($check);
 
-    if(!empty($datacheck)) {
+    $check2 = "SELECT RoomAmount FROM `rooms` WHERE RoomID = '$check_room'";
+    $datacheck2 = DB::select($check2);
+    $myString = implode(',', array_column($datacheck2, 'RoomAmount'));
 
-        return response()->json(['code'=>2,'msg'=>'มีการจองอยู่แล้ว']);
-       // return dd($datacheck);
+    if($check_amount > $myString) {
+
+        return response()->json(['code'=>2,'msg'=>'จำนวนคนเกินห้องประชุม']);
+        //return dd($myString);
+
+    }else if(!empty($datacheck)){
+
+        return response()->json(['code'=>3,'msg'=>'มีการจองอยู่แล้ว']);
+        //return dd($check2);
 
     }else{
+        $addreport = new Report();
+        $addreport->id = \Auth::user()->id;
+        $addreport->RoomID = $request->RoomID;
+        $addreport->BookingTitle = $request->BookingTitle;
+        $addreport->BookingAmount = $request->BookingAmount;
+        $addreport->Booking_start = $request->Booking_start;
+        $addreport->Booking_end = $request->Booking_end;
+        $addreport->BookingDetail = $request->BookingDetail;
+        $addreport->RoomStatus = 2;
+        $addreport->save();
         
         $addbook = new Bookings();
+        $addbook->ReportID = $addreport->ReportID;
         $addbook->id = \Auth::user()->id;
         $addbook->RoomID = $request->RoomID;
         $addbook->BookingTitle = $request->BookingTitle;
@@ -64,18 +85,6 @@ class BookingController extends Controller
         $addbook->BookingDetail = $request->BookingDetail;
         $addbook->RoomStatus = 2;
 
-        $addreport = new Report();
-        $addreport->id = \Auth::user()->id;
-        $addreport->RoomID = $request->RoomID;
-        $addreport->DepartmentID = $request->DepartmentID;
-        $addreport->BookingTitle = $request->BookingTitle;
-        $addreport->BookingAmount = $request->BookingAmount;
-        $addreport->Booking_start = $request->Booking_start;
-        $addreport->Booking_end = $request->Booking_end;
-        $addreport->BookingDetail = $request->BookingDetail;
-        $addreport->RoomStatus = 2;
-        $addreport->save();
-
         $query = $addbook->save();
         //echo $query;
         if(!$query){
@@ -83,9 +92,11 @@ class BookingController extends Controller
         }else{
             return response()->json(['code'=>1,'msg'=>'เพิ่มการจองเรียบร้อย']);
         } 
+     }            
     }
-  }
 }
+
+
     
 
 
@@ -96,15 +107,17 @@ class BookingController extends Controller
             $sql="SELECT users.name,rooms.RoomName,department.DepartmentName,bookings.* FROM bookings 
             INNER JOIN users ON users.id = bookings.id
             INNER JOIN rooms ON rooms.RoomID = bookings.RoomID
-            LEFT OUTER JOIN department ON department.DepartmentID = bookings.DepartmentID
-            WHERE users.id = '$userID'
-            ORDER BY bookings.BookingID DESC";  
+            LEFT JOIN department ON users.DepartmentID = department.DepartmentID 
+            WHERE users.id = '$userID'";  
 
             $data=DB::select($sql); 
                     return DataTables::of($data)
                      ->addIndexColumn()
                      ->addColumn('actions', function($row){
-                         return '      
+                         if($row->VerifyStatus == 1 || $row->VerifyStatus == 2){
+                            return '';
+                         }else{
+                            return '      
                                  <button class="btn btn-sm btn-info" data-id="'.$row->BookingID.'" id="infoBookingBtn">
                                  <i class="fas fa-info-circle"></i></button>
                                  <button class="btn btn-sm btn-primary" data-id="'.$row->BookingID.'" id="editBookingBtn">
@@ -112,6 +125,8 @@ class BookingController extends Controller
                                  <button class="btn btn-sm btn-danger" data-id="'.$row->BookingID.'" id="deleteBookingBtn">
                                  <i class="fas fa-trash-alt"></i></button>
                                  ';
+                         }
+                         
                      })
                      ->rawColumns(['actions'])
                      ->make(true);  
@@ -125,7 +140,7 @@ class BookingController extends Controller
         $sql="SELECT users.*,rooms.*,department.DepartmentName,bookings.* FROM bookings 
         INNER JOIN users ON users.id = bookings.id
         INNER JOIN rooms ON rooms.RoomID = bookings.RoomID
-        LEFT JOIN department ON department.DepartmentID = users.DepartmentID OR department.DepartmentID = bookings.DepartmentID
+        LEFT JOIN department ON department.DepartmentID = users.DepartmentID 
         WHERE bookings.BookingID ='$booking_id'";
         $bookingDetails=DB::select($sql)[0];
     
@@ -135,6 +150,7 @@ class BookingController extends Controller
         //UPDATE BOOKING DETAILS
         public function updateUserBookingDetails(Request $request){
             $booking_id = $request->bkid;
+            $report_id = $request->rpid;
         
             $validator = \Validator::make($request->all(),[
                 'RoomID'=>'required',
@@ -153,7 +169,7 @@ class BookingController extends Controller
                 $check_end = $request->Booking_end;
                 $check_room = $request->RoomID;
             
-                $check = "SELECT * FROM `bookings` WHERE RoomID = '$check_room' AND RoomStatus = '2'
+                $check = "SELECT * FROM `bookings` WHERE RoomID = '$check_room'
                 AND ( 
                     (`Booking_start` BETWEEN '$check_start' AND '$check_end') 
                 OR 
@@ -180,6 +196,16 @@ class BookingController extends Controller
                 $addbook->Booking_end = $request->Booking_end;
                 $addbook->BookingDetail = $request->BookingDetail;
                 $query = $addbook->save();
+
+                $addreport = Report::find($report_id);
+                $addreport->RoomID = $request->RoomID;
+                $addreport->BookingTitle = $request->BookingTitle;
+                $addreport->BookingAmount = $request->BookingAmount;
+                $addreport->Booking_start = $request->Booking_start;
+                $addreport->Booking_end = $request->Booking_end;
+                $addreport->BookingDetail = $request->BookingDetail;
+
+                $query = $addreport->save();
         
                 if($query){
                     return response()->json(['code'=>1, 'msg'=>'อัพเดทการจองเรียบร้อย']);

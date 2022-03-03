@@ -59,6 +59,11 @@
                                     <span class="text-danger error-text RoomNumber_error"></span>
                                 </div>
                                 <div class="form-group">
+                                    <label for="">จำนวนคน</label>
+                                    <input type="number" class="form-control" name="RoomAmount" placeholder="Enter amount">
+                                    <span class="text-danger error-text RoomAmount_error"></span>
+                                </div>
+                                <div class="form-group">
                                     <label for="">รูปภาพ</label>
                                     <input type="file" class="form-control" name="Image_room">
                                     <span class="text-danger error-text Image_room_error"></span>
@@ -98,6 +103,11 @@
                          <input type="text" class="form-control" name="RoomNumber" placeholder="Enter room no.">
                          <span class="text-danger error-text RoomNumber_error"></span>
                      </div>
+                     <div class="form-group">
+                        <label for="">จำนวนคน</label>
+                        <input type="number" class="form-control" name="RoomAmount" placeholder="Enter amount">
+                        <span class="text-danger error-text RoomAmount_error"></span>
+                    </div>
                      <div class="form-group">
                          <label for="">รูปภาพ</label>
                          <input type="file" class="form-control" name="Image_room_update">
@@ -141,6 +151,15 @@
                               </div>
                               <div class="col-6 col-md-6">                        
                                     <span class="text-center RoomNumber"></span> 
+                              </div>
+                    </div>
+                    <p></p>
+                    <div class="row">             
+                              <div class="col-6 col-md-5">
+                                      <h3 class="text-center">จำนวนคน</h3>
+                              </div>
+                              <div class="col-6 col-md-6">                        
+                                    <span class="text-center RoomAmount"></span> 
                               </div>
                     </div>
                                           
@@ -231,6 +250,7 @@ $('#addroom').on('submit', function(e){
               $('.editRoom').find('input[name="rid"]').val(data.details.RoomID);
               $('.editRoom').find('input[name="RoomName"]').val(data.details.RoomName);
               $('.editRoom').find('input[name="RoomNumber"]').val(data.details.RoomNumber); 
+              $('.editRoom').find('input[name="RoomAmount"]').val(data.details.RoomAmount);
               $('.editRoom').find('.img-holder-update').html('<img src="/img/Image_Room/'+data.details.
               Image_room+'" class="img-fluid" style="max-width:300;margin-bottom:10px;">');
               $('.editRoom').find('input[type="file"]').attr('data-value','<img src="/img/Image_Room/'+data.details.
@@ -342,7 +362,8 @@ $('#addroom').on('submit', function(e){
                 //alert(room_id);   
              $('.infoRoom').find('input[name="rid"]').val(data.details.RoomID);
              $('.infoRoom').find('.RoomName').text(data.details.RoomName);
-             $('.infoRoom').find('.RoomNumber').text(data.details.RoomNumber);             
+             $('.infoRoom').find('.RoomNumber').text(data.details.RoomNumber);   
+             $('.infoRoom').find('.RoomAmount').text(data.details.RoomAmount);           
              $("#Image_Room").html(`<img src="img/Image_Room/${data.details.Image_room}" width="300" class="img-fluid img-center">`);       
              $('.infoRoom').modal('show');
               },'json');

@@ -35,26 +35,8 @@
             <div class="modal-body">
             <form action="{{ route('add.booking') }}" method="POST" enctype="multipart/form-data" id="addBooking"> 
             @csrf            
-            <div class="row">
-             <!-- php  -->
-             <?php $partsD = DB::connection('mysql')->select('select * from department'); ?> 
-             <!-- end php  -->
-
-                              <div class="col-6 col-md-5">
-                                      <h3 class="text-center">หน่วยงานที่จัดประชุม</h3>
-                              </div>
-                              
-                           <div class="col-6 col-md-6">
-                           <select class="form-control" name="DepartmentID">
-                        <option value="{{ isset($user->DepartmentID) ? $user->DepartmentID : ''}}">{{ isset($user->DepartmentID) ? $user->DepartmentID : 'เลือกแผนก'}}</option>
-                            @foreach($partsD as $row)
-           	                <option value="{{$row->DepartmentID}}">{{$row->DepartmentName}}</option>
-                            @endforeach
-                        </select>
-                        <span class="text-danger error-text DepartmentID_error"></span>
-                                  </div>
-                           </div>
-                           <p></p>
+      
+                        
                            <div class="row">
                               <div class="col-6 col-md-5">
                                       <h3 class="text-center">ประชุมเรื่อง</h3>
@@ -141,12 +123,12 @@
     </div>
     </div>
     </div>
-    <div class="col">
+    <div class="container">
 <div class="card">
 <div class="card-header">
 <div class="row align-items-center">
             <div class="col-8 mb-0">
-               <h3>ตารางการจอง</h3> 
+               <h3>ตารางการขอจอง</h3> 
             </div>
             <div class="col-4 text-right"> 
                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#booking_add">
@@ -172,7 +154,7 @@
     </div>
     </div>
 
-    <div class="col">
+    <div class="container">
 <div class="card">
 <div class="card-header">
 <div class="row align-items-center">
@@ -187,6 +169,7 @@
                 
                 <table class="table table-hover table-condensed" id="reports-table">
                                 <thead>
+                                    <th><input type="checkbox" name="main_checkbox"><label></label></th>
                                     <th>#</th>
                                     <th>ห้องประชุม</th>
                                     <th>ผู้จอง</th>
@@ -196,7 +179,7 @@
                                     <th>หัวข้อการประชุม</th>
                                     <th>จำนวนผู้เข้าประชุม</th>
                                     <th>รายละเอียดการประชุม</th>
-                                    <th>Action</th>
+                                    <th>Action<button class="btn btn-sm btn-danger d-none" id="deleteAllBtn">Delete ALL</button></th>
                                 </thead>
                                 <tbody>
                                 </tbody>
@@ -222,25 +205,6 @@
                     @csrf
                      <input type="hidden" name="bkid">
                      <input type="hidden" name="rpid">
-                     <div class="row">       
-             <!-- php  -->
-             <?php $partsD = DB::connection('mysql')->select('select * from department'); ?> 
-             <!-- end php  -->     
-                              <div class="col- col-md-5">
-                                      <h3 class="text-center">หน่วยงานที่จัดประชุม</h3>
-                              </div>
-                              <div class="col-6 col-md-6">
-                           <select class="form-control" name="DepartmentID" id="DepartmentID">
-                               <option value=""></option>
-                        <option value="{{ isset($user->DepartmentID) ? $user->DepartmentID : ''}}">{{ isset($user->DepartmentID) ? $user->DepartmentID : 'เลือกแผนก'}}</option>
-                            @foreach($partsD as $row)
-           	                <option value="{{$row->DepartmentID}}">{{$row->DepartmentName}}</option>
-                            @endforeach
-                        </select>
-                        <span class="text-danger error-text DepartmentID_error"></span>
-                                  </div>
-                           </div>
-                           <p></p>
                            <div class="row">
                               <div class="col-6 col-md-5">
                                       <h3 class="text-center">ประชุมเรื่อง</h3>
@@ -531,7 +495,7 @@ jQuery('#dateicon3').click(function(){
             minDate:'-1970/01/01',
             allowTimes:[
             '08:00', '08:15', '08:30','08:45','09:00','09:15', '09:30', '09:45',  
-            '10:10', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
+            '10:00', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
             '12:00', '12:15', '12:30','12:45','13:00','13:15', '13:30', '13:45',
             '14:00', '14:15', '14:30','14:45','15:00','15:15', '15:30', '15:45',
             '16:00', '16:15', '16:30','16:45','17:00','17:15', '17:30', '17:45',
@@ -542,7 +506,7 @@ jQuery('#dateicon3').click(function(){
             minDate:'-1970/01/01',
             allowTimes:[
             '08:00', '08:15', '08:30','08:45','09:00','09:15', '09:30', '09:45',  
-            '10:10', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
+            '10:00', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
             '12:00', '12:15', '12:30','12:45','13:00','13:15', '13:30', '13:45',
             '14:00', '14:15', '14:30','14:45','15:00','15:15', '15:30', '15:45',
             '16:00', '16:15', '16:30','16:45','17:00','17:15', '17:30', '17:45',
@@ -553,7 +517,7 @@ jQuery('#dateicon3').click(function(){
             minDate:'-1970/01/01',
             allowTimes:[
             '08:00', '08:15', '08:30','08:45','09:00','09:15', '09:30', '09:45',  
-            '10:10', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
+            '10:00', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
             '12:00', '12:15', '12:30','12:45','13:00','13:15', '13:30', '13:45',
             '14:00', '14:15', '14:30','14:45','15:00','15:15', '15:30', '15:45',
             '16:00', '16:15', '16:30','16:45','17:00','17:15', '17:30', '17:45',
@@ -564,7 +528,7 @@ jQuery('#dateicon3').click(function(){
             minDate:'-1970/01/01',
             allowTimes:[
             '08:00', '08:15', '08:30','08:45','09:00','09:15', '09:30', '09:45',  
-            '10:10', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
+            '10:00', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
             '12:00', '12:15', '12:30','12:45','13:00','13:15', '13:30', '13:45',
             '14:00', '14:15', '14:30','14:45','15:00','15:15', '15:30', '15:45',
             '16:00', '16:15', '16:30','16:45','17:00','17:15', '17:30', '17:45',
@@ -580,7 +544,7 @@ jQuery('#dateicon3').click(function(){
            ajax:"{{ route('get.booking.list') }}",
            "pageLength":5,
            "aLengthMenu":[[5,10,25,50,-1],[5,10,25,50,"All"]],
-    
+           "order": [[ 1, "asc" ]], 
            columns:[
                {data:'name', name:'name'},
                {data:'Booking_start',
@@ -615,6 +579,7 @@ jQuery('#dateicon3').click(function(){
            ajax:"{{ route('get.report.list') }}",
            "pageLength":5,
            "aLengthMenu":[[5,10,25,50,-1],[5,10,25,50,"All"]],
+           "order": [[ 5, "asc" ]],
            dom: 'lBfrtip',
            buttons: [{
               extend: 'excel',
@@ -622,13 +587,14 @@ jQuery('#dateicon3').click(function(){
               filename: 'รายงานการจองห้องประชุม',
               className: 'btn-default',
               exportOptions: {
-              modifier: {
+              modifier: {  
               page: 'all'
                 },
-                columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]
+                columns: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
               }
             }],
            columns:[
+            {data:'checkbox', name:'checkbox', orderable:false, searchable:false},   
             {data:'DT_RowIndex', name:'DT_RowIndex'},
             {data:'RoomName', name:'RoomName'},
             {data:'name', name:'name'},
@@ -644,15 +610,15 @@ jQuery('#dateicon3').click(function(){
                 {data:'BookingTitle', name:'BookingTitle'},  
                 {data:'BookingAmount', name:'BookingAmount'},   
                 {data:'BookingDetail', name:'BookingDetail'}, 
-                {data:'actions', name:'actions'},   
+                {data:'actions', name:'actions', orderable:false, searchable:false},   
                
            ],
-           columnDefs: [
+           columnDefs: [   
             {
-              "targets": [ 6 ],
+              "targets": [ 1 ],
               "visible": false,
               "searchable": false
-            },
+            },               
             {
               "targets": [ 7 ],
               "visible": false,
@@ -662,9 +628,18 @@ jQuery('#dateicon3').click(function(){
               "targets": [ 8 ],
               "visible": false,
               "searchable": false
+            },
+            {
+              "targets": [ 9 ],
+              "visible": false,
+              "searchable": false
             }
         ],
         
+      }).on('draw', function(){
+          $('input[name="report_checkbox"]').each(function(){this.checked = false;});
+          $('input[name="main_checkbox"]').prop('checked', false);
+          $('button#deleteAllBtn').addClass('d-none');
       })
       table.buttons( 0, null ).containers().appendTo( '#test' );
 
@@ -731,8 +706,12 @@ $('#addBooking').on('submit', function(e){
               // alert(data.details.RoomNumber);   
               $('.editBooking').find('input[name="bkid"]').val(data.details.BookingID);
               $('.editBooking').find('input[name="rpid"]').val(data.details.ReportID);
+              if(data.details.roleID == 2){
+              $('.editBooking').find('select[name=DepartmentID]').prop('disabled', true);
+              }else {
               $('.editBooking').find('select[name=DepartmentID] option').filter(':selected').text(data.details.DepartmentName); 
               $('.editBooking').find('select[name=DepartmentID] option').filter(':selected').val(data.details.DepartmentID);     
+              };
               $('.editBooking').find('input[name="BookingTitle"]').val(data.details.BookingTitle); 
               $('.editBooking').find('input[name="BookingAmount"]').val(data.details.BookingAmount); 
               $('.editBooking').find('select[name=RoomID] option').filter(':selected').text(data.details.RoomName); 
@@ -921,6 +900,76 @@ $('#addBooking').on('submit', function(e){
                           }
                     });
                 });
+
+                $(document).on('click','input[name="main_checkbox"]', function(){
+                    if(this.checked){
+                        $('input[name="report_checkbox"]').each(function(){
+                            this.checked = true;
+                        });
+                    }else{
+                        $('input[name="report_checkbox"]').each(function(){
+                            this.checked = false;
+                        });
+                    }
+                    toggledeleteAllBtn();
+                });
+
+                $(document).on('change','input[name="report_checkbox"]', function(){
+
+                    if($('input[name="report_checkbox"]').length == $('input[name="report_checkbox"]:checked').length){
+                       $('input[name="main_checkbox"]').prop('checked', true);
+                    }else{
+                        $('input[name="main_checkbox"]').prop('checked', false);
+                    }
+                    toggledeleteAllBtn();
+                });
+
+                function toggledeleteAllBtn(){
+                    if($('input[name="report_checkbox"]:checked').length > 0){
+                       $('button#deleteAllBtn').text('Delete ('+$('input[name="report_checkbox"]:checked').length+')').removeClass('d-none');
+                    }else{
+                        $('button#deleteAllBtn').addClass('<br> d-none');
+                    }
+                    
+                }
+
+                $(document).on('click','button#deleteAllBtn',function(){
+                    var checkedReports = [];
+                    $('input[name="report_checkbox"]:checked').each(function(){
+                        checkedReports.push($(this).data('id'));
+                    });
+                    var url = '{{ route("delete.selected.reports") }}';
+                    if(checkedReports.length > 0){
+                        Swal.fire({
+                            title:'Are you sure?',
+                            html:'You want to delete <b>('+checkedReports.length+')</b> reports',
+                            icon: 'warning',
+                            showCancelButton:true,
+                            showCloseButton:true,
+                            confirmButtonText:'Yes, Delete',
+                            cancelButtonText:'Cancel',
+                            cancelButtonColor:'#d33',
+                            confirmButtonColor:'#556ee6',
+                            allowOutsideClick:false,
+                        }).then(function(result){
+                            if(result.value){
+                                $.post(url,{report_ids:checkedReports}, function(data){
+                                    if(data.code == 1){
+                                        $('#reports-table').DataTable().ajax.reload(null, true);
+                                        Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: (data.msg),
+                                    showConfirmButton: false,
+                                    timerProgressBar: true,
+                                    timer: 1500
+                                        });
+                                    }
+                                    },'json');
+                            }
+                        })
+                    }
+                });
                     
                 //info Booking RECORD
                 $(document).on('click','#infoBookingBtn', function(){
@@ -935,7 +984,7 @@ $('#addBooking').on('submit', function(e){
               $('.infoBooking').find('.Booking_start').text(data.details.Booking_start);
               $('.infoBooking').find('.Booking_end').text(data.details.Booking_end); 
               $('.infoBooking').find('.BookingDetail').text(data.details.BookingDetail);  
-              $("#Image_Room").html(`<img src="img/Image_Room/${data.details.Image_room}" width="300" class="img-fluid img-center">`);      
+              $("#Image_Room").html(`<img src="img/Image_Room/${data.details.Image_room}" width="300" class="img-fluid img-center">`);          
               $('.infoBooking').modal('show');    
               //console.log(data.details.DepartmentName);   
               },'json'); 

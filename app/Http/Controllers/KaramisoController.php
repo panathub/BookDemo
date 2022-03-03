@@ -24,8 +24,7 @@ class KaramisoController extends Controller
         $sql ="SELECT users.*,rooms.RoomName,department.DepartmentName,bookings.* FROM bookings 
         INNER JOIN users ON users.id = bookings.id 
         INNER JOIN rooms ON rooms.RoomID = bookings.RoomID 
-        LEFT JOIN department ON department.DepartmentID = users.DepartmentID 
-        OR department.DepartmentID = bookings.DepartmentID 
+        LEFT JOIN department ON department.DepartmentID = users.DepartmentID
         WHERE rooms.RoomID = '63' And bookings.VerifyStatus = '1'
         ORDER BY Booking_start ASC";
         $homeBooking=DB::select($sql)[0];
@@ -44,7 +43,6 @@ class KaramisoController extends Controller
         INNER JOIN users ON users.id = bookings.id 
         INNER JOIN rooms ON rooms.RoomID = bookings.RoomID 
         LEFT JOIN department ON department.DepartmentID = users.DepartmentID 
-        OR department.DepartmentID = bookings.DepartmentID 
         WHERE rooms.RoomID = '63' And bookings.VerifyStatus = '1' 
         ORDER BY Booking_start ASC";
         $homeBooking=DB::select($sql)[0];
@@ -56,7 +54,6 @@ class KaramisoController extends Controller
         INNER JOIN users ON users.id = bookings.id 
         INNER JOIN rooms ON rooms.RoomID = bookings.RoomID 
         LEFT JOIN department ON department.DepartmentID = users.DepartmentID 
-        OR department.DepartmentID = bookings.DepartmentID 
         WHERE rooms.RoomID = '63' And bookings.BookingID != $homeBookings And bookings.VerifyStatus = '1' 
         ORDER BY Booking_start ASC";
         
@@ -85,8 +82,7 @@ class KaramisoController extends Controller
         $sql ="SELECT users.*,rooms.RoomName,department.DepartmentName,bookings.* FROM bookings 
         INNER JOIN users ON users.id = bookings.id 
         INNER JOIN rooms ON rooms.RoomID = bookings.RoomID 
-        LEFT JOIN department ON department.DepartmentID = users.DepartmentID 
-        OR department.DepartmentID = bookings.DepartmentID 
+        LEFT JOIN department ON department.DepartmentID = users.DepartmentID
         WHERE rooms.RoomID = '63' And bookings.VerifyStatus = '1'
         ORDER BY Booking_start ASC";
         $homeBooking=DB::select($sql)[0];

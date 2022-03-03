@@ -26,7 +26,6 @@ class ManageBookingController extends Controller
     $validator = \Validator::make($request->all(),[
         'BookingTitle'=>'required',
         'RoomID'=>'required',
-        'DepartmentID'=>'required',
         'BookingAmount'=>'required',
         'Booking_start'=>'required',
         'Booking_end'=>'required',
@@ -62,7 +61,7 @@ class ManageBookingController extends Controller
             $addreport = new Report();
             $addreport->id = \Auth::user()->id;
             $addreport->RoomID = $request->RoomID;
-            $addreport->DepartmentID = $request->DepartmentID;
+           
             $addreport->BookingTitle = $request->BookingTitle;
             $addreport->BookingAmount = $request->BookingAmount;
             $addreport->Booking_start = $request->Booking_start;
@@ -75,7 +74,7 @@ class ManageBookingController extends Controller
             $addbook->ReportID = $addreport->ReportID;
             $addbook->id = \Auth::user()->id;
             $addbook->RoomID = $request->RoomID;
-            $addbook->DepartmentID = $request->DepartmentID;
+        
             $addbook->BookingTitle = $request->BookingTitle;
             $addbook->BookingAmount = $request->BookingAmount;
             $addbook->Booking_start = $request->Booking_start;
@@ -101,8 +100,8 @@ class ManageBookingController extends Controller
             $sql="SELECT users.name,rooms.RoomName,department.DepartmentName,bookings.* FROM bookings 
             INNER JOIN users ON users.id = bookings.id
             INNER JOIN rooms ON rooms.RoomID = bookings.RoomID
-            
-            LEFT OUTER JOIN department ON department.DepartmentID = bookings.DepartmentID
+            LEFT JOIN department ON department.DepartmentID = users.DepartmentID
+            WHERE VerifyStatus = 0
             ORDER BY bookings.BookingID DESC";  
             $databookings=DB::select($sql); 
                      return DataTables::of($databookings)
@@ -117,8 +116,6 @@ class ManageBookingController extends Controller
                                  <i class="fas fa-info-circle"></i></button>
                                  <button class="btn btn-sm btn-primary" data-id="'.$row->BookingID.'" id="editBookingBtn">
                                  <i class="fas fa-edit"></i></button>
-                                 <button class="btn btn-sm btn-danger" data-id="'.$row->BookingID.'" id="deleteBookingBtn">
-                                 <i class="fas fa-trash-alt"></i></button>
                                  ';
                      })
                      ->rawColumns(['actions'])
@@ -129,15 +126,12 @@ class ManageBookingController extends Controller
     //GET BOOKING DETAILS
     public function getBookingDetails(Request $request){
     $booking_id = $request->booking_id;
-
-    $sql="SELECT users.*,rooms.*,department.DepartmentName,bookings.*,reports.* FROM bookings 
+    $sql="SELECT users.*,rooms.*,department.DepartmentName,bookings.* FROM bookings 
     INNER JOIN users ON users.id = bookings.id
     INNER JOIN rooms ON rooms.RoomID = bookings.RoomID
-    INNER JOIN reports ON reports.ReportID = bookings.ReportID
-    LEFT JOIN department ON department.DepartmentID = users.DepartmentID OR department.DepartmentID = bookings.DepartmentID
+    LEFT JOIN department ON department.DepartmentID = users.DepartmentID 
     WHERE bookings.BookingID ='$booking_id'";
     $bookingDetails=DB::select($sql)[0];
-//dad///
     return response()->json(['details'=>$bookingDetails]);
     
 }
@@ -162,7 +156,6 @@ class ManageBookingController extends Controller
         }else{
              
             $addbook = Bookings::find($booking_id);
-            $addbook->DepartmentID = $request->DepartmentID;
             $addbook->RoomID = $request->RoomID;
             $addbook->BookingTitle = $request->BookingTitle;
             $addbook->BookingAmount = $request->BookingAmount;
@@ -172,7 +165,6 @@ class ManageBookingController extends Controller
             $addbook->save();
 
             $addreport = Report::find($report_id);
-            $addreport->DepartmentID = $request->DepartmentID;
             $addreport->RoomID = $request->RoomID;
             $addreport->BookingTitle = $request->BookingTitle;
             $addreport->BookingAmount = $request->BookingAmount;
@@ -210,7 +202,7 @@ class ManageBookingController extends Controller
         $pass = Bookings::find($booking_id);
         $pass2 = Bookings::with(['user'=> function($test){
                         $test->select('*')->leftjoin('department','users.DepartmentID', "=", 'department.DepartmentID');
-                        },'department','room'])->find($booking_id);
+                        },'room'])->find($booking_id);
     
         
         $pass->RoomStatus = 2;
@@ -243,13 +235,9 @@ class ManageBookingController extends Controller
     public function cancleBookingDetails(Request $request){
         $booking_id = $request->booking_id;
 
-        $pass = Bookings::find($booking_id);
-        $pass->RoomStatus = 0;
-        $pass->VerifyStatus = 2;
-
         $pass2 = Bookings::with(['user'=> function($test){
             $test->select('*')->leftjoin('department','users.DepartmentID', "=", 'department.DepartmentID');
-            },'department','room'])->find($booking_id);
+            },'room'])->find($booking_id);
 
             $title = $pass2->BookingTitle;
             $start = $pass2->Booking_start;
@@ -258,11 +246,11 @@ class ManageBookingController extends Controller
             $userName = $pass2->user->name;
             $departmentName = $pass2->user->DepartmentName;
     
-            $query = $pass->save();
+            $query = $pass2->save();
             $sMessage = "📣✨ ปุกาศจ้า 📣✨"."\n"."หัวข้อประชุม: ".$title."\n"."ห้อง: ".$roomName."\n"
                         ."ผู้จอง: ".$userName."\n"."แผนก: ".$departmentName."\n"."เวลาเริ่ม: ".$start."\n"
                         ."เวลาสิ้นสุด: ".$end."\n"."โดนยกเลิกจาก Admin 😢";
-        
+            $query = Bookings::find($booking_id)->delete();
                 if($query){
                    Line::sticker(446, 2008)
                         ->send($sMessage);  

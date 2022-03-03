@@ -27,7 +27,7 @@
     <div class="container-fluid p-3">
       <nav class="navbar navbar-expand-lg">
         <a class="navbar-brand" href="#">
-          <i class="fas fa-book-reader fa-2x mx-3"></i>BookingsMeetingRoom</a>
+          <i class="fas fa-book-reader fa-2x mx-3"></i>Noble-MeetingRoom</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
           aria-label="Toggle navigation">
           <i class="fas fa-align-right text-light"></i>
@@ -316,7 +316,7 @@ display_c5();
                 //alert(room_id);   
              $('.NotiModal').find('input[name="mid"]').val(data.details.id);
              $('.NotiModal').find('.text').text(data.details.text);
-             $("#image").html(`<img src="img/Image_Room/${data.details.image}" width="25%" height="25%" class="img-center">`); 
+             $("#image").html(`<img src="img/Image_Room/${data.details.image}" width="55%" height="55%" class="img-center">`); 
              $('.NotiModal').modal('show');      
               },'json');
               setTimeout(function(){

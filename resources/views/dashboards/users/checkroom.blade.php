@@ -28,7 +28,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
             <div class="col">
                 <div class="card">
                       <div class="card-header bg-transparent">
-              <h2 class="fullcalendar-title mb-0 text-center"><i class="far fa-calendar-alt"></i>&nbsp;รายการจองห้องประชุม {{$view2->RoomName}}</h2>
+              <h2 class="fullcalendar-title mb-0 text-center"><i class="far fa-calendar-alt"></i>&nbsp;รายการจองห้องประชุม {{$view2->RoomName}} [จำกัดผู้เข้าประชุม {{$view2->RoomAmount}} คน]</h2>
             </div>
             <div class="card-body">
             <div class="table-responsive">   

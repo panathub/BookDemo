@@ -218,10 +218,6 @@
   <script src="DataTables/JSZip-2.5.0/jszip.min.js"></script>
   <script src="DataTables/Buttons-2.0.1/js/buttons.html5.min.js"></script>
   <script src="DataTables/Responsive-2.2.9/js/responsive.dataTables.js"></script>
-  
-
-  
-  
   <script src="sweetalert2/sweetalert2.min.js"></script>
     <!-- Optional JS -->
   <script src="assets/js/argon.js"></script>

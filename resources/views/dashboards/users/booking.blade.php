@@ -122,7 +122,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
     <div class="col">
 <div class="card">
 <div class="card-header bg-transparent">
-              <h2 class="mb-0 text-center"><i class="far fa-bookmark">&nbsp;</i>ประวัติการจอง</h2>
+              <h2 class="mb-0 text-center"><i class="far fa-bookmark">&nbsp;</i>รายการจองของฉัน</h2>
             </div>
             <div class="card-body">
                 
@@ -158,6 +158,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
             <form action="<?= route('user.update.booking.details') ?>" method="POST" enctype="multipart/form-data" id="update-booking-form">
                     @csrf
                      <input type="hidden" name="bkid">
+                     <input type="hidden" name="rpid">
                            <div class="row">
                               <div class="col-6 col-md-5">
                                       <h3 class="text-center">ประชุมเรื่อง</h3>
@@ -368,7 +369,7 @@ jQuery('#datetimepicker').datetimepicker({
     minDate:'-1970/01/01',
     allowTimes:[
     '08:00', '08:15', '08:30','08:45','09:00','09:15', '09:30', '09:45',  
-    '10:10', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
+    '10:00', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
     '12:00', '12:15', '12:30','12:45','13:00','13:15', '13:30', '13:45',
     '14:00', '14:15', '14:30','14:45','15:00','15:15', '15:30', '15:45',
     '16:00', '16:15', '16:30','16:45','17:00','17:15', '17:30', '17:45',
@@ -379,7 +380,7 @@ jQuery('#datetimepicker1').datetimepicker({
     minDate:'-1970/01/01',
     allowTimes:[
     '08:00', '08:15', '08:30','08:45','09:00','09:15', '09:30', '09:45',  
-    '10:10', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
+    '10:00', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
     '12:00', '12:15', '12:30','12:45','13:00','13:15', '13:30', '13:45',
     '14:00', '14:15', '14:30','14:45','15:00','15:15', '15:30', '15:45',
     '16:00', '16:15', '16:30','16:45','17:00','17:15', '17:30', '17:45',
@@ -390,7 +391,7 @@ jQuery('#datetimepicker2').datetimepicker({
     minDate:'-1970/01/01',
     allowTimes:[
     '08:00', '08:15', '08:30','08:45','09:00','09:15', '09:30', '09:45',  
-    '10:10', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
+    '10:00', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
     '12:00', '12:15', '12:30','12:45','13:00','13:15', '13:30', '13:45',
     '14:00', '14:15', '14:30','14:45','15:00','15:15', '15:30', '15:45',
     '16:00', '16:15', '16:30','16:45','17:00','17:15', '17:30', '17:45',
@@ -401,7 +402,7 @@ jQuery('#datetimepicker3').datetimepicker({
     minDate:'-1970/01/01',
     allowTimes:[
     '08:00', '08:15', '08:30','08:45','09:00','09:15', '09:30', '09:45',  
-    '10:10', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
+    '10:00', '10:15', '10:30','10:45','11:00','11:15', '11:30', '11:45',
     '12:00', '12:15', '12:30','12:45','13:00','13:15', '13:30', '13:45',
     '14:00', '14:15', '14:30','14:45','15:00','15:15', '15:30', '15:45',
     '16:00', '16:15', '16:30','16:45','17:00','17:15', '17:30', '17:45',
@@ -428,10 +429,12 @@ jQuery('#datetimepicker3').datetimepicker({
                 render: function(data){
                     return moment(data).locale('th').format('DD-MM-YYYY เวลา LT')
                 }},
+                
                {data:'VerifyStatus', 
                     render:function(data){
-                        if(data == 1){
+                        if(data == 1){                           
                             return '<span style="color:green">'+'อนุมัติแล้ว'+'</span>';
+                            
                         }
                         else if(data == 2){
                             return '<span style="color:red">'+'ไม่อนุมัติ'+'</span>';
@@ -475,6 +478,16 @@ $('#addBooking').on('submit', function(e){
                                     timerProgressBar: true,
                                 timer: 1500
                                 })
+                        }else if(data.code == 3){
+                        $(".loading-icon").addClass("text-hide");
+                        $(".button").attr("disabled", false);
+                        $(".btn-txt").text("บันทึกการจองห้องประชุม");
+                       Swal.fire({                         
+                                    icon: 'error',
+                                    title: (data.msg),  
+                                    timerProgressBar: true,
+                                timer: 1500
+                                })            
                     }else{
                         $(".loading-icon").addClass("text-hide");
                         $(".button").attr("disabled", false);
@@ -501,6 +514,7 @@ $('#addBooking').on('submit', function(e){
          $.post('<?= route("user.get.booking.details") ?>',{booking_id:booking_id}, function(data){
               // alert(data.details.RoomNumber);   
               $('.editBooking').find('input[name="bkid"]').val(data.details.BookingID);
+              $('.editBooking').find('input[name="rpid"]').val(data.details.ReportID);
               $('.editBooking').find('input[name="BookingTitle"]').val(data.details.BookingTitle); 
               $('.editBooking').find('input[name="BookingAmount"]').val(data.details.BookingAmount); 
               $('.editBooking').find('select[name=RoomID] option').filter(':selected').text(data.details.RoomName); 
@@ -613,17 +627,7 @@ $('#addBooking').on('submit', function(e){
               },'json'); 
             });
 
-            $(document).ready(function(){
-                $('.timepicker').timepicker({                  
-                    timeFormat: 'h:mm p',
-                    interval: 10,
-                    minTime: '8:00am',
-                    maxTime: '6:00pm',                   
-                    dynamic: false,
-                    dropdown: true,
-                    scrollbar: true         
-                });
-});
+
 
 });
 
