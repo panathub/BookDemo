@@ -175,7 +175,7 @@ display_c5();
       $(document).ready(function(){
         var booking_id = $(this).data('id');
         var today = new Date();
-        var time = today.getHours() + ":" + ('0'+today.getMinutes()).slice(-2);;
+        var time = ('0' + today.getDate()).slice(-2) + "/" + ('0' + (today.getMonth()+1)).slice(-2) + "/" + today.getFullYear() + " "+ ('0' + today.getHours()).slice(-2) + ":" + ('0'+today.getMinutes()).slice(-2);
        // let timeAfter30Mins = new Date();
         times = new Date(today.setMinutes(today.getMinutes() + 30));
         var timeAfter30Mins = moment(times).locale('th').format('LT');
@@ -187,9 +187,9 @@ display_c5();
              //* -----------------------------------------------------------------------------
              $.get('<?= route("get.booking.sukiyaki") ?>',{booking_id:booking_id}, function(data){
               
-              var start = moment(data.details.Booking_start).locale('th').format('LT');
-              var startAfter30Mins = moment(data.details.Booking_start).add(30,'minutes').locale('th').format('LT');
-              var end = moment(data.details.Booking_end).locale('th').format('LT');
+              var start = moment(data.details.Booking_start).locale('th').format('HH:mm');
+              var startAfter30Mins = moment(data.details.Booking_start).add(30,'minutes').locale('th').format('L HH:mm');
+              var end = moment(data.details.Booking_end).locale('th').format('HH:mm');
               var status = data.details.BookingStatus;
               //alert(data.details[1].BookingID);
              // for (var i=0;i<data.details.Booking>)
