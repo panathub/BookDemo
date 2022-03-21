@@ -189,7 +189,7 @@ display_c5();
 
               var start = moment(data.details.Booking_start).locale('th').format('HH:mm');
               var startAfter30Mins = moment(data.details.Booking_start).add(30,'minutes').locale('th').format('L HH:mm');
-              var end = moment(data.details.Booking_end).locale('th').format('HH:mm');
+              var end = moment(data.details.Booking_end).locale('th').format('L HH:mm');
               var status = data.details.BookingStatus;
             
               //alert(data.details[1].BookingID);

@@ -177,6 +177,7 @@ display_c5();
         var booking_id = $(this).data('id');
         var today = new Date();
         var time = ('0' + today.getDate()).slice(-2) + "/" + ('0' + (today.getMonth()+1)).slice(-2) + "/" + today.getFullYear() + " "+ ('0' + today.getHours()).slice(-2) + ":" + ('0'+today.getMinutes()).slice(-2);
+        var time2 = ('0' + today.getHours()).slice(-2) + ":" + ('0'+today.getMinutes()).slice(-2);
        // var timetest = ('0' + today.getDate()).slice(-2) + "/" + ('0' + (today.getMonth()+1)).slice(-2) + "/" + today.getFullYear() + " "+ ('0' + today.getHours()).slice(-2) + ":" + ('0'+today.getMinutes()).slice(-2);
        // let timeAfter30Mins = new Date();
         times = new Date(today.setMinutes(today.getMinutes() + 30));
@@ -192,7 +193,7 @@ display_c5();
               var start = moment(data.details.Booking_start).locale('th').format('HH:mm');
               var startAfter30Mins = moment(data.details.Booking_start).add(30,'minutes').locale('th').format('L HH:mm');
               //var startAfter30Minstest = moment(data.details.Booking_start).add(30,'minutes').locale('th').format('L HH:mm');
-              var end = moment(data.details.Booking_end).locale('th').format('HH:mm');
+              var end = moment(data.details.Booking_end).locale('th').format('L HH:mm');
               var status = data.details.BookingStatus;
               //alert(data.details[1].BookingID);
              // for (var i=0;i<data.details.Booking>)
@@ -221,13 +222,13 @@ display_c5();
                   displayData2TEST()
                 console.log('error');
                 }
-                console.log(time);
+                console.log(end);
                 console.log(startAfter30Mins);
-                console.log(status);
-              
+                console.log(time2);
+                
               
             });
-            
+           
         
                     //Verify ฺBooking DETAILS
                     $('#verify-booking-form').on('submit', function(e){

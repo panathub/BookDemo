@@ -20,9 +20,8 @@
   
   <!-- Datatable -->
   <link rel="stylesheet" href="DataTables/datatables.css" type="text/css">
-  <link rel="stylesheet" href="DataTables/Responsive-2.2.9/css/responsive.dataTables.css" type="text/css">
+  <link rel="stylesheet" href="DataTables/Responsive-2.2.9/css/responsive.dataTables.min.css" type="text/css">
   <link rel="stylesheet" href="sweetalert2/sweetalert2.min.css" type="text/css">
-
   <!-- Calendar -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css">
   
@@ -217,7 +216,7 @@
   <script src="DataTables/Buttons-2.0.1/js/dataTables.buttons.min.js"></script>
   <script src="DataTables/JSZip-2.5.0/jszip.min.js"></script>
   <script src="DataTables/Buttons-2.0.1/js/buttons.html5.min.js"></script>
-  <script src="DataTables/Responsive-2.2.9/js/responsive.dataTables.js"></script>
+  <script src="DataTables/Responsive-2.2.9/js/responsive.dataTables.min.js"></script>
   <script src="sweetalert2/sweetalert2.min.js"></script>
     <!-- Optional JS -->
   <script src="assets/js/argon.js"></script>
