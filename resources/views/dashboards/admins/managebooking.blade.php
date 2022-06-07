@@ -599,14 +599,16 @@ jQuery('#dateicon3').click(function(){
             {data:'RoomName', name:'RoomName'},
             {data:'name', name:'name'},
             {data:'DepartmentName', name:'DepartmentName'},
-               {data:'Booking_start',
-                    render: function(data){
-                       return moment(data).locale('th').format('Do MMM YY เวลา LT')
-                    }},
-                {data:'Booking_end',
-                render: function(data){
-                    return moment(data).locale('th').format('Do MMM YY เวลา LT')
-                }},                    
+            //    {data:'Booking_start',
+            //         render: function(data){
+            //            return moment(data).locale('th').format('Do MMM YY เวลา LT')
+            //         }},
+            //     {data:'Booking_end',
+            //     render: function(data){
+            //         return moment(data).locale('th').format('Do MMM YY เวลา LT')
+            //     }},      
+            {data:'Booking_start', name:'Booking_start'},
+            {data:'Booking_end', name:'Booking_end'},
                 {data:'BookingTitle', name:'BookingTitle'},  
                 {data:'BookingAmount', name:'BookingAmount'},   
                 {data:'BookingDetail', name:'BookingDetail'}, 

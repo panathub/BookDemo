@@ -169,7 +169,7 @@ class BookingController extends Controller
                 $check_end = $request->Booking_end;
                 $check_room = $request->RoomID;
             
-                $check = "SELECT * FROM `bookings` WHERE RoomID = '$check_room'
+                $check = "SELECT * FROM `bookings` WHERE RoomID = '$check_room' AND BookingID != '$booking_id'
                 AND ( 
                     (`Booking_start` BETWEEN '$check_start' AND '$check_end') 
                 OR 

@@ -44,8 +44,7 @@ class FullCalendarController extends Controller
             $sql="SELECT users.name,rooms.*,department.DepartmentName,bookings.* FROM bookings 
             INNER JOIN users ON users.id = bookings.id
             INNER JOIN rooms ON rooms.RoomID = bookings.RoomID
-            LEFT JOIN department ON department.DepartmentID = users.DepartmentID 
-            WHERE MONTH(Booking_start) = $month";  
+            LEFT JOIN department ON department.DepartmentID = users.DepartmentID";  
             $databookings=DB::select($sql); 
                      return DataTables::of($databookings)
                      ->addIndexColumn()
@@ -68,19 +67,18 @@ class FullCalendarController extends Controller
         $sql="SELECT users.name,rooms.*,department.DepartmentName,bookings.* FROM bookings 
         INNER JOIN users ON users.id = bookings.id
         INNER JOIN rooms ON rooms.RoomID = bookings.RoomID
-        LEFT JOIN department ON department.DepartmentID = users.DepartmentID
-        WHERE MONTH(Booking_start) = $month";  
+        LEFT JOIN department ON department.DepartmentID = users.DepartmentID";  
         $databookings=DB::select($sql); 
                  return DataTables::of($databookings)
                  ->addIndexColumn()
                  ->addColumn('actions', function($row){
                      if($row->VerifyStatus == 1){
                         return ' <button class="btn btn-sm btn-info" data-id="'.$row->BookingID.'" id="infoBookingBtn">
-                             <i class="fas fa-info-circle"></i> รายละเอียด</button>
+                             <i class="fas fa-info-circle"></i></button>
                              <button class="btn btn-sm btn-primary" data-id="'.$row->BookingID.'" id="editBookingBtn">
-                             <i class="fas fas fa-edit"></i> แก้ไข</button>
+                             <i class="fas fas fa-edit"></i></button>
                              <button class="btn btn-sm btn-danger" data-id="'.$row->BookingID.'" id="deleteBookingBtn">
-                             <i class="fas fa-trash-alt"></i> ลบ</button>
+                             <i class="fas fa-trash-alt"></i></button>
                              ';
                      }else{
                         return ' <button class="btn btn-sm btn-info" data-id="'.$row->BookingID.'" id="infoBookingBtn">

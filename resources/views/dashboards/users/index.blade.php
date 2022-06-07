@@ -230,6 +230,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
           var table =  $('#bookings-table').DataTable({
            processing:true,
            info:true,
+           "scrollX": true,
            ajax:"{{ route('get.booking.index') }}",
            "pageLength":5,
            "aLengthMenu":[[5,10,25,50,-1],[5,10,25,50,"All"]],

@@ -175,41 +175,38 @@ display_c5();
       $(document).ready(function(){
         var booking_id = $(this).data('id');
         var today = new Date();
-        var time = ('0' + today.getDate()).slice(-2) + "/" + ('0' + (today.getMonth()+1)).slice(-2) + "/" + today.getFullYear() + " "+ ('0' + today.getHours()).slice(-2) + ":" + ('0'+today.getMinutes()).slice(-2);
-       // let timeAfter30Mins = new Date();
+        //var time = ('0' + today.getDate()).slice(-2) + "/" + ('0' + (today.getMonth()+1)).slice(-2) + "/" + today.getFullYear() + " "+ ('0' + today.getHours()).slice(-2) + ":" + ('0'+today.getMinutes()).slice(-2);
+        var presentTime = today.getFullYear() + "-" + ('0' + (today.getMonth()+1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2) + " " + ('0' + today.getHours()).slice(-2) + ":" + ('0'+today.getMinutes()).slice(-2);
         times = new Date(today.setMinutes(today.getMinutes() + 30));
         var timeAfter30Mins = moment(times).locale('th').format('LT');
         //console.log(timeAfter30Mins);
        
-        //console.log(time);
-        //console.log(display_c5());
-     
+      
              //* -----------------------------------------------------------------------------
              $.get('<?= route("get.booking.sukiyaki") ?>',{booking_id:booking_id}, function(data){
               
-              var start = moment(data.details.Booking_start).locale('th').format('HH:mm');
-              var startAfter30Mins = moment(data.details.Booking_start).add(30,'minutes').locale('th').format('L HH:mm');
-              var end = moment(data.details.Booking_end).locale('th').format('L HH:mm');
+              var startAfter30Mins = moment(data.details.Booking_start).add(30,'minutes').locale('th').format('YYYY-MM-DD HH:mm');
+              var end3 = data.details.Booking_end;
               var status = data.details.BookingStatus;
               //alert(data.details[1].BookingID);
              // for (var i=0;i<data.details.Booking>)
-              if(time <= startAfter30Mins && status == 0){              
+              if(presentTime <= startAfter30Mins && status == 0){              
                                              
                 displayData();
                 displayModal();
                 console.log('if1');
 
-              }else if(time >= startAfter30Mins && status == 0){
+              }else if(presentTime >= startAfter30Mins && status == 0){
 
                 deleteData();
                 console.log('if2');
 
-              }else if(status == 1 && time < end){
+              }else if(presentTime <= end3 && status == 1){
 
                 displayData();
                 console.log('success');
 
-              }else if(time >= end){
+              }else if(presentTime > end3 && status == 1){
 
                 deleteData();
                 console.log('if3');
@@ -218,10 +215,6 @@ display_c5();
                   displayData2TEST()
                 console.log('error');
                 }
-                console.log(time);
-                console.log(startAfter30Mins);
-                console.log(status);
-              
               
             });
             
