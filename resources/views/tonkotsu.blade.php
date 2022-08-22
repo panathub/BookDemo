@@ -76,8 +76,8 @@
                <input type="hidden" name="rid"> 
              <h2>ห้องประชุม</h2>&nbsp;<h2>Tonkotsu</h2>
              </div>
-              <h6>สถานะ</h6>        
-              <h3 class="BookingStatus"></h3>
+              <!-- <h6>สถานะ</h6>        
+              <h3 class="BookingStatus"></h3> -->
 
         </div>
     </div>
@@ -115,9 +115,9 @@
 
     </div>
       <div class="container text-center">
-      <button type="submit"class="btn btn-light px-5 py-2 primary-btn" id="verifyHomeBtn">
+      <!-- <button type="submit"class="btn btn-light px-5 py-2 primary-btn" id="verifyHomeBtn">
             Booking
-          </button>
+          </button> -->
     </form>
 </div>
     </section>
@@ -197,17 +197,17 @@ display_c5();
                 displayModal();
                 console.log('if1');
 
-              }else if(presentTime >= startAfter30Mins && status == 0){
+            //   }else if(presentTime >= startAfter30Mins && status == 0){
 
-                deleteData();
-                console.log('if2');
+            //     deleteData();
+            //     console.log('if2');
 
-              }else if(presentTime <= end3 && status == 1){
+              }else if(presentTime <= end3 && status == 0){
 
                 displayData();
                 console.log('success');
 
-              }else if(presentTime > end3 && status == 1){
+              }else if(presentTime > end3 && status == 0){
 
                 deleteData();
                 console.log('if3');

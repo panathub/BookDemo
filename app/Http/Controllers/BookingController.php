@@ -9,6 +9,7 @@ use App\Models\Room;
 use App\Models\Report;
 use DB;
 use DataTables;
+use Carbon\Carbon;
 
 class BookingController extends Controller
 {
@@ -30,7 +31,8 @@ class BookingController extends Controller
     if(!$validator->passes()){
         return response()->json(['code'=>0,'error'=>$validator->errors()->toArray()]);
     }else{
-        
+	
+	
     $check_start = $request->Booking_start;
     $check_end = $request->Booking_end;
     $check_room = $request->RoomID;
@@ -47,11 +49,45 @@ class BookingController extends Controller
         ('$check_end' BETWEEN `Booking_start` AND `Booking_end`))";
 
     $datacheck = DB::select($check);
+	
 
-    $check2 = "SELECT RoomAmount FROM `rooms` WHERE RoomID = '$check_room'";
-    $datacheck2 = DB::select($check2);
-    $myString = implode(',', array_column($datacheck2, 'RoomAmount'));
+	$checktest = Bookings::select('*')
+						->where('RoomID','=', $check_room)
+						->where('RoomStatus', '!=', 0)
+						// ->where(function ($query) use ($check_start, $check_end) {
+						// 	// $query->whereBetween('Booking_start', array($check_start, $check_end));
+						// 	// $query->orWhereBetween('Booking_end', array($check_start, $check_end));
+						// 	$query->whereRaw('Booking_start between ? and ?', array($check_start, $check_end));
+						// 	$query->orWhereRaw('Booking_start between ? and ?', array($check_start, $check_end));
+						// 	$query->orWhereRaw('? between Booking_start and Booking_end', $check_start);
+						// 	$query->orWhereRaw('? between Booking_start and Booking_end', $check_end);
+						// })
+						->get();
+						// ->whereBetween(DB::raw('DATE(Booking_start)'), array($check_start, $check_end))
+						// ->orWhereBetween(DB::raw('DATE(Booking_end)'), array($check_start, $check_end))
+						// ->orWhereBetween(DB::raw('DATE(Booking_start', 'Booking_end)'), array($check_start))
+						// ->orWhereBetween(DB::raw('DATE(Booking_start', 'Booking_end)'), array($check_end))
+						// ->where(function ($query) use ($check_start) {
+						// 	$query->where('Booking_start', '<=', $check_start);
+						// 	$query->where('Booking_end', '>=', $check_start);
+						// })
+						// ->where(function ($query) use ($check_end) {
+						// 	$query->where('Booking_start', '<=', $check_end);
+						// 	$query->where('Booking_end', '>=', $check_end);
+						// })
+						// ->orwhereRaw('? between Booking_start and Booking_end', [$check_start])
+						// ->orwhereRaw('? between Booking_start and Booking_end', [$check_end])
+						// ->orWhereBetween($check_end, array('Booking_start', 'Booking_end'))
+				
+				//  $query->orWhereBetween($check_end, ['Booking_start', 'Booking_end']);
+				 
+			
+	
+	
 
+	$check2 = Room::where('RoomID','=', $check_room)->pluck('RoomAmount')->first();
+	$myString = str_replace("",'',$check2);
+  	
     if($check_amount > $myString) {
 
         return response()->json(['code'=>2,'msg'=>'จำนวนคนเกินห้องประชุม']);

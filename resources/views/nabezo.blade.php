@@ -62,7 +62,7 @@
              <h1>ห้องประชุม</h1>&nbsp;<h1>Nabezo</h1>
              </div>
               <h6>สถานะ</h6>        
-              <h3 class="BookingStatus"></h3>
+              <!-- <h3 class="BookingStatus"></h3> -->
 
         </div>
     </div>
@@ -179,17 +179,17 @@ display_c5();
                 displayModal();
                 console.log('if1');
 
-              }else if(presentTime >= startAfter30Mins && status == 0){
+            //   }else if(presentTime >= startAfter30Mins && status == 0){
 
-                deleteData();
-                console.log('if2');
+            //     deleteData();
+            //     console.log('if2');
 
-              }else if(presentTime <= end3 && status == 1){
+              }else if(presentTime <= end3 && status == 0){
 
                 displayData();
                 console.log('success');
 
-              }else if(presentTime > end3 && status == 1){
+              }else if(presentTime > end3 && status == 0){
 
                 deleteData();
                 console.log('if3');

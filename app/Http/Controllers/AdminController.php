@@ -120,8 +120,7 @@ class AdminController extends Controller
         public function getModalDetails(Request $request){
             $m_id = $request->m_id;
 
-            $sql="SELECT * FROM modal WHERE id ='$m_id'";
-            $modalDetails=DB::select($sql)[0];
+			$modalDetails = Modal::where('id', $m_id)->first();
             return response()->json(['details'=>$modalDetails]);
 
         }
