@@ -91,7 +91,8 @@ class BookingController extends Controller
                                         ->orWhereBetween('Booking_end', [$check_start, $check_end])
                                         ->orWhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_start])
                                         ->orWhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_end])
-                                        ->first();
+                                        ->get();
+                                        dd(!$test123->isEmpty());
                        // dd($checktest2);
 	$checktest = Bookings::select('*')
 						->where('RoomID','=', $check_room)
