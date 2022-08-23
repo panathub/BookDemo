@@ -33,8 +33,8 @@ class BookingController extends Controller
     }else{
 	
 	
-    $check_start = $request->Booking_start;
-    $check_end = $request->Booking_end;
+    $check_start = date($request->Booking_start);
+    $check_end = date($request->Booking_end);
     $check_room = $request->RoomID;
     $check_amount = $request->BookingAmount;
 
@@ -50,7 +50,49 @@ class BookingController extends Controller
 
     $datacheck = DB::select($check);
 	
-
+    $checktest2 = Bookings::where('RoomID', '=', $check_room)
+                        ->where('RoomStatus', '!=', 0)
+                        ->where(function ($query) use ($check_start, $check_end) { 
+                            $query->where(function ($q) use ($check_start, $check_end) {
+                                $q->where(function ($q2) use ($check_start, $check_end) {
+                                    $q2->whereBetween('Booking_start', [$check_start, $check_end]);
+                                });
+                                $q->orWhere(function ($q2) use ($check_start, $check_end) {
+                                    $q2->whereBetween('Booking_end', [$check_start, $check_end]);
+                                });
+                                $q->orWhere(function ($q2) use ($check_start, $check_end) {
+                                    $q2->WhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_start]);
+                                });
+                                $q->orWhere(function ($q2) use ($check_start, $check_end) {
+                                    $q2->WhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_end]);
+                                });
+                                // $q->whereBetween('Booking_end', [$check_start, $check_end]);
+                                // $q->WhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_start]);
+                                // $q->WhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_end]);
+                            });
+                            // $query->orWhere(function ($q) use ($check_start, $check_end) {
+                            //     $q->whereBetween('Booking_end', [$check_start, $check_end]);
+                            // });
+                            // $query->orWhere(function ($q) use ($check_start, $check_end) {
+                            //     $q->WhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_start]);
+                            // });
+                            // $query->orWhere(function ($q) use ($check_start, $check_end) {
+                            //     $q->WhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_end]);
+                            // });
+                        })
+                        // ->whereBetween('Booking_start', [$check_start, $check_end])       
+                        // ->orWhereBetween('Booking_end', [$check_start, $check_end])   
+                        // ->orWhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_start])
+                        // ->orWhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_end])
+                        ->first();
+                        $test123 = Bookings::where('RoomID', '=', $check_room)
+                                        ->where('RoomStatus', '!=', 0)
+                                        ->whereBetween('Booking_start', [$check_start, $check_end])
+                                        ->orWhereBetween('Booking_end', [$check_start, $check_end])
+                                        ->orWhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_start])
+                                        ->orWhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_end])
+                                        ->first();
+                       // dd($checktest2);
 	$checktest = Bookings::select('*')
 						->where('RoomID','=', $check_room)
 						->where('RoomStatus', '!=', 0)
@@ -93,7 +135,7 @@ class BookingController extends Controller
         return response()->json(['code'=>2,'msg'=>'จำนวนคนเกินห้องประชุม']);
         //return dd($myString);
 
-    }else if(!empty($datacheck)){
+    }else if(!empty($test123)){
 
         return response()->json(['code'=>3,'msg'=>'มีการจองอยู่แล้ว']);
         //return dd($check2);
