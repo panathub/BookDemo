@@ -187,20 +187,17 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
     var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
           locale: 'th',
-         
           allDaySlot: true,
-          fixedWeekCount: false,
-         
+          fixedWeekCount: false, 
           headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+          	left: 'prev,next today',
+          	center: 'title',
+          	right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
           }, 
           eventTimeFormat: { // like '14:30:00'
-          hour: '2-digit',
-          minute: '2-digit',   
+          	hour: '2-digit',
+          	minute: '2-digit',   
           },
-          
           timeZone: 'Asia/Bangkok',
           dayMaxEvents: true,
           eventMaxStack: true,

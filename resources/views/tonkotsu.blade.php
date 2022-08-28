@@ -76,8 +76,8 @@
                <input type="hidden" name="rid"> 
              <h2>ห้องประชุม</h2>&nbsp;<h2>Tonkotsu</h2>
              </div>
-              <!-- <h6>สถานะ</h6>        
-              <h3 class="BookingStatus"></h3> -->
+              <h6>สถานะ</h6>        
+              <h3 class="BookingStatus"></h3>
 
         </div>
     </div>

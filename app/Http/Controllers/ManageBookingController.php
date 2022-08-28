@@ -11,9 +11,6 @@ use DB;
 use DataTables;
 use Phattarachai\LineNotify\Facade\Line;
 
-
-
-
 class ManageBookingController extends Controller
 {
     public function index(){
@@ -81,8 +78,6 @@ class ManageBookingController extends Controller
             $addbook->Booking_end = $request->Booking_end;
             $addbook->BookingDetail = $request->BookingDetail;
             $addbook->RoomStatus = 2;
-
-                    
 
             $query = $addbook->save();
             //echo $query;
@@ -204,9 +199,10 @@ class ManageBookingController extends Controller
                         $test->select('*')->leftjoin('department','users.DepartmentID', "=", 'department.DepartmentID');
                         },'room'])->find($booking_id);
     
-        
+		
         $pass->RoomStatus = 2;
         $pass->VerifyStatus = 1;
+		$pass->BookingStatus = 1;
 
         $title = $pass2->BookingTitle;
         $start = $pass2->Booking_start;

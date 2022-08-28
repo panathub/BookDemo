@@ -19,4 +19,8 @@ class Department extends Model
         return $this->hasMany(Bookings::class,'BookingID','DepartmentID');
     }
 
+	public function users() {
+		return $this->hasMany(User::class, 'DepartmentID');
+	}
+
 }

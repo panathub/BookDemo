@@ -62,7 +62,6 @@ class KaramisoController extends Controller
             INNER JOIN users ON users.id = bookings.id 
             INNER JOIN rooms ON rooms.RoomID = bookings.RoomID 
             LEFT JOIN department ON department.DepartmentID = users.DepartmentID 
-            OR department.DepartmentID = bookings.DepartmentID 
             WHERE rooms.RoomID = '63' And bookings.VerifyStatus = '1' 
             ORDER BY Booking_start ASC";
             $homeBookingTEST=DB::select($sql2)[0];

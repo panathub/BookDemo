@@ -11,8 +11,12 @@ class Role extends Model
     protected $primaryKey='roleID'; //Ignore automatically query with id as primary key
     public $timestamps = false; // Ignore automatically add create_at/update_at fields into tablE
 
+	protected $fillable = [
+        'roleName',
+    ];
+
 	public function users() {
 
-		return $this->hasMany(User::class);
+		return $this->hasMany(User::class, 'roleID');
 	}
 }

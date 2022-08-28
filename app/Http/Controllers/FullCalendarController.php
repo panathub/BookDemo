@@ -20,14 +20,36 @@ class FullCalendarController extends Controller
        //return response()->json($event);
 
        $events = array();
-       $bookings = Bookings::all();
+       $bookings = Bookings::with('room')->get();
+	   $color = null;
+	   
        foreach($bookings as $booking) {
+		
+	   switch ($booking->room->RoomName) {
+		case 'Karamiso':
+			$color = '#ff512f';
+		  break;
+		case 'Sukiyaki':
+			$color = '#ffcc00';
+		  break;
+		case 'Tonkotsu':
+			$color = '#00DBDE';
+		  break;
+		  case 'Kinoko':
+			$color = '#FF3CAC';
+		  break;
+		  case 'Shabushabu':
+			$color = '#2B86C5';
+		  break;
+		default:
+			$color = '#000000';
+	  }
            $events[] = [
-                 'id'=>$booking->BookingID,
+                'id'=>$booking->BookingID,
                 'title' => $booking->BookingTitle,
                 'start' => $booking->Booking_start,
                 'end' => $booking->Booking_end,
-                
+                'color' => $color ? $color: ''
            ];
        }
        

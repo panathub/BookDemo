@@ -77,7 +77,7 @@
              <h2>ห้องประชุม</h2>&nbsp;<h2>ShabuShabu</h2>
              </div>
               <h6>สถานะ</h6>        
-              <!-- <h3 class="BookingStatus"></h3> -->
+              <h3 class="BookingStatus"></h3>
 
         </div>
     </div>
@@ -114,9 +114,9 @@
 
     </div>
       <div class="container text-center">
-      <button type="submit"class="btn btn-light px-5 py-2 primary-btn" id="verifyHomeBtn">
+      <!-- <button type="submit"class="btn btn-light px-5 py-2 primary-btn" id="verifyHomeBtn">
             Booking
-          </button>
+          </button> -->
     </form>
 </div>
     </section>

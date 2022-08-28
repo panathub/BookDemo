@@ -32,13 +32,12 @@ class BookingController extends Controller
         return response()->json(['code'=>0,'error'=>$validator->errors()->toArray()]);
     }else{
 	
-	
     $check_start = date($request->Booking_start);
     $check_end = date($request->Booking_end);
     $check_room = $request->RoomID;
     $check_amount = $request->BookingAmount;
 
-    $check = "SELECT * FROM `bookings` WHERE RoomID = '$check_room' AND RoomStatus != '0'
+	$check = "SELECT * FROM `bookings` WHERE RoomID = '$check_room' AND RoomStatus != '0'
     AND ( 
         (`Booking_start` BETWEEN '$check_start' AND '$check_end') 
     OR 
@@ -49,84 +48,14 @@ class BookingController extends Controller
         ('$check_end' BETWEEN `Booking_start` AND `Booking_end`))";
 
     $datacheck = DB::select($check);
-	
-    $checktest2 = Bookings::where('RoomID', '=', $check_room)
-                        ->where('RoomStatus', '!=', 0)
-                        ->where(function ($query) use ($check_start, $check_end) { 
-                            $query->where(function ($q) use ($check_start, $check_end) {
-                                $q->where(function ($q2) use ($check_start, $check_end) {
-                                    $q2->whereBetween('Booking_start', [$check_start, $check_end]);
-                                });
-                                $q->orWhere(function ($q2) use ($check_start, $check_end) {
-                                    $q2->whereBetween('Booking_end', [$check_start, $check_end]);
-                                });
-                                $q->orWhere(function ($q2) use ($check_start, $check_end) {
-                                    $q2->WhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_start]);
-                                });
-                                $q->orWhere(function ($q2) use ($check_start, $check_end) {
-                                    $q2->WhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_end]);
-                                });
-                                // $q->whereBetween('Booking_end', [$check_start, $check_end]);
-                                // $q->WhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_start]);
-                                // $q->WhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_end]);
-                            });
-                            // $query->orWhere(function ($q) use ($check_start, $check_end) {
-                            //     $q->whereBetween('Booking_end', [$check_start, $check_end]);
-                            // });
-                            // $query->orWhere(function ($q) use ($check_start, $check_end) {
-                            //     $q->WhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_start]);
-                            // });
-                            // $query->orWhere(function ($q) use ($check_start, $check_end) {
-                            //     $q->WhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_end]);
-                            // });
-                        })
-                        // ->whereBetween('Booking_start', [$check_start, $check_end])       
-                        // ->orWhereBetween('Booking_end', [$check_start, $check_end])   
-                        // ->orWhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_start])
-                        // ->orWhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_end])
-                        ->first();
-                        $test123 = Bookings::where('RoomID', '=', $check_room)
-                                        ->where('RoomStatus', '!=', 0)
-                                        ->whereBetween('Booking_start', [$check_start, $check_end])
-                                        ->orWhereBetween('Booking_end', [$check_start, $check_end])
-                                        ->orWhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_start])
-                                        ->orWhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_end])
-                                        ->get();
-                                        dd(!$test123->isEmpty());
-                       // dd($checktest2);
-	$checktest = Bookings::select('*')
-						->where('RoomID','=', $check_room)
-						->where('RoomStatus', '!=', 0)
-						// ->where(function ($query) use ($check_start, $check_end) {
-						// 	// $query->whereBetween('Booking_start', array($check_start, $check_end));
-						// 	// $query->orWhereBetween('Booking_end', array($check_start, $check_end));
-						// 	$query->whereRaw('Booking_start between ? and ?', array($check_start, $check_end));
-						// 	$query->orWhereRaw('Booking_start between ? and ?', array($check_start, $check_end));
-						// 	$query->orWhereRaw('? between Booking_start and Booking_end', $check_start);
-						// 	$query->orWhereRaw('? between Booking_start and Booking_end', $check_end);
-						// })
-						->get();
-						// ->whereBetween(DB::raw('DATE(Booking_start)'), array($check_start, $check_end))
-						// ->orWhereBetween(DB::raw('DATE(Booking_end)'), array($check_start, $check_end))
-						// ->orWhereBetween(DB::raw('DATE(Booking_start', 'Booking_end)'), array($check_start))
-						// ->orWhereBetween(DB::raw('DATE(Booking_start', 'Booking_end)'), array($check_end))
-						// ->where(function ($query) use ($check_start) {
-						// 	$query->where('Booking_start', '<=', $check_start);
-						// 	$query->where('Booking_end', '>=', $check_start);
-						// })
-						// ->where(function ($query) use ($check_end) {
-						// 	$query->where('Booking_start', '<=', $check_end);
-						// 	$query->where('Booking_end', '>=', $check_end);
-						// })
-						// ->orwhereRaw('? between Booking_start and Booking_end', [$check_start])
-						// ->orwhereRaw('? between Booking_start and Booking_end', [$check_end])
-						// ->orWhereBetween($check_end, array('Booking_start', 'Booking_end'))
-				
-				//  $query->orWhereBetween($check_end, ['Booking_start', 'Booking_end']);
-				 
-			
-	
-	
+
+    $checkRoomReserve = Bookings::where('RoomID', '=', $check_room)
+                    			->where('RoomStatus', '!=', 0)
+                    			->whereBetween('Booking_start', [$check_start, $check_end])
+                    			->orWhereBetween('Booking_end', [$check_start, $check_end])
+                    			->orWhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_start])
+                    			->orWhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_end])
+                    			->first();
 
 	$check2 = Room::where('RoomID','=', $check_room)->pluck('RoomAmount')->first();
 	$myString = str_replace("",'',$check2);
@@ -134,12 +63,10 @@ class BookingController extends Controller
     if($check_amount > $myString) {
 
         return response()->json(['code'=>2,'msg'=>'จำนวนคนเกินห้องประชุม']);
-        //return dd($myString);
 
-    }else if(!empty($test123)){
+    }else if(!empty($datacheck)){
 
         return response()->json(['code'=>3,'msg'=>'มีการจองอยู่แล้ว']);
-        //return dd($check2);
 
     }else{
         $addreport = new Report();
@@ -165,32 +92,28 @@ class BookingController extends Controller
         $addbook->RoomStatus = 2;
 
         $query = $addbook->save();
-        //echo $query;
+
         if(!$query){
             return response()->json(['code'=>0,'msg'=>'Something went wrong']);
         }else{
             return response()->json(['code'=>1,'msg'=>'เพิ่มการจองเรียบร้อย']);
         } 
-     }            
+     }  
+
     }
 }
-
-
-    
-
-
         // GET ALL BOOKING
         public function getUserBookingList(Request $request){
             $userID = \Auth::user()->id;
 
-            $sql="SELECT users.name,rooms.RoomName,department.DepartmentName,bookings.* FROM bookings 
-            INNER JOIN users ON users.id = bookings.id
-            INNER JOIN rooms ON rooms.RoomID = bookings.RoomID
-            LEFT JOIN department ON users.DepartmentID = department.DepartmentID 
-            WHERE users.id = '$userID'";  
+			$dataUserBookingList = Bookings::select('users.name','rooms.RoomName','department.DepartmentName','bookings.*')
+											->join('users', 'bookings.id', '=', 'users.id')
+											->join('rooms', 'bookings.RoomID', '=', 'rooms.RoomID')
+											->leftJoin('department', 'users.DepartmentID', '=', 'department.DepartmentID')
+											->where('users.id', '=', $userID)
+											->get();
 
-            $data=DB::select($sql); 
-                    return DataTables::of($data)
+                    return DataTables::of($dataUserBookingList)
                      ->addIndexColumn()
                      ->addColumn('actions', function($row){
                          if($row->VerifyStatus == 1 || $row->VerifyStatus == 2){
@@ -216,14 +139,14 @@ class BookingController extends Controller
     public function getUserBookingDetails(Request $request){
         $booking_id = $request->booking_id;
     
-        $sql="SELECT users.*,rooms.*,department.DepartmentName,bookings.* FROM bookings 
-        INNER JOIN users ON users.id = bookings.id
-        INNER JOIN rooms ON rooms.RoomID = bookings.RoomID
-        LEFT JOIN department ON department.DepartmentID = users.DepartmentID 
-        WHERE bookings.BookingID ='$booking_id'";
-        $bookingDetails=DB::select($sql)[0];
+		$dataUserBookingDetail = Bookings::select('users.*','rooms.*','department.DepartmentName','bookings.*')
+		->join('users', 'bookings.id', '=', 'users.id')
+		->join('rooms', 'bookings.RoomID', '=', 'rooms.RoomID')
+		->leftJoin('department', 'users.DepartmentID', '=', 'department.DepartmentID')
+		->where('bookings.BookingID', '=', $booking_id)
+		->first();
     
-        return response()->json(['details'=>$bookingDetails]);
+        return response()->json(['details'=>$dataUserBookingDetail]);
     }
 
         //UPDATE BOOKING DETAILS
@@ -237,7 +160,6 @@ class BookingController extends Controller
                 'BookingAmount'=>'required',
                 'Booking_start'=>'required',
                 'Booking_end'=>'required',
-         
             ]);
         
             if(!$validator->passes()){
@@ -260,11 +182,18 @@ class BookingController extends Controller
 
                 $datacheck = DB::select($check);
 
+				// $checkRoomReserveUpdate = Bookings::where('RoomID', '=', $check_room)
+				// ->where('BookingID', '!=', $booking_id)
+				// ->whereBetween('Booking_start', [$check_start, $check_end])
+				// ->orWhereBetween('Booking_end', [$check_start, $check_end])
+				// ->orWhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_start])
+				// ->orWhereRaw('? BETWEEN Booking_start AND Booking_end', [$check_end])
+				// ->get();
+
                 if(!empty($datacheck)) {
 
                     return response()->json(['code'=>2,'msg'=>'มีการจองรอยืนยัน']);
-   // return dd($datacheck);
-
+ 
                 }else{                  
                  
                 $addbook = Bookings::find($booking_id);

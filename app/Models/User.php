@@ -57,7 +57,7 @@ class User extends Authenticatable
     }*/
 
     public function bookings() {
-        return $this->hasMany(Bookings::class, 'BookingID','id');
+        return $this->hasMany(Bookings::class, 'id');
     }
 
     public function department() {
@@ -65,7 +65,7 @@ class User extends Authenticatable
     }
 
 	public function role() {
-        return $this->belongsTo(Role::class);
+		return $this->belongsTo(Role::class, 'roleID');
     }
 
 }
