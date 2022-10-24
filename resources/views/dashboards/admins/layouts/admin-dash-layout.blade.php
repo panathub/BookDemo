@@ -8,7 +8,7 @@
   <base href="{{ \URL::to('/') }}">
  
   <!-- Google Font: Source Sans Pro -->
-  <link rel="icon" href="img/Noble.png" type="image/png">
+  <link rel="icon" href="img/Noble.webp">
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400&display=swap" rel="stylesheet">
  
   <!-- Icons -->
@@ -37,7 +37,7 @@
       <!-- Brand -->
       <div class="sidenav-header  align-items-center">
         <a class="navbar-brand" href="javascript:void(0)">
-          <img src="img/Noble.png" class="navbar-brand-img" alt="...">
+          <img src="img/Noble.webp" class="navbar-brand-img" alt="...">
         </a>
       </div>
       <div class="navbar-inner">

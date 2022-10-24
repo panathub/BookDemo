@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use DB;
 use DataTables;
 use App\Models\Department;
 
@@ -23,12 +22,10 @@ class DepartmentController extends Controller
              return response()->json(['code'=>0,'error'=>$validator->errors()->toArray()]);
         }else{
            
-
             $department = new Department();
             $department->DepartmentName = $request->DName;
-            
             $query = $department->save();
-            //echo $query;
+
             if(!$query){
                 return response()->json(['code'=>0,'msg'=>'Something went wrong']);
             }else{
@@ -36,7 +33,6 @@ class DepartmentController extends Controller
             }
         }
     }
-    
         // GET ALL DEPARTMENT
         public function getDepartmentList(Request $request){
             $ds = Department::all();

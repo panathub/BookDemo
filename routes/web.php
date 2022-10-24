@@ -45,6 +45,7 @@ Route::middleware(['middleware'=>'PreventBackHistory'])->group(function () {
 
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/', [RoomController::class,'getAllRooms'])->name('all.room');
  //!-----------------------------------------Modal---------------------------------------
  Route::get('/getModalDetails',[AdminController::class,'getModalDetails'])->name('get.modal.details');
  Route::post('/updateModalDetails',[AdminController::class, 'updateModalDetails'])->name('update.modal.details');
@@ -117,13 +118,14 @@ Route::group(['prefix'=>'admin', 'middleware'=>['isAdmin','auth','PreventBackHis
         
          //!-----------------------------------------Manage Booking----------------------------------*/
         Route::get('/booking',[ManageBookingController::class,'index'])->name('admin.booking');
-        Route::post('/add-booking',[ManageBookingController::class,'addBooking'])->name('add.booking');
+        Route::post('/add-booking',[BookingController::class,'addUserBooking'])->name('add.booking');
         Route::get('/getBookingList',[ManageBookingController::class,'getBookingList'])->name('get.booking.list');
         Route::post('/getBookingDetails',[ManageBookingController::class,'getBookingDetails'])->name('get.booking.details');
         Route::post('/updateBookingDetails',[ManageBookingController::class, 'updateBookingDetails'])->name('update.booking.details');
         Route::post('/verifyBookingDetails',[ManageBookingController::class, 'verifyBookingDetails'])->name('verify.booking.details');
         Route::post('/cancleBookingDetails',[ManageBookingController::class, 'cancleBookingDetails'])->name('cancle.booking.details');
         Route::post('/deleteBooking',[ManageBookingController::class,'deleteBooking'])->name('delete.booking');
+        Route::post('/deleteSelectedBooking',[ManageBookingController::class,'deleteSelectedBooking'])->name('delete.selected.booking');
 
         //!-----------------------------------------Report Booking----------------------------------*/
         Route::get('/getReportList',[ReportController::class,'getReportList'])->name('get.report.list');

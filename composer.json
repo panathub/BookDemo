@@ -13,9 +13,11 @@
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.2",
         "phattarachai/line-notify": "^1.1",
+        "phattarachai/thaidate": "^12.1",
         "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^2.12",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",

@@ -6791,8 +6791,33 @@ a.badge:focus
 
 .badge-success
 {
-    color: #1aae6f;
-    background-color: #b0eed3;
+    color: #fff;
+    background-color: #1aae6f;
+}
+.badge-karamiso
+{
+    color: #fff;
+    background-color: #ff512f;
+}
+.badge-tonkotsu
+{
+    color: #fff;
+    background-color: #00DBDE;
+}
+.badge-shabushabu
+{
+    color: #fff;
+    background-color: #2B86C5;
+}
+.badge-kinoko
+{
+    color: #fff;
+    background-color: #FF3CAC;
+}
+.badge-sukiyaki
+{
+    color: #fff;
+    background-color: #ffcc00;
 }
 .badge-success[href]:hover,
 .badge-success[href]:focus
@@ -6819,8 +6844,8 @@ a.badge:focus
 
 .badge-warning
 {
-    color: #ff3709;
-    background-color: #fee6e0;
+    color: #fff;
+    background-color: #FFC107;
 }
 .badge-warning[href]:hover,
 .badge-warning[href]:focus
@@ -6833,8 +6858,8 @@ a.badge:focus
 
 .badge-danger
 {
-    color: #f80031;
-    background-color: #fdd1da;
+    color: #fff;
+    background-color: #f80031;
 }
 .badge-danger[href]:hover,
 .badge-danger[href]:focus

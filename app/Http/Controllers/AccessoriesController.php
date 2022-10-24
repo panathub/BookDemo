@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use DB;
 use DataTables;
 use App\Models\Accessories;
 
@@ -21,14 +20,11 @@ class AccessoriesController extends Controller
         'Image_acc'=>'required|image|mimes:jpeg,png,jpg,|max:2048',
     ]);
 
-   
-
     if(!$validator->passes()){
          return response()->json(['code'=>0,'error'=>$validator->errors()->toArray()]);
     }else{
        
         $Image_acc = $request->file('Image_acc');
-        $new_name = rand() . '.' . $Image_acc->getClientOriginalExtension();
         $Image_acc->move(public_path('img/Image_Accessories'), $Image_acc->getClientOriginalName());
         $imageFileName = $Image_acc->getClientOriginalName();
 
@@ -38,7 +34,7 @@ class AccessoriesController extends Controller
         $acc->Image_acc = $imageFileName;
         
         $query = $acc->save();
-        //echo $query;
+
         if(!$query){
             return response()->json(['code'=>0,'msg'=>'Something went wrong']);
         }else{
@@ -46,7 +42,6 @@ class AccessoriesController extends Controller
         }
     }
 }
-
     // GET ALL ACC
     public function getAccList(Request $request){
         $accs = Accessories::all();

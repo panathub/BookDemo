@@ -7,7 +7,7 @@
   <title>User Dashboard</title>
   <base href="{{ \URL::to('/') }}">
 
-  <link rel="icon" href="img/Noble.png" type="image/png">
+  <link rel="icon" href="img/Noble.webp">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400&display=swap" rel="stylesheet">
  
@@ -37,7 +37,7 @@
       <!-- Brand -->
       <div class="sidenav-header  align-items-center">
         <a class="navbar-brand" href="javascript:void(0)">
-        <img src="img/Noble.png" class="navbar-brand-img" alt="...">
+        <img src="img/Noble.webp" class="navbar-brand-img" alt="...">
         </a>
       </div>
       <div class="navbar-inner">
@@ -183,9 +183,6 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
   <script src="DataTables/DataTables-1.11.3/js/jquery.dataTables.min.js"></script>
   <script src="sweetalert2/sweetalert2.min.js"></script>
  
-    <!-- Optional JS -->
-  <script src="assets/vendor/chart.js/dist/Chart.min.js"></script>
-  <script src="assets/vendor/chart.js/dist/Chart.extension.js"></script>
   <!-- Argon JS -->
   <script src="assets/js/argon.js?v=1.2.0"></script>
   <!-- Calendar -->
