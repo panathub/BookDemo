@@ -420,7 +420,7 @@
 			responsive: true,
 			processing: true,
 			info: true,
-			ajax: "{{ route('get.booking.index.admin') }}",
+			ajax: "{{ route('get.booking.index.admin.v2') }}",
 			"pageLength": 5,
 			"aLengthMenu": [
 				[5, 10, 25, 50, -1],
@@ -650,11 +650,11 @@
 				$('.infoBooking').find('.Booking_end').text(data.details.Booking_end);
 				$('.infoBooking').find('.BookingDetail').text(data.details.BookingDetail);
 				if (data.details.VerifyStatus == 1) {
-					$('.infoBooking').find('.VerifyStatus').html('<span class="text-success">' + '<i class="fas fa-check text-success"></i>' + ' อนุมัติแล้ว' + '</span>');
+					$('.infoBooking').find('.VerifyStatus').html('<span class="badge badge-md badge-success">อนุมัติแล้ว</span>');
 				} else if (data.details.VerifyStatus == 2) {
-					$('.infoBooking').find('.VerifyStatus').html('<span class="text-danger">' + '<i class="fas fa-times text-danger"></i>' + ' ไม่อนุมัติ' + '</span>');
+					$('.infoBooking').find('.VerifyStatus').html('<span class="badge badge-md badge-danger">ไม่อนุมัติ</span>');
 				} else
-					$('.infoBooking').find('.VerifyStatus').html('<span class="text-warning">' + '<i class="fas fa-clock text-warning"></i>' + ' รอยืนยัน' + '</span>');
+					$('.infoBooking').find('.VerifyStatus').html('<span class="badge badge-md badge-warning">รอยืนยัน</span>');
 				$("#img_room").html(`<img src="img/Image_Room/${data.details.Image_room}" width="60%" height="60%" class="img-center">`);
 				$('.infoBooking').modal('show');
 				//console.log(data.details.DepartmentName);   

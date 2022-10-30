@@ -199,24 +199,25 @@
 				</div>
 			</div>
 			<div class="card-body">
-
-				<table class="table table-hover table-condensed" id="reports-table">
-					<thead>
-						<th><input type="checkbox" name="main_checkbox"><label></label></th>
-						<th>#</th>
-						<th>ห้องประชุม</th>
-						<th>ผู้จอง</th>
-						<th>แผนก</th>
-						<th>วัน/เวลาเริ่ม</th>
-						<th>วัน/เวลาสิ้นสุด</th>
-						<th>หัวข้อการประชุม</th>
-						<th>จำนวนผู้เข้าประชุม</th>
-						<th>รายละเอียดการประชุม</th>
-						<th>Action<button class="btn btn-sm btn-danger d-none" id="deleteAllBtn">Delete ALL</button></th>
-					</thead>
-					<tbody>
-					</tbody>
-				</table>
+				<div class="table-responsive">
+					<table class="table table-hover table-condensed" id="reports-table">
+						<thead>
+							<th><input type="checkbox" name="main_checkbox"><label></label></th>
+							<th>#</th>
+							<th>ห้องประชุม</th>
+							<th>ผู้จอง</th>
+							<th>แผนก</th>
+							<th>วัน/เวลาเริ่ม</th>
+							<th>วัน/เวลาสิ้นสุด</th>
+							<th>หัวข้อการประชุม</th>
+							<th>จำนวนผู้เข้าประชุม</th>
+							<th>รายละเอียดการประชุม</th>
+							<th>Action<button class="btn btn-sm btn-danger d-none" id="deleteAllBtn">Delete ALL</button></th>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -768,7 +769,7 @@
 							timerProgressBar: true,
 							timer: 1500
 						})
-					}else if (data.code == 3) {
+					} else if (data.code == 3) {
 						$(".loading-icon").addClass("text-hide");
 						$(".button").attr("disabled", false);
 						$(".btn-txt").text("บันทึกการจองห้องประชุม");
@@ -777,7 +778,7 @@
 							title: (data.msg),
 							timerProgressBar: true,
 							timer: 1500
-						})	
+						})
 					} else {
 						$(".loading-icon").addClass("text-hide");
 						$(".button").attr("disabled", false);

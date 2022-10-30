@@ -53,7 +53,7 @@ class BookingController extends Controller
 			// 			$q4->whereRaw('? between Booking_start and Booking_end', $check_end);
 			// 		});
 			// 	})->exists();
-			$check = "SELECT * FROM `bookings` WHERE RoomID = '$check_room' AND RoomStatus != '0'
+			$check = "SELECT * FROM `bookings` WHERE RoomID = '$check_room' AND RoomStatus != '0' AND VerifyStatus != '2'
 				AND ( 
 					(`Booking_start` BETWEEN '$check_start' AND '$check_end') 
 				OR 
@@ -171,7 +171,7 @@ class BookingController extends Controller
 			$check_end = $request->Booking_end;
 			$check_room = $request->RoomID;
 
-			$check = "SELECT * FROM `bookings` WHERE RoomID = '$check_room' AND BookingID != '$booking_id'
+			$check = "SELECT * FROM `bookings` WHERE RoomID = '$check_room' AND BookingID != '$booking_id' AND VerifyStatus != '2'
                 AND ( 
                     (`Booking_start` BETWEEN '$check_start' AND '$check_end') 
                 OR 

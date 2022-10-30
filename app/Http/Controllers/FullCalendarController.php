@@ -118,6 +118,30 @@ class FullCalendarController extends Controller
 			->make(true);
 	}
 
+	public function getBookingIndexAdminV2(Request $request)
+	{
+		$month = Carbon::now()->timezone('Asia/Bangkok');
+		$data = Bookings::select('users.name', 'rooms.RoomName', 'department.DepartmentName', 'bookings.*')
+			->join('users', 'bookings.id', '=', 'users.id')
+			->join('rooms', 'bookings.RoomID', '=', 'rooms.RoomID')
+			->leftJoin('department', 'users.DepartmentID', '=', 'department.DepartmentID')
+			->where('bookings.RoomStatus', 2)
+			->whereMonth('Booking_start', $month)
+			->orderByDesc('BookingID')
+			->withTrashed()
+			->get();
+		return DataTables::of($data)
+			->addIndexColumn()
+			->addColumn('actions', function ($row) {
+
+				return ' <button class="btn btn-sm btn-info" data-id="' . $row->BookingID . '" id="infoBookingBtn">
+                        <i class="fas fa-info-circle"></i></button>
+                        ';
+			})
+			->rawColumns(['actions'])
+			->make(true);
+	}
+
 	//GET BOOKING DETAILS
 	public function getBookingIndexDetails(Request $request)
 	{

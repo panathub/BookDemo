@@ -5,6 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
+	<meta http-equiv="refresh" content="900">
 	<title>Noble-MeetingsRoom</title>
 	<base href="{{ \URL::to('/') }}">
 	<link rel="icon" href="img/Noble.webp">
@@ -56,7 +57,7 @@
 		</div>
 		<div class="container-fluid text-center" style="padding-top:20px; padding-bottom:40px;">
 			<div class="col-md-8 col-sm-12  text-white">
-				<h5><span id='ct5'></span></h5>
+				<h5>{{\Carbon\Carbon::now()->thaidate('lที่ j F พ.ศ. Y')}}<span id='ct5'></span></h5>
 				<form action="<?= route('verify.meeting') ?>" method="POST" enctype="multipart/form-data" id="verify-booking-form">
 					@csrf
 					<div class="row justify-content-center">
@@ -65,8 +66,8 @@
 						<h2>ห้องประชุม</h2>&nbsp;<h2>Sukiyaki</h2>
 					</div>
 					<h6>สถานะ</h6>
-					<h3 class="BookingStatus"></h3>			
-				</div>
+					<h3 class="BookingStatus"></h3>
+			</div>
 		</div>
 	</header>
 	<main>
@@ -75,7 +76,7 @@
 				<div class="col-md-12 col-14">
 					<div class="panel text-left">
 						<h3 class="text-left" style="background-color: #0093E9; background-image: linear-gradient(160deg, #0093E9 0%, #80D0C7 100%);">
-							   Upcoming Meeting
+							Upcoming Meeting
 						</h3>
 						<div>
 							<h1 class="Booking_start">-</h1>
@@ -91,14 +92,14 @@
 						</div>
 					</div>
 				</div>
-				
+
 				<div class="container text-center">
-					
+
 					</form>
 				</div>
 		</section>
 	</main>
-	
+
 	@include('managemodal')
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -110,14 +111,9 @@
 	<script>
 		function displayNowDate() {
 			var x = new Date();
-			var x1 = " - " + x.getHours() + ":" + ('0' + x.getMinutes()).slice(-2) + ":" + ('0' + x.getSeconds()).slice(-2);
-			var result = x.toLocaleDateString('th-TH', {
-				year: 'numeric',
-				month: 'long',
-				day: 'numeric',
-				weekday: 'long',
-			})
-			document.getElementById('ct5').innerHTML = result + x1;
+			var x1 = " - " + ('0' + x.getHours()).slice(-2) + ":" + ('0' + x.getMinutes()).slice(-2) + ":" + ('0' + x.getSeconds()).slice(-2);
+			
+			document.getElementById('ct5').innerHTML = x1;
 
 			display_c5();
 		}
@@ -149,136 +145,27 @@
 				var presentTime = today.getFullYear() + "-" + ('0' + (today.getMonth() + 1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2) + " " + ('0' + today.getHours()).slice(-2) + ":" + ('0' + today.getMinutes()).slice(-2);
 				times = new Date(today.setMinutes(today.getMinutes() + 30));
 				var timeAfter30Mins = moment(times).locale('th').format('LT');
-				//console.log(timeAfter30Mins);
-
-
 				//* -----------------------------------------------------------------------------
 				$.get('<?= route("get.booking.sukiyaki") ?>', {
 					booking_id: booking_id
 				}, function(data) {
 
-					var startAfter30Mins = moment(data.details.Booking_start).add(30, 'minutes').locale('th').format('YYYY-MM-DD HH:mm');
-					var end3 = data.details.Booking_end;
-					var status = data.details.BookingStatus;
+					$('input[name="bkid"]').val(data.details.BookingID);
+					$('input[name="rid"]').val(data.details.RoomID);
 
-					if (presentTime <= startAfter30Mins && status == 0) {
-
-						displayData();
-						displayModal();
-						console.log('if1');
-
-					} else if (presentTime >= startAfter30Mins && status == 0) {
-
-						deleteData();
-						console.log('if2');
-
-					} else if (presentTime <= end3 && status == 1) {
-
-						displayData();
-						console.log('success');
-
-					} else if (presentTime > end3 && status == 1) {
-
-						deleteData();
-						console.log('if3');
-
+					$('.name').text(data.details.name);
+					$('.DepartmentName').text(data.details.DepartmentName);
+					$('.Booking_start').text(moment(data.details.Booking_start).locale('th').format('DD-MM-YYYY เวลา LT'));
+					$('.Booking_end').text(moment(data.details.Booking_end).locale('th').format('DD-MM-YYYY เวลา LT'));
+					if (data.details.BookingStatus == 0) {
+						$('.BookingStatus').html('<span class="text-white">' + '<i class="fas fa-check text-white"></i>' + ' รอยืนยันการใช้ห้องประชุม' + '</span>');
 					} else {
-						displayData2TEST()
-						console.log('error');
+						$('.BookingStatus').html('<span class="text-white">' + '<i class="fas fa-clock text-white"></i>' + ' กำลังดำเนินการประชุม' + '</span>');
 					}
-
 				});
-
-
-				//Verify ฺBooking DETAILS
-				$('#verify-booking-form').on('submit', function(e) {
-					e.preventDefault();
-					var form = this;
-					$.ajax({
-						url: $(form).attr('action'),
-						method: 'POST',
-						data: new FormData(form),
-						processData: false,
-						dataType: 'json',
-						contentType: false,
-						success: function(data) {
-							Swal.fire({
-								icon: 'success',
-								title: 'Success',
-								text: (data.msg),
-								showConfirmButton: false,
-								timerProgressBar: true,
-								timer: 1500
-							});
-							window.setTimeout(function() {
-								window.location.reload();
-							}, 2000);
-
-						}
-					});
-				});
+				displayModal()
 			});
 
-
-			function displayData() {
-				var booking_id = $(this).data('id');
-				var room_id = $(this).data('RoomID');
-				var today = new Date();
-				var time = today.getHours() + ":" + today.getMinutes()
-				//* -----------------------------------------------------------------------------
-				$.get('<?= route("get.booking.sukiyaki") ?>', {
-					booking_id: booking_id
-				}, (function(data) {
-
-					//alert(room_id);  
-
-					$('input[name="bkid"]').val(data.details.BookingID);
-					$('input[name="rid"]').val(data.details.RoomID);
-
-					$('.name').text(data.details.name);
-					$('.DepartmentName').text(data.details.DepartmentName);
-					$('.Booking_start').text(moment(data.details.Booking_start).locale('th').format('DD-MM-YYYY เวลา LT'));
-					$('.Booking_end').text(moment(data.details.Booking_end).locale('th').format('DD-MM-YYYY เวลา LT'));
-					if (data.details.BookingStatus == 0) {
-						$('.BookingStatus').html('<span class="text-white">' + '<i class="fas fa-check text-white"></i>' + ' รอยืนยันการใช้ห้องประชุม' + '</span>');
-					} else {
-						$('.BookingStatus').html('<span class="text-white">' + '<i class="fas fa-clock text-white"></i>' + ' กำลังดำเนินการประชุม' + '</span>');
-					}
-				}), 'json');
-			}
-
-			function displayData2TEST() {
-				var booking_id = $(this).data('id');
-				var room_id = $(this).data('RoomID');
-				var today = new Date();
-				var time = today.getHours() + ":" + today.getMinutes()
-				//* -----------------------------------------------------------------------------
-				$.get('<?= route("get.booking.sukiyaki.test") ?>', {
-					booking_id: booking_id
-				}, function(data) {
-					//alert(room_id);  
-					$('input[name="bkid"]').val(data.details.BookingID);
-					$('input[name="rid"]').val(data.details.RoomID);
-					$('.name').text(data.details.name);
-					$('.DepartmentName').text(data.details.DepartmentName);
-					$('.Booking_start').text(moment(data.details.Booking_start).locale('th').format('DD-MM-YYYY เวลา LT'));
-					$('.Booking_end').text(moment(data.details.Booking_end).locale('th').format('DD-MM-YYYY เวลา LT'));
-					if (data.details.BookingStatus == 0) {
-						$('.BookingStatus').html('<span class="text-white">' + '<i class="fas fa-check text-white"></i>' + ' รอยืนยันการใช้ห้องประชุม' + '</span>');
-					} else {
-						$('.BookingStatus').html('<span class="text-white">' + '<i class="fas fa-clock text-white"></i>' + ' กำลังดำเนินการประชุม' + '</span>');
-					}
-				}, 'json');
-			}
-
-			function deleteData() {
-				var booking_id = $(this).data('id');
-				var room_id = $(this).data('RoomID');
-				//* -----------------------------------------------------------------------------
-				$.post('<?= route("delete.booking.sukiyaki") ?>', {
-					booking_id
-				}, function(data) {}, 'json');
-			}
 
 			function displayModal() {
 				var m_id = $(this).data('id');
@@ -300,10 +187,6 @@
 
 		});
 	</script>
-
-
-
-
 </body>
 
 </html>

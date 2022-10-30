@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <meta http-equiv="refresh" content="30">
+  <meta http-equiv="refresh" content="900">
   <title>Noble-MeetingsRoom</title>
   <base href="{{ \URL::to('/') }}">
   <link rel="icon" href="img/Noble.png" type="image/png">
@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="sweetalert2/sweetalert2.min.css" type="text/css">
 </head>
 
-<body onload=display_ct5();>
+<body>
   <header style="background-image: linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12);">
     <div class="container-fluid p-3">
       <nav class="navbar navbar-expand-lg">

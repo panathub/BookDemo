@@ -21,13 +21,14 @@ class KaramisoController extends Controller
         //$booking_id = $request->booking_id;
        // $RoomID = $request->room_id;
         $today = date('Y-m-d H:i');
-        $sql ="SELECT users.*,rooms.RoomName,department.DepartmentName,bookings.* FROM bookings 
-        INNER JOIN users ON users.id = bookings.id 
-        INNER JOIN rooms ON rooms.RoomID = bookings.RoomID 
-        LEFT JOIN department ON department.DepartmentID = users.DepartmentID
-        WHERE rooms.RoomID = '63' And bookings.VerifyStatus = '1'
-        ORDER BY Booking_start ASC";
-        $homeBooking=DB::select($sql)[0];
+		$homeBooking = Bookings::select('users.*', 'rooms.*', 'department.DepartmentName', 'bookings.*')
+			->join('users', 'bookings.id', '=', 'users.id')
+			->join('rooms', 'bookings.RoomID', '=', 'rooms.RoomID')
+			->leftJoin('department', 'users.DepartmentID', '=', 'department.DepartmentID')
+			->where('rooms.RoomID', 63)
+			->where('bookings.VerifyStatus', 1)
+			->orderBy('Booking_start', 'asc')
+			->first();
         
        return response()->json(['details'=>$homeBooking]); 
        //return view('noble', ['views'=> $homeBookingDetails]);

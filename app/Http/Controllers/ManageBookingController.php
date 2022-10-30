@@ -10,6 +10,7 @@ use App\Models\Report;
 use DataTables;
 use Carbon\Carbon;
 use DB;
+use App\Jobs\RunBooking;
 use Phattarachai\LineNotify\Facade\Line;
 
 class ManageBookingController extends Controller
@@ -144,6 +145,7 @@ class ManageBookingController extends Controller
 			->join('rooms', 'bookings.RoomID', '=', 'rooms.RoomID')
 			->leftJoin('department', 'users.DepartmentID', '=', 'department.DepartmentID')
 			->where('bookings.BookingID', '=', $booking_id)
+			->withTrashed()
 			->first();
 		return response()->json(['details' => $bookingDetails]);
 	}
@@ -226,19 +228,20 @@ class ManageBookingController extends Controller
 		$title = $pass2->BookingTitle;
 		$start = $pass2->Booking_start;
 		$end = $pass2->Booking_end;
-		$detail = $pass2->BookingDetail;
+		$detail = $pass2->BookingDetail ? $pass2->BookingDetail : '-';
 		$roomName = $pass2->room->RoomName;
 		$userName = $pass2->user->name;
 		$departmentName = $pass2->user->DepartmentName;
 
+		$formatDelete = Carbon::parse($pass2->Booking_end)->timezone('Asia/Bangkok');
 		$query = $pass->save();
 		$sMessage = "📣ปุกาศ✨ " . "\n" . "หัวข้อประชุม: " . $title . "\n" . "ห้อง: " . $roomName . "\n"
 			. "ผู้จอง: " . $userName . "\n" . "แผนก: " . $departmentName . "\n" . "เวลาเริ่ม: " . $start . "\n"
 			. "เวลาสิ้นสุด: " . $end . "\n" . "รายละเอียด: " . $detail . "\n" . "ได้รับการอนุมัติจาก Admin 🔥";
-
 		if ($query) {
-			//    Line::sticker(446, 1989)
-			//  ->send($sMessage);  
+			Line::sticker(446, 1989)->send($sMessage);
+			RunBooking::dispatch($pass2)->delay($formatDelete);
+
 			return response()->json(['code' => 1, 'msg' => 'อนุมัตการจองเรียบร้อย']);
 		} else {
 			return response()->json(['code' => 0, 'msg' => 'Something went wrong']);
@@ -268,8 +271,7 @@ class ManageBookingController extends Controller
 			. "เวลาสิ้นสุด: " . $end . "\n" . "โดนยกเลิกจาก Admin 😢";
 		$query = Bookings::find($booking_id)->delete();
 		if ($query) {
-			//    Line::sticker(446, 2008)
-			//         ->send($sMessage);  
+			Line::sticker(446, 2008)->send($sMessage);  
 			return response()->json(['code' => 1, 'msg' => 'ยกเลิกการจองเรียบร้อย']);
 		} else {
 			return response()->json(['code' => 0, 'msg' => 'Something went wrong']);
@@ -279,7 +281,9 @@ class ManageBookingController extends Controller
 	public function deleteSelectedBooking(Request $request)
 	{
 		$booking_id = $request->booking_id;
-		Bookings::whereIn('BookingID', $booking_id)->delete();
+		$booking = Bookings::whereIn('BookingID', $booking_id);
+		$booking->update(['VerifyStatus' => 2]);
+		$booking->delete();
 		return response()->json(['code' => 1, 'msg' => 'Bookings have been delete']);
 	}
 }

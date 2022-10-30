@@ -54,6 +54,7 @@ Route::get('/', [RoomController::class,'getAllRooms'])->name('all.room');
   Route::get('index',[FullCalendarController::class,'index'])->name('index');
   Route::get('/getBookingIndex',[FullCalendarController::class,'getBookingIndex'])->name('get.booking.index');
   Route::get('/getBookingIndexAdmin',[FullCalendarController::class,'getBookingIndexAdmin'])->name('get.booking.index.admin');
+  Route::get('/getBookingIndexAdminV2',[FullCalendarController::class,'getBookingIndexAdminV2'])->name('get.booking.index.admin.v2');
   Route::get('/getBookingIndexDetails',[FullCalendarController::class,'getBookingIndexDetails'])->name('get.booking.index.details');
 
 //!-----------------------------------------Karamiso Index Room---------------------------------------

@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Bookings;
+use Illuminate\Support\Facades\Log;
 
 class RunBooking implements ShouldQueue
 {
@@ -19,9 +20,11 @@ class RunBooking implements ShouldQueue
      *
      * @return void
      */
+
+	private $data;
     public function __construct(Bookings $Booking)
     {
-        //
+        $this->data = $Booking;
     }
 
     /**
@@ -31,6 +34,7 @@ class RunBooking implements ShouldQueue
      */
     public function handle()
     {
-       // $Booking->delete();
+	   Log::info('success');	
+       $this->data->delete();
     }
 }
