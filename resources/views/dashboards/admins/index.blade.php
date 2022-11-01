@@ -466,13 +466,13 @@
 				{
 					data: "Booking_start",
 					render: function(data, type, row, meta) {
-						return moment(data).locale('th').format('Do MMM YY, HH:mm')
+						return moment(data).locale('th').format('DD MMM YY, HH:mm')
 					}
 				},
 				{
 					data: 'Booking_end',
 					render: function(data) {
-						return moment(data).locale('th').format('Do MMM YY, HH:mm')
+						return moment(data).locale('th').format('DD MMM YY, HH:mm')
 					}
 				},
 				{

@@ -97,7 +97,9 @@ class FullCalendarController extends Controller
 		return DataTables::of($data)
 			->addIndexColumn()
 			->addColumn('actions', function ($row) {
+				dd($row);
 				if ($row->VerifyStatus === 1) {
+					dd(gettype($row->VerifyStatus));
 					return ' <button class="btn btn-sm btn-info" data-id="' . $row->BookingID . '" id="infoBookingBtn">
                              <i class="fas fa-info-circle"></i></button>
                              <button class="btn btn-sm btn-primary" data-id="' . $row->BookingID . '" id="editBookingBtn">

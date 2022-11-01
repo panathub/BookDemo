@@ -285,13 +285,13 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 				{
 					data: "Booking_start",
 					render: function(data) {
-						return moment(data).locale('th').format('Do MMM YY, HH:mm')
+						return moment(data).locale('th').format('DD MMM YY, HH:mm')
 					}
 				},
 				{
 					data: 'Booking_end',
 					render: function(data) {
-						return moment(data).locale('th').format('Do MMM YY, HH:mm')
+						return moment(data).locale('th').format('DD MMM YY, HH:mm')
 					}
 				},
 				{
