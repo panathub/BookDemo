@@ -81,6 +81,7 @@
 						<div>
 							<h1 class="Booking_start">-</h1>
 							<h1 class="Booking_end">-</h1>
+							<h1 class="BookingTitle"></h1>
 						</div>
 						<div>
 							<h3>By</h3>

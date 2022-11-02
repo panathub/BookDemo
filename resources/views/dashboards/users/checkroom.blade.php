@@ -48,41 +48,41 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 								<td>{{$row->BookingTitle}}</td>
 								<td>{{\Carbon\Carbon::parse($row->Booking_start)->thaidate('j M y H:i')}} - {{\Carbon\Carbon::parse($row->Booking_end)->thaidate('j M y H:i')}}</td>
 								<td>
-									@if($row->RoomStatus === 0)
+									@if($row->RoomStatus == 0)
 									<span class="badge badge-dot mr-4">
 										<i class="bg-success"></i>
 										ว่าง
 									</span>
-									@elseif($row->RoomStatus === 1)
+									@elseif($row->RoomStatus == 1)
 									<span class="badge badge-dot mr-4">
 										<i class="bg-warning"></i>
 										รออนุมัติ
 									</span>
-									@elseif($row->RoomStatus === 2)
+									@elseif($row->RoomStatus == 2)
 									<span class="badge badge-dot mr-4">
 										<i class="bg-danger"></i>
 										ไม่ว่าง
 									</span>
-									@elseif($row->RoomStatus === null)
+									@elseif($row->RoomStatus == null)
 									@endif
 								</td>
 								<td>
-									@if($row->VerifyStatus === 0)
+									@if($row->VerifyStatus == 0)
 									<span class="badge badge-dot mr-4">
 										<i class="bg-warning"></i>
 										รอยืนยัน
 									</span>
-									@elseif($row->VerifyStatus === 1)
+									@elseif($row->VerifyStatus == 1)
 									<span class="badge badge-dot mr-4">
 										<i class="bg-success"></i>
 										อนุมัติแล้ว
 									</span>
-									@elseif($row->VerifyStatus === 2)
+									@elseif($row->VerifyStatus == 2)
 									<span class="badge badge-dot mr-4">
 										<i class="bg-danger"></i>
 										ไม่อนุมัติ
 									</span>
-									@elseif($row->VerifyStatus === null)
+									@elseif($row->VerifyStatus == null)
 									@endif
 								</td>
 							</tr>

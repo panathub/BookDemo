@@ -82,6 +82,7 @@
 						<div>
 							<h1 class="Booking_start">-</h1>
 							<h1 class="Booking_end">-</h1>
+							<h1 class="BookingTitle"></h1>
 						</div>
 						<h3>By</h3>
 						<div class="row col">
@@ -152,6 +153,7 @@
 					$('input[name="rid"]').val(data.details.RoomID);
 					$('.name').text(data.details.name);
 					$('.DepartmentName').text(data.details.DepartmentName);
+					$('.BookingTitle').text(data.details.BookingTitle);
 					$('.Booking_start').text(moment(data.details.Booking_start).locale('th').format('DD-MM-YYYY เวลา LT'));
 					$('.Booking_end').text(moment(data.details.Booking_end).locale('th').format('DD-MM-YYYY เวลา LT'));
 					if (data.details.BookingStatus == 0) {
