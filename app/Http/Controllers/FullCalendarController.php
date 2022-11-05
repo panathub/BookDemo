@@ -82,7 +82,7 @@ class FullCalendarController extends Controller
 	}
 
 	// GET ALL BOOKING ADMIN
-	public function getBookingIndexAdmin(Request $request)
+	public function getBookingIndexAdmin()
 	{
 		$month = Carbon::now()->timezone('Asia/Bangkok');
 		$data = Bookings::select('users.name', 'rooms.RoomName', 'department.DepartmentName', 'bookings.*')
@@ -91,15 +91,14 @@ class FullCalendarController extends Controller
 			->leftJoin('department', 'users.DepartmentID', '=', 'department.DepartmentID')
 			->where('bookings.RoomStatus', 2)
 			->whereMonth('Booking_start', $month)
-			->orderByDesc('BookingID')
+			->orderBy('Booking_start','asc')
 			->withTrashed()
 			->get();
 		return DataTables::of($data)
 			->addIndexColumn()
 			->addColumn('actions', function ($row) {
-				dd($row);
+				
 				if ($row->VerifyStatus === 1) {
-					dd(gettype($row->VerifyStatus));
 					return ' <button class="btn btn-sm btn-info" data-id="' . $row->BookingID . '" id="infoBookingBtn">
                              <i class="fas fa-info-circle"></i></button>
                              <button class="btn btn-sm btn-primary" data-id="' . $row->BookingID . '" id="editBookingBtn">
@@ -120,7 +119,7 @@ class FullCalendarController extends Controller
 			->make(true);
 	}
 
-	public function getBookingIndexAdminV2(Request $request)
+	public function getBookingIndexAdminV2()
 	{
 		$month = Carbon::now()->timezone('Asia/Bangkok');
 		$data = Bookings::select('users.name', 'rooms.RoomName', 'department.DepartmentName', 'bookings.*')
@@ -129,7 +128,7 @@ class FullCalendarController extends Controller
 			->leftJoin('department', 'users.DepartmentID', '=', 'department.DepartmentID')
 			->where('bookings.RoomStatus', 2)
 			->whereMonth('Booking_start', $month)
-			->orderByDesc('BookingID')
+			->orderBy('Booking_start','asc')
 			->withTrashed()
 			->get();
 		return DataTables::of($data)
@@ -154,6 +153,7 @@ class FullCalendarController extends Controller
 			->join('rooms', 'bookings.RoomID', '=', 'rooms.RoomID')
 			->leftJoin('department', 'users.DepartmentID', '=', 'department.DepartmentID')
 			->where('bookings.BookingID', '=', $booking_id)
+			->withTrashed()
 			->first();
 		return response()->json(['details' => $bookingDetails]);
 	}

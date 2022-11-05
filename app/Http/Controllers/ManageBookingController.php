@@ -107,7 +107,7 @@ class ManageBookingController extends Controller
 	}
 
 	// GET ALL BOOKING
-	public function getBookingList(Request $request)
+	public function getBookingList()
 	{
 
 		$databookings = Bookings::select('users.name', 'rooms.RoomName', 'department.DepartmentName', 'bookings.*')
@@ -202,7 +202,9 @@ class ManageBookingController extends Controller
 	public function deleteBooking(Request $request)
 	{
 		$booking_id = $request->booking_id;
-		$query = Bookings::find($booking_id)->delete();
+		$query = Bookings::where('BookingID', $booking_id);
+		$query->update(['VerifyStatus' => 2]);
+		$query->delete();
 
 		if ($query) {
 			return response()->json(['code' => 1, 'msg' => 'ลบการจองเรียบร้อย']);

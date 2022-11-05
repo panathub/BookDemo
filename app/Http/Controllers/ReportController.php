@@ -17,7 +17,8 @@ class ReportController extends Controller
                 $sql="SELECT users.name,rooms.RoomName,department.DepartmentName,reports.* FROM reports 
                 INNER JOIN users ON users.id = reports.id
                 INNER JOIN rooms ON rooms.RoomID = reports.RoomID
-                LEFT  JOIN department ON department.DepartmentID = users.DepartmentID";  
+                LEFT  JOIN department ON department.DepartmentID = users.DepartmentID
+				ORDER BY ReportID DESC";  
                 $datareports=DB::select($sql); 
                          return DataTables::of($datareports)
                          ->addIndexColumn()

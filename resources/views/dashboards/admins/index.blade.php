@@ -426,7 +426,9 @@
 				[5, 10, 25, 50, -1],
 				[5, 10, 25, 50, "All"]
 			],
-
+			"order": [
+				[3, "asc"]
+			],
 			columns: [{
 					data: 'RoomName',
 					render: function(data, type) {

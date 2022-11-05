@@ -141,6 +141,7 @@
 				<div class="table-responsive">
 					<table class="table table-condensed align-items-center" id="request-bookings-table">
 						<thead>
+							<th>ห้อง</th>
 							<th>ผู้จอง</th>
 							<th>วัน/เวลาเริ่ม</th>
 							<th>วัน/เวลาสิ้นสุด</th>
@@ -158,7 +159,19 @@
 	<div class="container">
 		<div class="card">
 			<div class="card-header">
-				<h5 class="h3 mb-0">รายการจองใช้ห้องประจำเดือน {{\Carbon\Carbon::now()->thaidate('F')}}</h5>
+				<div class="row align-items-center">
+					<div class="col-8 mb-0">
+						<h3>รายการจองใช้ห้องประจำเดือน {{\Carbon\Carbon::now()->thaidate('F')}}</h3>
+					</div>
+					<div class="col-4 text-right">
+						<select data-column="2" class="form-control filter-select">
+							<option value="">Select Room</option>
+							@foreach($partsR as $row)
+							<option value="{{$row->RoomName}}">{{$row->RoomName}}</option>
+							@endforeach
+						</select>
+					</div>
+				</div>
 			</div>
 			<div class="card-body">
 				<div class="table-responsive">
@@ -584,19 +597,41 @@
 				[1, "asc"]
 			],
 			columns: [{
+					data: 'RoomName',
+					render: function(data, type) {
+						switch (data) {
+							case 'Karamiso':
+								return '<span class="badge badge-md badge-karamiso">Karamiso</span>';
+								break;
+							case 'Sukiyaki':
+								return '<span class="badge badge-md badge-sukiyaki">Sukiyaki</span>';
+								break;
+							case 'Tonkotsu':
+								return '<span class="badge badge-md badge-tonkotsu">Tonkotsu</span>';
+								break;
+							case 'Kinoko':
+								return '<span class="badge badge-md badge-kinoko">Kinoko</span>';
+								break;
+							case 'Shabushabu':
+								return '<span class="badge badge-md badge-shabushabu">Shabushabu</span>';
+								break;
+						}
+					}
+				},
+				{
 					data: 'name',
 					name: 'name'
 				},
 				{
 					data: 'Booking_start',
 					render: function(data) {
-						return moment(data).locale('th').format('Do MMM YY, HH:mm')
+						return moment(data).locale('th').format('DD MMM YY, HH:mm')
 					}
 				},
 				{
 					data: 'Booking_end',
 					render: function(data) {
-						return moment(data).locale('th').format('Do MMM YY, HH:mm')
+						return moment(data).locale('th').format('DD MMM YY, HH:mm')
 					}
 				},
 				{
@@ -613,7 +648,8 @@
 				},
 				{
 					data: 'actions',
-					name: 'actions'
+					name: 'actions',
+					orderable: false,
 				},
 			]
 
@@ -631,9 +667,7 @@
 				[5, 10, 25, 50, -1],
 				[5, 10, 25, 50, "All"]
 			],
-			"order": [
-				[5, "asc"]
-			],
+
 			dom: 'lBfrtip',
 			buttons: [{
 				extend: 'excel',
@@ -655,11 +689,29 @@
 				},
 				{
 					data: 'DT_RowIndex',
-					name: 'DT_RowIndex'
+					name: 'DT_RowIndex',
 				},
 				{
 					data: 'RoomName',
-					name: 'RoomName'
+					render: function(data, type) {
+						switch (data) {
+							case 'Karamiso':
+								return '<span class="badge badge-md badge-karamiso">Karamiso</span>';
+								break;
+							case 'Sukiyaki':
+								return '<span class="badge badge-md badge-sukiyaki">Sukiyaki</span>';
+								break;
+							case 'Tonkotsu':
+								return '<span class="badge badge-md badge-tonkotsu">Tonkotsu</span>';
+								break;
+							case 'Kinoko':
+								return '<span class="badge badge-md badge-kinoko">Kinoko</span>';
+								break;
+							case 'Shabushabu':
+								return '<span class="badge badge-md badge-shabushabu">Shabushabu</span>';
+								break;
+						}
+					}
 				},
 				{
 					data: 'name',
@@ -705,10 +757,12 @@
 				},
 
 			],
-			columnDefs: [{
+			columnDefs: [
+				{
 					"targets": [1],
 					"visible": false,
-					"searchable": false
+					"searchable": false,
+					
 				},
 				{
 					"targets": [7],
@@ -724,7 +778,8 @@
 					"targets": [9],
 					"visible": false,
 					"searchable": false
-				}
+				},
+
 			],
 
 		}).on('draw', function() {
@@ -1144,6 +1199,9 @@
 			[5, 10, 25, 50, -1],
 			[5, 10, 25, 50, "All"]
 		],
+		"order": [
+			[5, "asc"]
+		],
 		columns: [{
 				data: 'checkbox',
 				name: 'checkbox',
@@ -1156,7 +1214,25 @@
 			},
 			{
 				data: 'RoomName',
-				name: 'RoomName'
+				render: function(data, type) {
+					switch (data) {
+						case 'Karamiso':
+							return '<span class="badge badge-md badge-karamiso">Karamiso</span>';
+							break;
+						case 'Sukiyaki':
+							return '<span class="badge badge-md badge-sukiyaki">Sukiyaki</span>';
+							break;
+						case 'Tonkotsu':
+							return '<span class="badge badge-md badge-tonkotsu">Tonkotsu</span>';
+							break;
+						case 'Kinoko':
+							return '<span class="badge badge-md badge-kinoko">Kinoko</span>';
+							break;
+						case 'Shabushabu':
+							return '<span class="badge badge-md badge-shabushabu">Shabushabu</span>';
+							break;
+					}
+				}
 			},
 			{
 				data: 'name',
@@ -1172,21 +1248,17 @@
 					}
 				}
 			},
-			// {data:"Booking_start",
-			//         render: function(data,type,row,meta){
-			//            return moment(data).locale('th').format('Do MMM YY เวลา LT')
-			//         }},
 			{
-				data: 'Booking_start',
-				name: 'Booking_start'
+				data: "Booking_start",
+				render: function(data, type, row, meta) {
+					return moment(data).locale('th').format('DD MMM YY, HH:mm')
+				}
 			},
-			// {data:'Booking_end',
-			// render: function(data){
-			//     return moment(data).locale('th').format('Do MMM YY เวลา LT')
-			// }}, 
 			{
 				data: 'Booking_end',
-				name: 'Booking_end'
+				render: function(data) {
+					return moment(data).locale('th').format('DD MMM YY, HH:mm')
+				}
 			},
 			{
 				data: 'BookingTitle',
@@ -1213,22 +1285,13 @@
 			},
 			{
 				data: 'actions',
-				name: 'actions'
+				name: 'actions', 
+				orderable: false,
 			},
 
 		],
 		columnDefs: [{
 				"targets": [1],
-				"visible": false,
-				"searchable": false
-			},
-			{
-				"targets": [5],
-				"visible": false,
-				"searchable": false
-			},
-			{
-				"targets": [6],
 				"visible": false,
 				"searchable": false
 			},
@@ -1255,6 +1318,12 @@
 		});
 		$('input[name="booking_main_checkbox"]').prop('checked', false);
 		$('button#deleteAllBookingBtn').addClass('d-none');
+	});
+
+	$('.filter-select').change(function() {
+		table.column($(this).data('column'))
+			.search($(this).val())
+			.draw();
 	});
 
 	$(document).on('click', '#editBookingBtn', function() {
