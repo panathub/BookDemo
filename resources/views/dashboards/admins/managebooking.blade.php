@@ -757,12 +757,11 @@
 				},
 
 			],
-			columnDefs: [
-				{
+			columnDefs: [{
 					"targets": [1],
 					"visible": false,
 					"searchable": false,
-					
+
 				},
 				{
 					"targets": [7],
@@ -1285,7 +1284,7 @@
 			},
 			{
 				data: 'actions',
-				name: 'actions', 
+				name: 'actions',
 				orderable: false,
 			},
 
@@ -1467,6 +1466,16 @@
 			$('input[name="booking_checkbox"]').each(function() {
 				this.checked = false;
 			});
+		}
+		toggledeleteAllBookingBtn();
+	});
+
+	$(document).on('change', 'input[name="booking_checkbox"]', function() {
+
+		if ($('input[name="booking_checkbox"]').length == $('input[name="booking_checkbox"]:checked').length) {
+			$('input[name="booking_main_checkbox"]').prop('checked', true);
+		} else {
+			$('input[name="booking_main_checkbox"]').prop('checked', false);
 		}
 		toggledeleteAllBookingBtn();
 	});
