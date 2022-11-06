@@ -69,6 +69,7 @@ class FullCalendarController extends Controller
 			->join('rooms', 'bookings.RoomID', '=', 'rooms.RoomID')
 			->leftJoin('department', 'users.DepartmentID', '=', 'department.DepartmentID')
 			->whereMonth('Booking_start', $month)
+			->whereDate('Booking_start', '<=', $month)
 			->get();
 		return DataTables::of($databookings)
 			->addIndexColumn()
@@ -91,6 +92,7 @@ class FullCalendarController extends Controller
 			->leftJoin('department', 'users.DepartmentID', '=', 'department.DepartmentID')
 			->where('bookings.RoomStatus', 2)
 			->whereMonth('Booking_start', $month)
+			->whereDate('Booking_start', '<=', $month)
 			->orderBy('Booking_start','asc')
 			->withTrashed()
 			->get();
@@ -98,7 +100,7 @@ class FullCalendarController extends Controller
 			->addIndexColumn()
 			->addColumn('actions', function ($row) {
 				
-				if ($row->VerifyStatus === 1) {
+				if ($row->VerifyStatus == 1) {
 					return ' <button class="btn btn-sm btn-info" data-id="' . $row->BookingID . '" id="infoBookingBtn">
                              <i class="fas fa-info-circle"></i></button>
                              <button class="btn btn-sm btn-primary" data-id="' . $row->BookingID . '" id="editBookingBtn">
@@ -128,6 +130,7 @@ class FullCalendarController extends Controller
 			->leftJoin('department', 'users.DepartmentID', '=', 'department.DepartmentID')
 			->where('bookings.RoomStatus', 2)
 			->whereMonth('Booking_start', $month)
+			->whereDate('Booking_start', '>=', $month)
 			->orderBy('Booking_start','asc')
 			->withTrashed()
 			->get();
