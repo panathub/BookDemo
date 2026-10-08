@@ -77,7 +77,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 							</div>
 							<div class="col-6 ">
 								<div class="input-group">
-									<input type="text" id="datetimepicker" class="form-control" name="Booking_start">
+									<input type="text" readonly id="datetimepicker" class="form-control" name="Booking_start">
 									<div class="input-group-append">
 										<span class="input-group-text" id="dateicon"><i class="fas fa-calendar-alt"></i></span>
 									</div>
@@ -92,7 +92,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 							</div>
 							<div class="col-6 ">
 								<div class="input-group">
-									<input type="text" id="datetimepicker1" class="form-control" name="Booking_end">
+									<input type="text" readonly id="datetimepicker1" class="form-control" name="Booking_end">
 									<div class="input-group-append">
 										<span class="input-group-text" id="dateicon1"><i class="fas fa-calendar-alt"></i></span>
 									</div>
@@ -474,6 +474,9 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 					if (data.code == 0) {
 						$.each(data.error, function(prefix, val) {
 							$(form).find('span.' + prefix + '_error').text(val[0]);
+							$(".loading-icon").addClass("text-hide");
+							$(".button").attr("disabled", false);
+							$(".btn-txt").text("บันทึกการจองห้องประชุม");
 						});
 					} else if (data.code == 2) {
 						$(".loading-icon").addClass("text-hide");
@@ -504,6 +507,9 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 							timerProgressBar: true,
 							timer: 1500
 						})
+						$('html, body').animate({
+					           scrollTop: $("#user-bookings-table").offset().top
+						}, 750);
 					}
 				}
 			});

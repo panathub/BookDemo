@@ -81,7 +81,7 @@
 							</div>
 							<div class="col-6 ">
 								<div class="input-group">
-									<input type="text" id="datetimepicker" class="form-control" name="Booking_start">
+									<input type="text" readonly id="datetimepicker" class="form-control" name="Booking_start">
 									<div class="input-group-append">
 										<span class="input-group-text" id="dateicon"><i class="fas fa-calendar-alt"></i></span>
 									</div>
@@ -96,7 +96,7 @@
 							</div>
 							<div class="col-6 ">
 								<div class="input-group">
-									<input type="text" id="datetimepicker1" class="form-control" name="Booking_end">
+									<input type="text" readonly id="datetimepicker1" class="form-control" name="Booking_end">
 									<div class="input-group-append">
 										<span class="input-group-text" id="dateicon1"><i class="fas fa-calendar-alt"></i></span>
 									</div>
@@ -156,20 +156,23 @@
 		</div>
 	</div>
 
-	<div class="container">
+	<div class="col">
 		<div class="card">
 			<div class="card-header">
 				<div class="row align-items-center">
 					<div class="col-8 mb-0">
-						<h3>รายการจองใช้ห้องประจำเดือน {{\Carbon\Carbon::now()->thaidate('F')}}</h3>
+						<h3>รายการจองใช้ห้องทั้งหมด</h3>
 					</div>
-					<div class="col-4 text-right">
+                                        <div class="col-4 text-right d-flex justify-content-end align-items-center">
 						<select data-column="2" class="form-control filter-select">
 							<option value="">Select Room</option>
 							@foreach($partsR as $row)
 							<option value="{{$row->RoomName}}">{{$row->RoomName}}</option>
 							@endforeach
 						</select>
+						<div id="test">
+							<input type="text" id="daterange" name="daterange" style="display:none;" />
+						</div>
 					</div>
 				</div>
 			</div>
@@ -200,7 +203,7 @@
 		</div>
 	</div>
 
-	<div class="container">
+	{{-- <div class="container">
 		<div class="card">
 			<div class="card-header">
 				<div class="row align-items-center">
@@ -233,7 +236,7 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> --}}
 
 </div>
 
@@ -509,6 +512,8 @@
 
 <script src="jquery/jquery.datetimepicker.full.min.js"></script>
 <link rel="stylesheet" href="jquery/jquery.datetimepicker.css" type="text/css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" defer></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script src="assets/vendor/moment/min/moment-with-locales.min.js"></script>
 
 <script>
@@ -582,6 +587,29 @@
 			]
 		});
 
+		$('button#copyButton').daterangepicker({
+    		        opens: 'left',
+			autoUpdateInput: false,
+		});
+
+		$('button#copyButton').on('apply.daterangepicker', function(ev, picker) {
+			var exportURL = "{{ route('export.selected.booking') }}";
+			var filterValue = $('.filter-select').val();
+			var queryString = '?start_date=' + picker.startDate.format('YYYY-MM-DD') + '&end_date=' + picker.endDate.format('YYYY-MM-DD');
+    
+                        if (filterValue) {
+        		    queryString += '&room=' + filterValue;
+   			}
+			   var end = moment();
+			window.location.href = exportURL + queryString;
+			$(this).data('daterangepicker').setStartDate(end);
+			$(this).data('daterangepicker').setEndDate(end);
+  		});
+
+  		$('button#copyButton').on('cancel.daterangepicker', function(ev, picker) {
+      		$(this).val('');
+  		});
+
 		//GET ALL BOOKIng
 		var table = $('#request-bookings-table').DataTable({
 			responsive: true,
@@ -594,29 +622,11 @@
 				[5, 10, 25, 50, "All"]
 			],
 			"order": [
-				[1, "asc"]
+				[2, "asc"]
 			],
 			columns: [{
-					data: 'RoomName',
-					render: function(data, type) {
-						switch (data) {
-							case 'Karamiso':
-								return '<span class="badge badge-md badge-karamiso">Karamiso</span>';
-								break;
-							case 'Sukiyaki':
-								return '<span class="badge badge-md badge-sukiyaki">Sukiyaki</span>';
-								break;
-							case 'Tonkotsu':
-								return '<span class="badge badge-md badge-tonkotsu">Tonkotsu</span>';
-								break;
-							case 'Kinoko':
-								return '<span class="badge badge-md badge-kinoko">Kinoko</span>';
-								break;
-							case 'Shabushabu':
-								return '<span class="badge badge-md badge-shabushabu">Shabushabu</span>';
-								break;
-						}
-					}
+					data: 'room_badge',
+					name: 'room_badge'
 				},
 				{
 					data: 'name',
@@ -624,14 +634,20 @@
 				},
 				{
 					data: 'Booking_start',
-					render: function(data) {
-						return moment(data).locale('th').format('DD MMM YY, HH:mm')
+					render: function(data, type) {
+					    if ( type === 'display' || type === 'filter' ) {
+            			                    return moment(data).locale('th').add(543, 'year').format('DD MMM YY, HH:mm')
+        				    }
+						return data
 					}
 				},
 				{
 					data: 'Booking_end',
-					render: function(data) {
-						return moment(data).locale('th').format('DD MMM YY, HH:mm')
+					render: function(data, type) {
+					    if ( type === 'display' || type === 'filter' ) {
+            			                    return moment(data).locale('th').add(543, 'year').format('DD MMM YY, HH:mm')
+        				    }
+						return data
 					}
 				},
 				{
@@ -710,6 +726,9 @@
 							case 'Shabushabu':
 								return '<span class="badge badge-md badge-shabushabu">Shabushabu</span>';
 								break;
+							default:
+								return '<span class="badge badge-md badge-other">'+data+'</span>';
+								break;
 						}
 					}
 				},
@@ -787,8 +806,7 @@
 			});
 			$('input[name="main_checkbox"]').prop('checked', false);
 			$('button#deleteAllBtn').addClass('d-none');
-		})
-		table.buttons(0, null).containers().appendTo('#test');
+		});
 
 		//ADD NEW ฺBOOKING
 		$('#addBooking').on('submit', function(e) {
@@ -1198,9 +1216,18 @@
 			[5, 10, 25, 50, -1],
 			[5, 10, 25, 50, "All"]
 		],
-		"order": [
-			[5, "asc"]
-		],
+		dom: 'lBfrtip',
+			buttons: [
+                            {
+                               text: '<i class="fas fa-file-excel"></i> Excel',
+			       attr: {
+                		   id: 'copyButton'
+            		       },
+                               action: function (e, dt, node, config) {
+                                 $('input[name="daterange"]').click();
+                               }
+                            }
+                ],
 		columns: [{
 				data: 'checkbox',
 				name: 'checkbox',
@@ -1212,26 +1239,8 @@
 				name: 'DT_RowIndex'
 			},
 			{
-				data: 'RoomName',
-				render: function(data, type) {
-					switch (data) {
-						case 'Karamiso':
-							return '<span class="badge badge-md badge-karamiso">Karamiso</span>';
-							break;
-						case 'Sukiyaki':
-							return '<span class="badge badge-md badge-sukiyaki">Sukiyaki</span>';
-							break;
-						case 'Tonkotsu':
-							return '<span class="badge badge-md badge-tonkotsu">Tonkotsu</span>';
-							break;
-						case 'Kinoko':
-							return '<span class="badge badge-md badge-kinoko">Kinoko</span>';
-							break;
-						case 'Shabushabu':
-							return '<span class="badge badge-md badge-shabushabu">Shabushabu</span>';
-							break;
-					}
-				}
+				data: 'room_badge',
+				name: 'room_badge'
 			},
 			{
 				data: 'name',
@@ -1250,13 +1259,19 @@
 			{
 				data: "Booking_start",
 				render: function(data, type, row, meta) {
-					return moment(data).locale('th').format('DD MMM YY, HH:mm')
+				         if ( type === 'display' || type === 'filter' ) {
+            			             return moment(data).locale('th').add(543, 'year').format('DD MMM YY, HH:mm')
+        				}
+				        return data
 				}
 			},
 			{
 				data: 'Booking_end',
-				render: function(data) {
-					return moment(data).locale('th').format('DD MMM YY, HH:mm')
+				render: function(data, type) {
+			                 if ( type === 'display' || type === 'filter' ) {
+            			             return moment(data).locale('th').add(543, 'year').format('DD MMM YY, HH:mm')
+        				}
+				        return data
 				}
 			},
 			{
@@ -1317,7 +1332,8 @@
 		});
 		$('input[name="booking_main_checkbox"]').prop('checked', false);
 		$('button#deleteAllBookingBtn').addClass('d-none');
-	});
+	})
+        table.buttons(0, null).containers().appendTo('#test');
 
 	$('.filter-select').change(function() {
 		table.column($(this).data('column'))

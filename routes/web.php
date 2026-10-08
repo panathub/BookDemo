@@ -18,6 +18,7 @@ use App\Http\Controllers\ShabuController;
 use App\Http\Controllers\SukiyakiController;
 use App\Http\Controllers\TonkotsuController;
 use App\Http\Controllers\KinokoController;
+use App\Http\Controllers\AccessoriesController;
 
 use Illuminate\Support\Facades\Auth;
 
@@ -102,7 +103,7 @@ Route::post('/verifyMeeting',[KinokoController::class, 'verifyMeeting'])->name('
 
 
 
-Route::group(['prefix'=>'admin', 'middleware'=>['isAdmin','auth','PreventBackHistory']], function(){
+Route::group(['prefix'=>'admin', 'middleware'=>['isAdmin','auth']], function(){
         Route::get('/dashboard',[AdminController::class,'index'])->name('admin.dashboard');
         Route::get('/profile',[AdminController::class,'profile'])->name('admin.profile');
         Route::post('update-profile-info',[AdminController::class,'updateInfo'])->name('adminUpdateInfo');
@@ -127,6 +128,7 @@ Route::group(['prefix'=>'admin', 'middleware'=>['isAdmin','auth','PreventBackHis
         Route::post('/cancleBookingDetails',[ManageBookingController::class, 'cancleBookingDetails'])->name('cancle.booking.details');
         Route::post('/deleteBooking',[ManageBookingController::class,'deleteBooking'])->name('delete.booking');
         Route::post('/deleteSelectedBooking',[ManageBookingController::class,'deleteSelectedBooking'])->name('delete.selected.booking');
+        Route::get('/export',[ManageBookingController::class, 'exportExcel'])->name('export.selected.booking');
 
         //!-----------------------------------------Report Booking----------------------------------*/
         Route::get('/getReportList',[ReportController::class,'getReportList'])->name('get.report.list');

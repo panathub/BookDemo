@@ -34,7 +34,7 @@ class RunBooking implements ShouldQueue
      */
     public function handle()
     {
-	   Log::info('success');	
+	   Log::info('id: '. $this->data->BookingID. ' deleted by job');	
        $this->data->delete();
     }
 }

@@ -14,45 +14,20 @@ class FullCalendarController extends Controller
 {
 	public function index()
 	{
-
-		//$event = Bookings::select('BookingTitle as title', 'Booking_start as start', 'Booking_end as end','BookingID')->get();
-		//return response()->json($event);
-
-		//$event=Bookings::Latest()->get();
-		//return response()->json($event);
-
 		$events = array();
 		$bookings = Bookings::with('room')->get();
 		$color = null;
 
 		foreach ($bookings as $booking) {
 
-			switch ($booking->room->RoomName) {
-				case 'Karamiso':
-					$color = '#ff512f';
-					break;
-				case 'Sukiyaki':
-					$color = '#ffcc00';
-					break;
-				case 'Tonkotsu':
-					$color = '#00DBDE';
-					break;
-				case 'Kinoko':
-					$color = '#FF3CAC';
-					break;
-				case 'Shabushabu':
-					$color = '#2B86C5';
-					break;
-				default:
-					$color = '#000000';
-			}
 			if ($booking->RoomStatus == 2) {
 				$events[] = [
 					'id' => $booking->BookingID,
 					'title' => $booking->BookingTitle,
 					'start' => $booking->Booking_start,
 					'end' => $booking->Booking_end,
-					'color' => $color ? $color : ''
+					'color' => $booking->room->RoomNumber,
+                                        'roomName' => $booking->room->RoomName
 				];
 			}
 		}
@@ -64,43 +39,54 @@ class FullCalendarController extends Controller
 	public function getBookingIndex()
 	{
 		$month = Carbon::now()->timezone('Asia/Bangkok');
-		$databookings = Bookings::select('users.*', 'rooms.*', 'department.DepartmentName', 'bookings.*')
+		$databookings = Bookings::select('users.name', 'rooms.RoomName', 'rooms.RoomNumber','department.DepartmentName', 'bookings.*')
 			->join('users', 'bookings.id', '=', 'users.id')
 			->join('rooms', 'bookings.RoomID', '=', 'rooms.RoomID')
 			->leftJoin('department', 'users.DepartmentID', '=', 'department.DepartmentID')
+			->where('bookings.RoomStatus', 2)
 			->whereMonth('Booking_start', $month)
-			->whereDate('Booking_start', '<=', $month)
+			->whereDate('Booking_start', '>=', $month)
 			->get();
 		return DataTables::of($databookings)
 			->addIndexColumn()
+			->addColumn('room_badge', function ($data) {
+				return '<span class="badge badge-md" style="color: #fff; background-color: ' . $data->RoomNumber . ';">' 
+				. $data->RoomName . 
+				'</span>';
+			})
 			->addColumn('actions', function ($row) {
 				return ' <button class="btn btn-sm btn-default" data-id="' . $row->BookingID . '" id="infoBookingBtn">
                                  <i class="fas fa-cog"></i></button>
                                  ';
 			})
-			->rawColumns(['actions'])
+			->rawColumns(['actions', 'room_badge'])
 			->make(true);
 	}
 
 	// GET ALL BOOKING ADMIN
 	public function getBookingIndexAdmin()
 	{
-		$month = Carbon::now()->timezone('Asia/Bangkok');
-		$data = Bookings::select('users.name', 'rooms.RoomName', 'department.DepartmentName', 'bookings.*')
+		$month = Carbon::now()->timezone('Asia/Bangkok'); 
+                $data = Bookings::select('users.name', 'rooms.RoomName', 'rooms.RoomNumber','department.DepartmentName', 'bookings.*')
 			->join('users', 'bookings.id', '=', 'users.id')
 			->join('rooms', 'bookings.RoomID', '=', 'rooms.RoomID')
 			->leftJoin('department', 'users.DepartmentID', '=', 'department.DepartmentID')
 			->where('bookings.RoomStatus', 2)
-			->whereMonth('Booking_start', $month)
-			->whereDate('Booking_start', '<=', $month)
+			->whereDate('Booking_start', '>=', $month->startOfMonth())
 			->orderBy('Booking_start','asc')
 			->withTrashed()
 			->get();
+
 		return DataTables::of($data)
 			->addIndexColumn()
+			->addColumn('room_badge', function ($data) {
+				return '<span class="badge badge-md" style="color: #fff; background-color: ' . $data->RoomNumber . ';">' 
+				. $data->RoomName . 
+				'</span>';
+			})
 			->addColumn('actions', function ($row) {
 				
-				if ($row->VerifyStatus == 1) {
+				if ($row->VerifyStatus == 1 && $row->deleted_at == null) {
 					return ' <button class="btn btn-sm btn-info" data-id="' . $row->BookingID . '" id="infoBookingBtn">
                              <i class="fas fa-info-circle"></i></button>
                              <button class="btn btn-sm btn-primary" data-id="' . $row->BookingID . '" id="editBookingBtn">
@@ -117,32 +103,38 @@ class FullCalendarController extends Controller
 			->addColumn('checkbox', function ($row) {
 				return '<input type="checkbox" name="booking_checkbox" data-id="' . $row->BookingID . '"><label></label>';
 			})
-			->rawColumns(['actions', 'checkbox'])
+			->rawColumns(['actions', 'checkbox', 'room_badge'])
 			->make(true);
 	}
 
 	public function getBookingIndexAdminV2()
 	{
 		$month = Carbon::now()->timezone('Asia/Bangkok');
-		$data = Bookings::select('users.name', 'rooms.RoomName', 'department.DepartmentName', 'bookings.*')
+		$data = Bookings::select('users.name', 'rooms.RoomName', 'rooms.RoomNumber','department.DepartmentName', 'bookings.*')
 			->join('users', 'bookings.id', '=', 'users.id')
 			->join('rooms', 'bookings.RoomID', '=', 'rooms.RoomID')
 			->leftJoin('department', 'users.DepartmentID', '=', 'department.DepartmentID')
 			->where('bookings.RoomStatus', 2)
 			->whereMonth('Booking_start', $month)
 			->whereDate('Booking_start', '>=', $month)
+			->whereYear('Booking_start', $month)
 			->orderBy('Booking_start','asc')
 			->withTrashed()
 			->get();
 		return DataTables::of($data)
 			->addIndexColumn()
+			->addColumn('room_badge', function ($data) {
+				return '<span class="badge badge-md" style="color: #fff; background-color: ' . $data->RoomNumber . ';">' 
+				. $data->RoomName . 
+				'</span>';
+			})
 			->addColumn('actions', function ($row) {
 
 				return ' <button class="btn btn-sm btn-info" data-id="' . $row->BookingID . '" id="infoBookingBtn">
                         <i class="fas fa-info-circle"></i></button>
                         ';
 			})
-			->rawColumns(['actions'])
+			->rawColumns(['actions', 'room_badge'])
 			->make(true);
 	}
 

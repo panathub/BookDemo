@@ -312,10 +312,10 @@
 		var calendarEl = document.getElementById('calendar');
 		var calendar = new FullCalendar.Calendar(calendarEl, {
 			locale: 'th',
-
+			height: 'auto',
 			allDaySlot: true,
 			fixedWeekCount: false,
-
+			weekends: false,
 			headerToolbar: {
 				left: 'prev,next today',
 				center: 'title',
@@ -330,6 +330,11 @@
 			dayMaxEvents: true,
 			eventMaxStack: true,
 			events: "{{route('index')}}",
+			eventDidMount: function (info) {
+				$(info.el).tooltip({
+					title: info.event.extendedProps.roomName,
+				});
+        	        },
 			eventClick: function() {
 				$('html, body').animate({
 					scrollTop: $("#bookings-table").offset().top
@@ -430,26 +435,8 @@
 				[3, "asc"]
 			],
 			columns: [{
-					data: 'RoomName',
-					render: function(data, type) {
-						switch (data) {
-							case 'Karamiso':
-								return '<span class="badge badge-md badge-karamiso">Karamiso</span>';
-								break;
-							case 'Sukiyaki':
-								return '<span class="badge badge-md badge-sukiyaki">Sukiyaki</span>';
-								break;
-							case 'Tonkotsu':
-								return '<span class="badge badge-md badge-tonkotsu">Tonkotsu</span>';
-								break;
-							case 'Kinoko':
-								return '<span class="badge badge-md badge-kinoko">Kinoko</span>';
-								break;
-							case 'Shabushabu':
-								return '<span class="badge badge-md badge-shabushabu">Shabushabu</span>';
-								break;
-						}
-					}
+					data: 'room_badge',
+					name: 'room_badge'
 				},
 				{
 					data: 'name',
@@ -468,13 +455,13 @@
 				{
 					data: "Booking_start",
 					render: function(data, type, row, meta) {
-						return moment(data).locale('th').format('DD MMM YY, HH:mm')
+						return moment(data).locale('th').add(543, 'year').format('DD MMM YY, HH:mm')
 					}
 				},
 				{
 					data: 'Booking_end',
 					render: function(data) {
-						return moment(data).locale('th').format('DD MMM YY, HH:mm')
+						return moment(data).locale('th').add(543, 'year').format('DD MMM YY, HH:mm')
 					}
 				},
 				{
