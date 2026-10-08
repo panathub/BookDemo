@@ -173,7 +173,7 @@
 					//alert(room_id);   
 					$('.NotiModal').find('input[name="mid"]').val(data.details.id);
 					$('.NotiModal').find('.text').text(data.details.text);
-					$("#image").html(`<img src="img/Image_Room/${data.details.image}" width="55%" height="55%" class="img-center">`);
+					$("#image").html(`<img src="{{ asset('storage/img/Image_Room') }}/${data.details.image}" width="55%" height="55%" class="img-center">`);
 					$('.NotiModal').modal('show');
 				}, 'json');
 				setTimeout(function() {

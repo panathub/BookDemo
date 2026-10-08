@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use DataTables;
 use App\Models\Accessories;
 
@@ -25,8 +26,8 @@ class AccessoriesController extends Controller
     }else{
        
         $Image_acc = $request->file('Image_acc');
-        $Image_acc->move(public_path('img/Image_Accessories'), $Image_acc->getClientOriginalName());
         $imageFileName = $Image_acc->getClientOriginalName();
+        Storage::disk('public')->putFileAs('img/Image_Accessories', $Image_acc, $imageFileName);
 
         $acc = new Accessories();
         $acc->Name = $request->AccName;
@@ -90,13 +91,13 @@ class AccessoriesController extends Controller
         if($request->hasFile('Image_acc_update')){
             $file_path = $path.$acc->Image_acc;
             //DELETE oldPicture
-            if($acc->Image_acc != null && \Storage::disk('public_image')->exists($file_path)){
-                \Storage::disk('public_image')->delete($file_path);
+            if($acc->Image_acc != null){
+                Storage::disk('public')->delete($file_path);
             }
             //Upload new picture
             $file = $request->file('Image_acc_update');
             $file_name = $file->getClientOriginalName();
-            $upload = $file->storeAs($path, $file_name, 'public_image');
+            $upload = Storage::disk('public')->putFileAs($path, $file, $file_name);
             
 
             if($upload){
@@ -125,7 +126,11 @@ class AccessoriesController extends Controller
     // DELETE ACC RECORD
     public function deleteAcc(Request $request){
         $acc_id = $request->acc_id;
-        $query = Accessories::find($acc_id)->delete();
+        $acc = Accessories::find($acc_id);
+        if($acc->Image_acc != null){
+            Storage::disk('public')->delete('img/Image_Accessories/'.$acc->Image_acc);
+        }
+        $query = $acc->delete();
     
         if($query){
             return response()->json(['code'=>1, 'msg'=>'ลบอุปกรณ์เรียบร้อย']);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Auth;
 use App\Models\User;
 use App\Models\Modal;
@@ -52,7 +53,7 @@ class AdminController extends Controller
 		$new_name = 'UIMG_' . date('Ymd') . uniqid() . '.jpg';
 
 		//Upload new image
-		$upload = $file->move(public_path($path), $new_name);
+		$upload = Storage::disk('public')->putFileAs($path, $file, $new_name);
 
 		if (!$upload) {
 			return response()->json(['status' => 0, 'msg' => 'Something went wrong, upload new picture failed.']);
@@ -61,9 +62,7 @@ class AdminController extends Controller
 			$oldPicture = User::find(Auth::user()->id)->getAttributes()['picture'];
 
 			if ($oldPicture != '') {
-				if (\File::exists(public_path($path . $oldPicture))) {
-					\File::delete(public_path($path . $oldPicture));
-				}
+				Storage::disk('public')->delete($path . $oldPicture);
 			}
 
 			//Update DB
@@ -146,13 +145,13 @@ class AdminController extends Controller
 			if ($request->hasFile('Image_modal_update')) {
 				$file_path = $path . $modal->image;
 				//DELETE oldPicture
-				if ($modal->image != null && \Storage::disk('public_image')->exists($file_path)) {
-					\Storage::disk('public_image')->delete($file_path);
+				if ($modal->image != null) {
+					Storage::disk('public')->delete($file_path);
 				}
 				//Upload new picture
 				$file = $request->file('Image_modal_update');
 				$file_name = $file->getClientOriginalName();
-				$upload = $file->storeAs($path, $file_name, 'public_image');
+				$upload = Storage::disk('public')->putFileAs($path, $file, $file_name);
 
 				if ($upload) {
 					$modal->update([

@@ -189,7 +189,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 		//alert(room_id);   
 		$('.NotiModal').find('input[name="mid"]').val(data.details.id);
 		$('.NotiModal').find('.text').text(data.details.text);
-		$("#image").html(`<img src="img/Image_Room/${data.details.image}" width="55%" height="55%" class="img-center">`);
+		$("#image").html(`<img src="{{ asset('storage/img/Image_Room') }}/${data.details.image}" width="55%" height="55%" class="img-center">`);
 		$('.NotiModal').modal('show');
 	}, 'json');
 	setTimeout(function() {
@@ -334,7 +334,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 					$('.infoBooking').find('.VerifyStatus').html('<span class="badge badge-lg badge-danger">ไม่อนุมัติ</span>');
 				} else
 					$('.infoBooking').find('.VerifyStatus').html('<span class="badge badge-lg badge-warning">รอยืนยัน</span>');
-				$("#Image_Room").html(`<img src="img/Image_Room/${data.details.Image_room}" width="300" class="img-fluid img-center">`);
+				$("#Image_Room").html(`<img src="{{ asset('storage/img/Image_Room') }}/${data.details.Image_room}" width="300" class="img-fluid img-center">`);
 				$('.infoBooking').modal('show');
 				//console.log(data.details.DepartmentName);   
 			}, 'json');

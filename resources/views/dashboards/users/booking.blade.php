@@ -636,7 +636,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 				$('.infoBooking').find('.Booking_start').text(data.details.Booking_start);
 				$('.infoBooking').find('.Booking_end').text(data.details.Booking_end);
 				$('.infoBooking').find('.BookingDetail').text(data.details.BookingDetail);
-				$("#Image_Room").html(`<img src="img/Image_Room/${data.details.Image_room}" width="300" class="img-fluid img-center">`);
+				$("#Image_Room").html(`<img src="{{ asset('storage/img/Image_Room') }}/${data.details.Image_room}" width="300" class="img-fluid img-center">`);
 				$('.infoBooking').modal('show');
 				// console.log(data.details.BookingID)        
 			}, 'json');

@@ -714,7 +714,6 @@
 				$('.infoUser').find('.email').text(data.details.email);
 				$('.infoUser').find('.roleName').text(data.details.roleName);
 				$('.infoUser').find('.DepartmentName').text(data.details.DepartmentName);
-				// $("#Image_User").html(`<img src="img/Image_User/${data.details.picture}" width="300" class="img-fluid img-thumbnail img-center">`); 
 				$('.infoUser').modal('show');
 			}, 'json');
 		});

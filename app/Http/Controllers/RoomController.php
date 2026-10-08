@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use DataTables;
 use App\Models\Room;
 
@@ -28,9 +29,8 @@ class RoomController extends Controller
 		} else {
 
 			$Image_room = $request->file('Image_room');
-			$new_name = rand() . '.' . $Image_room->getClientOriginalExtension();
-			$Image_room->move(public_path('img/Image_Room'), $Image_room->getClientOriginalName());
 			$imageFileName = $Image_room->getClientOriginalName();
+			Storage::disk('public')->putFileAs('img/Image_Room', $Image_room, $imageFileName);
 
 			$room = new Room();
 			$room->RoomName = $request->RoomName;
@@ -102,13 +102,13 @@ class RoomController extends Controller
 			if ($request->hasFile('Image_room_update')) {
 				$file_path = $path . $room->Image_room;
 				//DELETE oldPicture
-				if ($room->Image_room != null && \Storage::disk('public_image')->exists($file_path)) {
-					\Storage::disk('public_image')->delete($file_path);
+				if ($room->Image_room != null) {
+					Storage::disk('public')->delete($file_path);
 				}
 				//Upload new picture
 				$file = $request->file('Image_room_update');
 				$file_name = $file->getClientOriginalName();
-				$upload = $file->storeAs($path, $file_name, 'public_image');
+				$upload = Storage::disk('public')->putFileAs($path, $file, $file_name);
 
 
 				if ($upload) {
@@ -142,7 +142,11 @@ class RoomController extends Controller
 	public function deleteRoom(Request $request)
 	{
 		$room_id = $request->room_id;
-		$query = Room::find($room_id)->delete();
+		$room = Room::find($room_id);
+		if ($room->Image_room != null) {
+			Storage::disk('public')->delete('img/Image_Room/' . $room->Image_room);
+		}
+		$query = $room->delete();
 
 		if ($query) {
 			return response()->json(['code' => 1, 'msg' => 'ลบห้องประชุมเรียบร้อย']);
