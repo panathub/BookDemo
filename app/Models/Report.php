@@ -36,6 +36,6 @@ class Report extends Model
     }
 
     public function bookings() {
-        return $this->hasOne(Bookings::class);
+        return $this->hasOne(Bookings::class, 'ReportID', 'ReportID');
     }
 }

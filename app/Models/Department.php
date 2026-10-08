@@ -16,7 +16,7 @@ class Department extends Model
     ];
 
     public function bookings() {
-        return $this->hasMany(Bookings::class,'BookingID','DepartmentID');
+        return $this->hasManyThrough(Bookings::class, User::class, 'DepartmentID', 'id', 'DepartmentID', 'id');
     }
 
 	public function users() {
