@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# Compares the schema built by `migrate:fresh` against a live database, structure only.
-# The live side is read with SHOW statements and nothing else.
-# Env: LIVE_HOST (host.docker.internal), LIVE_PORT (3306), LIVE_USER (root), LIVE_DB (noblemee_booksmeet).
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -13,7 +10,6 @@ LIVE_PORT=${LIVE_PORT:-3306}
 LIVE_USER=${LIVE_USER:-root}
 LIVE_DB=${LIVE_DB:-noblemee_booksmeet}
 
-# Tables the migrations create that live lacks, with the reason they are allowed.
 declare -A ONLY_IN_MIGRATIONS=(
   [accessories]="AccessoriesController and the Accessories model use it; live never created it"
   [failed_jobs]="live records its migration as run but the table was dropped"
@@ -28,10 +24,10 @@ docker compose run --rm -T \
   -e DB_DATABASE="$db_name" -e DB_USERNAME=root -e DB_PASSWORD="$db_secret" \
   app php artisan migrate:fresh --force >/dev/null
 
-fresh() { docker compose exec -T -e MYSQL_PWD="$db_secret" db mysql -uroot -N "$db_name" -e "$1" </dev/null; }
+fresh() { docker compose exec -T -e MYSQL_PWD="$db_secret" db mysql -uroot -N "$db_name" -e "SHOW $1" </dev/null; }
 live() {
   docker run --rm --add-host host.docker.internal:host-gateway mysql:8 \
-    mysql -h "$LIVE_HOST" -P "$LIVE_PORT" -u "$LIVE_USER" -N "$LIVE_DB" -e "$1" </dev/null
+    mysql -h "$LIVE_HOST" -P "$LIVE_PORT" -u "$LIVE_USER" -N "$LIVE_DB" -e "SHOW $1" </dev/null
 }
 
 normalize() {
@@ -61,12 +57,12 @@ canonicalize() {
     }'
 }
 
-show_create() { "$1" "SHOW CREATE TABLE \`$2\`\G" | sed '1,2d' | normalize | canonicalize; }
+show_create() { "$1" "CREATE TABLE \`$2\`\G" | sed '1,2d' | normalize | canonicalize; }
 
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
-fresh 'SHOW TABLES' | sort >"$tmp/fresh.tables"
-live 'SHOW TABLES' | sort >"$tmp/live.tables"
+fresh TABLES | sort >"$tmp/fresh.tables"
+live TABLES | sort >"$tmp/live.tables"
 
 status=0
 while read -r t; do
