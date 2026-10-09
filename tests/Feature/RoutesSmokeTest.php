@@ -18,11 +18,6 @@ class RoutesSmokeTest extends TestCase
     private const BROKEN_BEFORE_REBASE = [
         '/admin/profile',
         '/admin/accessories',
-        '/getBookingNabezo',
-        '/getBookingNabe2Test',
-        '/getBookingSukiyaki2Test',
-        '/getBookingShabu2Test',
-        '/getBookingKinoko2Test',
         '/user/settings',
     ];
 
