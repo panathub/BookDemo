@@ -27,7 +27,7 @@ class DemoSeeder extends Seeder
                 [60, 'Tonkotsu', '#6af3f6', 9, 0, 'TONKOTSU.jpg'],
                 [63, 'Karamiso', '#ff512f', 9, 0, 'KARAMISO.jpg'],
                 [64, 'Sukiyaki', '#fbf323', 20, 0, 'SUKIYAKI.jpg'],
-                [66, 'Shabushabu', '#2b86c5', 20, 0, 'SHABU-SHABU.jpg'],
+                [66, 'Shabushabu (ใช้เฉพาะผู้บริหารเท่านั้น)', '#2b86c5', 20, 0, 'SHABU-SHABU.jpg'],
                 [67, 'Kinoko', '#FF3CAC', 9, 0, 'KINOKO.jpg'],
                 [78, 'PONZU', '#1dd51a', 12, 0, 'S__173015057.jpg'],
                 [79, 'OIL SAUCE', '#eab3f9', 4, 0, 'OIL SAUCE.jpg'],
@@ -36,6 +36,12 @@ class DemoSeeder extends Seeder
                 [82, 'WARISHITA', '#340df8', 9, 0, 'WARISHITA.jpg'],
             ]
         ));
+
+        DB::table('modal')->insert([
+            'id' => 1,
+            'image' => 'logo1.jpg',
+            'text' => 'ประกาศตัวอย่าง: กรุณาจองห้องประชุมล่วงหน้า',
+        ]);
 
         $now = Carbon::now();
         DB::table('users')->insert([
