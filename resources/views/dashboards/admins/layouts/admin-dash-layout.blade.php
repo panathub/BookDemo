@@ -288,8 +288,8 @@
 				}, function(data) {
 					$('#editModal').find('input[name="mid"]').val(data.details.id);
 					$('#editModal').find('textarea[name="text"]').val(data.details.text);
-					$('#editModal').find('.img-holder-update').html('<img src="/img/Image_Room/' + data.details.image + '" class="img-fluid" style="width:50%;margin-bottom:10px;">');
-					$('#editModal').find('input[type="file"]').attr('data-value', '<img src="/img/Image_Room/' + data.details.image + '" class="img-fluid" style="width:50%;margin-bottom:10px;">');
+					$('#editModal').find('.img-holder-update').html('<img src="{{ asset('storage/img/Image_Room') }}/' + data.details.image + '" class="img-fluid" style="width:50%;margin-bottom:10px;">');
+					$('#editModal').find('input[type="file"]').attr('data-value', '<img src="{{ asset('storage/img/Image_Room') }}/' + data.details.image + '" class="img-fluid" style="width:50%;margin-bottom:10px;">');
 					$('#editModal').find('input[type="file"]').val('');
 					//console.log(data.details.text);    
 					$('#editModal').modal('show');

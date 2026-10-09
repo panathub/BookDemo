@@ -1177,7 +1177,7 @@
 				$('.infoBooking').find('.Booking_start').text(data.details.Booking_start);
 				$('.infoBooking').find('.Booking_end').text(data.details.Booking_end);
 				$('.infoBooking').find('.BookingDetail').text(data.details.BookingDetail);
-				$("#Image_Room").html(`<img src="img/Image_Room/${data.details.Image_room}" width="300" class="img-fluid img-center">`);
+				$("#Image_Room").html(`<img src="{{ asset('storage/img/Image_Room') }}/${data.details.Image_room}" width="300" class="img-fluid img-center">`);
 				$('.infoBooking').modal('show');
 				//console.log(data.details.DepartmentName);   
 			}, 'json');
@@ -1198,7 +1198,7 @@
 				$('.infoReport').find('.Booking_start').text(data.details.Booking_start);
 				$('.infoReport').find('.Booking_end').text(data.details.Booking_end);
 				$('.infoReport').find('.BookingDetail').text(data.details.BookingDetail);
-				$("#Image_Room_Report").html(`<img src="img/Image_Room/${data.details.Image_room}" width="300" class="img-fluid img-center">`);
+				$("#Image_Room_Report").html(`<img src="{{ asset('storage/img/Image_Room') }}/${data.details.Image_room}" width="300" class="img-fluid img-center">`);
 				$('.infoReport').modal('show');
 				//console.log(data.details.DepartmentName);   
 			}, 'json');
@@ -1467,7 +1467,7 @@
 				$('.infoBooking').find('.VerifyStatus').html('<span class="text-danger">' + '<i class="fas fa-times text-danger"></i>' + ' ไม่อนุมัติ' + '</span>');
 			} else
 				$('.infoBooking').find('.VerifyStatus').html('<span class="text-warning">' + '<i class="fas fa-clock text-warning"></i>' + ' รอยืนยัน' + '</span>');
-			$("#img_room").html(`<img src="img/Image_Room/${data.details.Image_room}" width="60%" height="60%" class="img-center">`);
+			$("#img_room").html(`<img src="{{ asset('storage/img/Image_Room') }}/${data.details.Image_room}" width="60%" height="60%" class="img-center">`);
 			$('.infoBooking').modal('show');
 			//console.log(data.details.DepartmentName);   
 		}, 'json');

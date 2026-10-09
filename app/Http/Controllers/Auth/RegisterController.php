@@ -54,7 +54,6 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'favoriteColor'=>'required',
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -81,27 +80,13 @@ class RegisterController extends Controller
          $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'favoriteColor'=>'required',
             'password' => ['required', 'string', 'min:8', 'confirmed'],
          ]);
-
-         /** Make avata */
-
-         $path = 'users/images/';
-         $fontPath = public_path('fonts/Oliciy.ttf');
-         $char = strtoupper($request->name[0]);
-         $newAvatarName = rand(12,34353).time().'_avatar.png';
-         $dest = $path.$newAvatarName;
-
-         $createAvatar = makeAvatar($fontPath,$dest,$char);
-         $picture = $createAvatar == true ? $newAvatarName : '';
 
          $user = new User();
          $user->name = $request->name;
          $user->email = $request->email;
-         $user->role = 2;
-         $user->favoriteColor = $request->favoriteColor;
-         $user->picture = $picture;
+         $user->roleID = 2;
          $user->password = \Hash::make($request->password);
 
          if( $user->save() ){

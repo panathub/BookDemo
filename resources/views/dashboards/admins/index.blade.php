@@ -297,7 +297,7 @@
 		//alert(room_id);   
 		$('.NotiModal').find('input[name="mid"]').val(data.details.id);
 		$('.NotiModal').find('.text').text(data.details.text);
-		$("#image").html(`<img src="img/Image_Room/${data.details.image}" width="55%" height="55%" class="img-center">`);
+		$("#image").html(`<img src="{{ asset('storage/img/Image_Room') }}/${data.details.image}" width="55%" height="55%" class="img-center">`);
 		$('.NotiModal').modal('show');
 	}, 'json');
 	setTimeout(function() {
@@ -644,7 +644,7 @@
 					$('.infoBooking').find('.VerifyStatus').html('<span class="badge badge-md badge-danger">ไม่อนุมัติ</span>');
 				} else
 					$('.infoBooking').find('.VerifyStatus').html('<span class="badge badge-md badge-warning">รอยืนยัน</span>');
-				$("#img_room").html(`<img src="img/Image_Room/${data.details.Image_room}" width="60%" height="60%" class="img-center">`);
+				$("#img_room").html(`<img src="{{ asset('storage/img/Image_Room') }}/${data.details.Image_room}" width="60%" height="60%" class="img-center">`);
 				$('.infoBooking').modal('show');
 				//console.log(data.details.DepartmentName);   
 			}, 'json');

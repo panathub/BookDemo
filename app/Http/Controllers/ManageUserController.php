@@ -16,7 +16,6 @@ class ManageUserController extends Controller
             'Name'=>'required',
             'email'=>'required|email|max:100',
             'password'=>'required',
-            //'picture'=>'required|image|mimes:jpeg,png,jpg,|max:2048',
             'DepartmentID'=>'required',
             'roleID'=>'required',
         ]);
@@ -25,16 +24,10 @@ class ManageUserController extends Controller
              return response()->json(['code'=>0,'error'=>$validator->errors()->toArray()]);
         }else{
            
-           /* $picture = $request->file('picture');
-            $new_name = rand() . '.' . $picture->getClientOriginalExtension();
-            $picture->move(public_path('img/Image_User'), $picture->getClientOriginalName());
-            $imageFileName = $picture->getClientOriginalName(); */
-
             $user = new User();
             $user->Name = $request->Name;
             $user->email = $request->email;
             $user->password = \Hash::make($request->password);
-           // $user->picture = $imageFileName;
             $user->roleID = $request->roleID;
             $user->DepartmentID = $request->DepartmentID;
             

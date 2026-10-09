@@ -266,8 +266,8 @@
 				$('.editRoom').find('input[name="RoomName"]').val(data.details.RoomName);
 				$('.editRoom').find('input[name="RoomNumber"]').val(data.details.RoomNumber);
 				$('.editRoom').find('input[name="RoomAmount"]').val(data.details.RoomAmount);
-				$('.editRoom').find('.img-holder-update').html('<img src="/img/Image_Room/' + data.details.Image_room + '" class="img-fluid" style="max-width:300;margin-bottom:10px;">');
-				$('.editRoom').find('input[type="file"]').attr('data-value', '<img src="/img/Image_Room/' + data.details.Image_room + '" class="img-fluid" style="max-width:300;margin-bottom:10px;">');
+				$('.editRoom').find('.img-holder-update').html('<img src="{{ asset('storage/img/Image_Room') }}/' + data.details.Image_room + '" class="img-fluid" style="max-width:300;margin-bottom:10px;">');
+				$('.editRoom').find('input[type="file"]').attr('data-value', '<img src="{{ asset('storage/img/Image_Room') }}/' + data.details.Image_room + '" class="img-fluid" style="max-width:300;margin-bottom:10px;">');
 				$('.editRoom').find('input[type="file"]').val('');
 				$('.editRoom').modal('show');
 			}, 'json');
@@ -385,7 +385,7 @@
 				$('.infoRoom').find('.RoomName').text(data.details.RoomName);
 				$('.infoRoom').find('.RoomNumber').text(data.details.RoomNumber);
 				$('.infoRoom').find('.RoomAmount').text(data.details.RoomAmount);
-				$("#Image_Room").html(`<img src="img/Image_Room/${data.details.Image_room}" width="300" class="img-fluid img-center">`);
+				$("#Image_Room").html(`<img src="{{ asset('storage/img/Image_Room') }}/${data.details.Image_room}" width="300" class="img-fluid img-center">`);
 				$('.infoRoom').modal('show');
 			}, 'json');
 		});
