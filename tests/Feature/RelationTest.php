@@ -8,6 +8,7 @@ use App\Models\Report;
 use App\Models\Room;
 use Database\Seeders\DemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class RelationTest extends TestCase
@@ -37,6 +38,18 @@ class RelationTest extends TestCase
 
     public function test_report_booking_shares_its_report_id()
     {
-        $this->assertSame(3, Report::find(3)->bookings->BookingID);
+        $row = [
+            'BookingTitle' => 'Distinct ids',
+            'BookingAmount' => 2,
+            'Booking_start' => '2030-01-01 09:00:00',
+            'Booking_end' => '2030-01-01 10:00:00',
+            'VerifyStatus' => 0,
+            'id' => 1,
+            'RoomID' => 60,
+        ];
+        DB::table('reports')->insert($row + ['ReportID' => 50]);
+        DB::table('bookings')->insert($row + ['BookingID' => 7, 'ReportID' => 50]);
+
+        $this->assertSame(7, Report::find(50)->bookings->BookingID);
     }
 }
