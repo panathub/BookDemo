@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Bookings;
+use App\Models\BookingSlot;
 use App\Models\Room;
 use App\Models\User;
 use Database\Seeders\DemoSeeder;
@@ -63,7 +64,7 @@ class RoomDisplayTest extends TestCase
             ->json('details');
 
         $this->assertSame(
-            ['BookingTitle', 'RoomName', 'name', 'DepartmentName', 'Booking_start', 'Booking_end', 'BookingDetail', 'BookingStatus'],
+            ['BookingID', 'BookingTitle', 'RoomName', 'name', 'DepartmentName', 'Booking_start', 'Booking_end', 'BookingDetail', 'BookingStatus'],
             array_keys($details)
         );
     }
@@ -99,10 +100,33 @@ class RoomDisplayTest extends TestCase
 
     public function test_verify_confirms_the_upcoming_booking(): void
     {
-        $this->actingAs(User::find(2))->post('/room/karamiso/verify')->assertJson(['code' => 1]);
+        $this->actingAs(User::find(2))->post('/room/karamiso/verify', ['bkid' => 2])->assertJson(['code' => 1]);
 
         $this->assertSame(1, Bookings::find(2)->fresh()->BookingStatus);
         $this->get('/room/karamiso/upcoming')->assertJsonPath('details.BookingStatus', 1);
+    }
+
+    public function test_verify_refuses_a_booking_from_another_room_or_an_unapproved_one(): void
+    {
+        $this->actingAs(User::find(2))->post('/room/karamiso/verify', ['bkid' => 1])->assertJson(['code' => 0]);
+        $this->actingAs(User::find(2))->post('/room/sukiyaki/verify', ['bkid' => 3])->assertJson(['code' => 0]);
+        $this->actingAs(User::find(2))->post('/room/karamiso/verify')->assertJson(['code' => 0]);
+
+        $this->assertSame([0, 0, 0], Bookings::whereIn('BookingID', [1, 2, 3])->orderBy('BookingID')->pluck('BookingStatus')->all());
+    }
+
+    public function test_verify_confirms_the_displayed_booking_not_the_earliest(): void
+    {
+        $room = Room::where('slug', 'karamiso')->firstOrFail();
+        $later = Bookings::request(User::find(2), $room, BookingSlot::parse('2030-01-01 09:00', '2030-01-01 10:00'), [
+            'BookingTitle' => 'Later', 'BookingAmount' => 1, 'BookingDetail' => null,
+        ])->approve();
+        $later->forceFill(['BookingStatus' => 0])->save();
+
+        $this->actingAs(User::find(2))->post('/room/karamiso/verify', ['bkid' => $later->BookingID])->assertJson(['code' => 1]);
+
+        $this->assertSame(1, $later->fresh()->BookingStatus);
+        $this->assertSame(0, Bookings::find(2)->BookingStatus);
     }
 
     public function test_new_room_gets_a_slug_from_its_name_and_renders(): void

@@ -182,6 +182,7 @@ class Bookings extends Model
     public function kioskSummary(): array
     {
         return [
+            'BookingID' => $this->BookingID,
             'BookingTitle' => $this->BookingTitle,
             'RoomName' => $this->room?->RoomName,
             'name' => $this->user?->name,

@@ -59,6 +59,7 @@
 				<h5>{{\Carbon\Carbon::now()->thaidate('lที่ j F พ.ศ. Y')}}<span id='ct5'></span></h5>
 				<form action="{{ route('room.verify', $room) }}" method="POST" id="verify-booking-form">
 					@csrf
+					<input type="hidden" name="bkid">
 					<div class="row justify-content-center">
 						<h2>ห้องประชุม</h2>&nbsp;<h2>{{ $room->RoomName }}</h2>
 					</div>
@@ -140,6 +141,7 @@
 					$('.name, .DepartmentName, .BookingTitle, .Booking_start, .Booking_end, .BookingStatus').text('-');
 					return;
 				}
+				$('input[name="bkid"]').val(details.BookingID);
 				$('.name').text(details.name);
 				$('.DepartmentName').text(details.DepartmentName);
 				$('.BookingTitle').text(details.BookingTitle);
@@ -161,7 +163,7 @@
 			$('#verify-booking-form').on('submit', function(e) {
 				e.preventDefault();
 				$.post($(this).attr('action'), $(this).serialize(), function(data) {
-					Swal.fire({ icon: 'success', title: data.msg, showConfirmButton: false, timer: 2000 });
+					Swal.fire({ icon: data.code === 1 ? 'success' : 'error', title: data.msg, showConfirmButton: false, timer: 2000 });
 					loadUpcoming();
 				}, 'json');
 			});
