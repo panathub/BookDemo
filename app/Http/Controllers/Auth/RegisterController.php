@@ -54,7 +54,6 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'favoriteColor'=>'required',
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -81,15 +80,13 @@ class RegisterController extends Controller
          $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'favoriteColor'=>'required',
             'password' => ['required', 'string', 'min:8', 'confirmed'],
          ]);
 
          $user = new User();
          $user->name = $request->name;
          $user->email = $request->email;
-         $user->role = 2;
-         $user->favoriteColor = $request->favoriteColor;
+         $user->roleID = 2;
          $user->password = \Hash::make($request->password);
 
          if( $user->save() ){
