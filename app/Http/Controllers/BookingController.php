@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Bookings;
 use App\Models\Room;
 use App\Models\Report;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 use DB;
 

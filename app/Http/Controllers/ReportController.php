@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Models\Room;
 use App\Models\Report;
 use DB;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 
 class ReportController extends Controller
 {

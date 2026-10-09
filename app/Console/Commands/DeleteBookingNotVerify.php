@@ -39,7 +39,7 @@ class DeleteBookingNotVerify extends Command
      */
     public function handle()
     {
-		$today = Carbon::now()->subDay(2)->endOfDay();
+		$today = Carbon::now()->subDays(2)->endOfDay();
 		$bookings = Bookings::whereDate('Booking_start','<=',$today)->get();
 		foreach($bookings as $booking) {
 			\Log::info('id '. $booking->BookingID. ' start '. $booking->Booking_start. ' end '. $booking->Booking_end. 'is auto deleted');

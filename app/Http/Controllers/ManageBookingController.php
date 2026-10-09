@@ -7,11 +7,10 @@ use App\Models\Bookings;
 use App\Models\User;
 use App\Models\Room;
 use App\Models\Report;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 use DB;
 use App\Jobs\RunBooking;
-use Phattarachai\LineNotify\Facade\Line;
 use App\Exports\BookingsExport;
 
 class ManageBookingController extends Controller
@@ -198,7 +197,6 @@ class ManageBookingController extends Controller
 			$addreport->Booking_end = $request->Booking_end;
 			$addreport->BookingDetail = $request->BookingDetail;
 
-
 			$query = $addreport->save();
 
 			if ($query) {
@@ -229,30 +227,14 @@ class ManageBookingController extends Controller
 		$booking_id = $request->booking_id;
 
 		$pass = Bookings::find($booking_id);
-		$pass2 = Bookings::with(['user' => function ($test) {
-			$test->select('*')->leftjoin('department', 'users.DepartmentID', "=", 'department.DepartmentID');
-		}, 'room'])->find($booking_id);
-
 
 		$pass->RoomStatus = 2;
 		$pass->VerifyStatus = 1;
 		$pass->BookingStatus = 1;
 
-		$title = $pass2->BookingTitle;
-		$start = $pass2->Booking_start;
-		$end = $pass2->Booking_end;
-		$detail = $pass2->BookingDetail ? $pass2->BookingDetail : '-';
-		$roomName = $pass2->room->RoomName;
-		$userName = $pass2->user->name;
-		$departmentName = $pass2->user->DepartmentName;
-
 		$formatDelete = Carbon::parse($pass->Booking_end)->timezone('Asia/Bangkok');
 		$query = $pass->save();
-		$sMessage = "📣ปุกาศ✨ " . "\n" . "หัวข้อประชุม: " . $title . "\n" . "ห้อง: " . $roomName . "\n"
-			. "ผู้จอง: " . $userName . "\n" . "แผนก: " . $departmentName . "\n" . "เวลาเริ่ม: " . $start . "\n"
-			. "เวลาสิ้นสุด: " . $end . "\n" . "รายละเอียด: " . $detail . "\n" . "ได้รับการอนุมัติจาก Admin 🔥";
 		if ($query) {
-			Line::sticker(446, 1989)->send($sMessage);
 			RunBooking::dispatch($pass)->onQueue('default')->delay($formatDelete);
 
 			return response()->json(['code' => 1, 'msg' => 'อนุมัตการจองเรียบร้อย']);
@@ -271,20 +253,9 @@ class ManageBookingController extends Controller
 
 		$pass2->VerifyStatus = 2;
 
-		$title = $pass2->BookingTitle;
-		$start = $pass2->Booking_start;
-		$end = $pass2->Booking_end;
-		$roomName = $pass2->room->RoomName;
-		$userName = $pass2->user->name;
-		$departmentName = $pass2->user->DepartmentName;
-
 		$query = $pass2->save();
-		$sMessage = "📣✨ ปุกาศจ้า 📣✨" . "\n" . "หัวข้อประชุม: " . $title . "\n" . "ห้อง: " . $roomName . "\n"
-			. "ผู้จอง: " . $userName . "\n" . "แผนก: " . $departmentName . "\n" . "เวลาเริ่ม: " . $start . "\n"
-			. "เวลาสิ้นสุด: " . $end . "\n" . "โดนยกเลิกจาก Admin 😢";
 		$query = Bookings::find($booking_id)->delete();
 		if ($query) {
-			Line::sticker(446, 2008)->send($sMessage);  
 			return response()->json(['code' => 1, 'msg' => 'ยกเลิกการจองเรียบร้อย']);
 		} else {
 			return response()->json(['code' => 0, 'msg' => 'Something went wrong']);

@@ -59,6 +59,10 @@ class LogViewerAuthTest extends TestCase
                 {
                     return false;
                 }
+
+                public function rehashPasswordIfRequired(Authenticatable $user, array $credentials, bool $force = false)
+                {
+                }
             };
         });
         config(['auth.providers.users.driver' => 'in-memory']);
@@ -66,7 +70,7 @@ class LogViewerAuthTest extends TestCase
         $sessionId = Str::random(40);
         $this->app['session']->driver()->getHandler()->write(
             $sessionId,
-            serialize([Auth::guard()->getName() => $user->id])
+            json_encode([Auth::guard()->getName() => $user->id])
         );
         $this->withCookie(config('session.cookie'), $sessionId);
     }

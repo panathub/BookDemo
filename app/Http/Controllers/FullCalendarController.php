@@ -7,7 +7,7 @@ use App\Models\Bookings;
 use App\Models\User;
 use App\Models\Room;
 use DB;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 
 class FullCalendarController extends Controller
