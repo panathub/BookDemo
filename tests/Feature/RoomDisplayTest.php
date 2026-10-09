@@ -139,4 +139,15 @@ class RoomDisplayTest extends TestCase
         $this->get('/room/miso-butter')->assertOk()->assertSee('Miso Butter')->assertSee(Room::DEFAULT_THEME, false);
         $this->get('/')->assertOk()->assertSee('/room/miso-butter');
     }
+
+    public function test_room_named_without_latin_letters_gets_a_slug_from_its_id(): void
+    {
+        $room = Room::create(['RoomName' => 'ห้องไทย', 'RoomNumber' => '#fff', 'RoomAmount' => 8, 'RoomStatus' => 0, 'Image_room' => 'x.jpg']);
+        $twin = Room::create(['RoomName' => 'ห้องไทย', 'RoomNumber' => '#fff', 'RoomAmount' => 8, 'RoomStatus' => 0, 'Image_room' => 'x.jpg']);
+
+        $this->assertSame("room-{$room->RoomID}", $room->slug);
+        $this->assertSame("room-{$twin->RoomID}", $twin->slug);
+        $this->assertSame("room-{$room->RoomID}", $room->fresh()->slug);
+        $this->get("/room/room-{$room->RoomID}")->assertOk()->assertSee('ห้องไทย');
+    }
 }

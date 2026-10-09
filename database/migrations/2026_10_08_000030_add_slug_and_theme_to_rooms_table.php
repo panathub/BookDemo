@@ -21,8 +21,11 @@ return new class extends Migration
             });
         }
 
-        foreach (DB::table('rooms')->whereNull('slug')->orderBy('RoomID')->get() as $row) {
-            [$slug, $theme] = Room::LEGACY_PAGES_BY_ROOM_ID[$row->RoomID] ?? [Room::slugFrom($row->RoomName), Room::DEFAULT_THEME];
+        $rows = DB::table('rooms')->whereNull('slug')->orderBy('RoomID')->get()
+            ->sortBy(fn ($row) => isset(Room::LEGACY_PAGES_BY_ROOM_ID[$row->RoomID]) ? 0 : 1);
+        foreach ($rows as $row) {
+            [$slug, $theme] = Room::LEGACY_PAGES_BY_ROOM_ID[$row->RoomID]
+                ?? [Room::slugFrom($row->RoomName) ?? Room::uniqueSlug("room-{$row->RoomID}"), Room::DEFAULT_THEME];
             DB::table('rooms')->where('RoomID', $row->RoomID)->update(['slug' => $slug, 'theme' => $theme]);
         }
     }

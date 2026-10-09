@@ -35,11 +35,22 @@ class Room extends Model
         static::creating(function (Room $room) {
             $room->slug ??= static::slugFrom($room->RoomName);
         });
+        static::created(function (Room $room) {
+            if ($room->slug === null) {
+                $room->forceFill(['slug' => static::uniqueSlug("room-{$room->RoomID}")])->saveQuietly();
+            }
+        });
     }
 
-    public static function slugFrom(string $name): string
+    public static function slugFrom(string $name): ?string
     {
-        $base = Str::slug($name) ?: 'room';
+        $base = Str::slug($name);
+
+        return $base === '' ? null : static::uniqueSlug($base);
+    }
+
+    public static function uniqueSlug(string $base): string
+    {
         $slug = $base;
         for ($n = 2; static::where('slug', $slug)->exists(); $n++) {
             $slug = "$base-$n";
