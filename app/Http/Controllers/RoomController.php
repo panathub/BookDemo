@@ -138,15 +138,10 @@ class RoomController extends Controller
 		}
 	}
 
-	// DELETE ROOM RECORD
 	public function deleteRoom(Request $request)
 	{
 		$room_id = $request->room_id;
-		$room = Room::find($room_id);
-		if ($room->Image_room != null) {
-			Storage::disk('public')->delete('img/Image_Room/' . $room->Image_room);
-		}
-		$query = $room->delete();
+		$query = Room::find($room_id)->delete();
 
 		if ($query) {
 			return response()->json(['code' => 1, 'msg' => 'ลบห้องประชุมเรียบร้อย']);

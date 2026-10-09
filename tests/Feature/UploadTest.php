@@ -81,14 +81,26 @@ class UploadTest extends TestCase
         $this->assertStoredOnPublicDiskOnly('img/Image_Room/upload-update-room.jpg');
     }
 
-    public function test_delete_room_removes_image_from_public_disk()
+    public function test_delete_room_keeps_image_on_public_disk()
     {
         $room = Room::first();
         Storage::disk('public')->put('img/Image_Room/'.$room->Image_room, 'old');
 
         $this->post('/admin/deleteRoom', ['room_id' => $room->RoomID])->assertJson(['code' => 1]);
 
-        Storage::disk('public')->assertMissing('img/Image_Room/'.$room->Image_room);
+        $this->assertNull(Room::find($room->RoomID));
+        Storage::disk('public')->assertExists('img/Image_Room/'.$room->Image_room);
+    }
+
+    public function test_delete_accessory_keeps_image_on_public_disk()
+    {
+        $acc = Accessories::create(['Name' => 'Doomed acc', 'Quantity' => 1, 'Image_acc' => 'doomed-acc.jpg']);
+        Storage::disk('public')->put('img/Image_Accessories/doomed-acc.jpg', 'old');
+
+        $this->post('/admin/deleteAcc', ['acc_id' => $acc->AccessoriesID])->assertJson(['code' => 1]);
+
+        $this->assertNull(Accessories::find($acc->AccessoriesID));
+        Storage::disk('public')->assertExists('img/Image_Accessories/doomed-acc.jpg');
     }
 
     public function test_add_accessory_stores_image_on_public_disk()

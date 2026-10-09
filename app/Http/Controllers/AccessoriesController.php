@@ -123,14 +123,9 @@ class AccessoriesController extends Controller
         }
     }
 }    
-    // DELETE ACC RECORD
     public function deleteAcc(Request $request){
         $acc_id = $request->acc_id;
-        $acc = Accessories::find($acc_id);
-        if($acc->Image_acc != null){
-            Storage::disk('public')->delete('img/Image_Accessories/'.$acc->Image_acc);
-        }
-        $query = $acc->delete();
+        $query = Accessories::find($acc_id)->delete();
     
         if($query){
             return response()->json(['code'=>1, 'msg'=>'ลบอุปกรณ์เรียบร้อย']);
