@@ -174,6 +174,25 @@ class Bookings extends Model
             ->where('Booking_end', '>=', $start->format('Y-m-d H:i:s'));
     }
 
+    public function scopeUpcomingFor(Builder $query, Room $room): Builder
+    {
+        return $query->inState(BookingState::Approved)->where('RoomID', $room->RoomID)->orderBy('Booking_start');
+    }
+
+    public function kioskSummary(): array
+    {
+        return [
+            'BookingTitle' => $this->BookingTitle,
+            'RoomName' => $this->room?->RoomName,
+            'name' => $this->user?->name,
+            'DepartmentName' => $this->user?->department?->DepartmentName,
+            'Booking_start' => $this->Booking_start,
+            'Booking_end' => $this->Booking_end,
+            'BookingDetail' => $this->BookingDetail,
+            'BookingStatus' => $this->BookingStatus,
+        ];
+    }
+
     public function scopeInState(Builder $query, BookingState $state): Builder
     {
         return match ($state) {

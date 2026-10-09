@@ -13,6 +13,7 @@ use App\Http\Controllers\ManageBookingController;
 use App\Http\Controllers\ManageUserController;
 use App\Http\Controllers\NabezoController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RoomDisplayController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\ShabuController;
 use App\Http\Controllers\SukiyakiController;
@@ -31,10 +32,6 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Route::middleware(['middleware' => 'PreventBackHistory'])->group(function () {
     Auth::routes();
@@ -55,6 +52,10 @@ Route::get('/getBookingIndexAdminV2', [FullCalendarController::class, 'getBookin
 Route::get('/getBookingIndexDetails', [FullCalendarController::class, 'getBookingIndexDetails'])->name('get.booking.index.details');
 
 Route::post('/verifyMeeting', [ManageBookingController::class, 'verifyMeeting'])->middleware('auth')->name('verify.meeting');
+
+Route::get('/room/{room:slug}', [RoomDisplayController::class, 'show'])->name('room.show');
+Route::get('/room/{room:slug}/upcoming', [RoomDisplayController::class, 'upcoming'])->name('room.upcoming');
+Route::post('/room/{room:slug}/verify', [RoomDisplayController::class, 'verify'])->middleware('auth')->name('room.verify');
 
 // !-----------------------------------------Karamiso Index Room---------------------------------------
 Route::get('/karamiso', [KaramisoController::class, 'index'])->name('get.karamiso');
@@ -91,6 +92,10 @@ Route::get('/kinoko', [KinokoController::class, 'index'])->name('get.kinoko');
 Route::get('/getBookingKinoko', [KinokoController::class, 'getBookingKinoko'])->name('get.booking.kinoko');
 Route::get('/getBookingKinoko2Test', [KinokoController::class, 'getBookingKinoko2TEST'])->name('get.booking.kinoko.test');
 Route::post('/deleteBookingKinoko', [KinokoController::class, 'deleteBookingKinoko'])->middleware('auth')->name('delete.booking.kinoko');
+foreach (['karamiso', 'tonkotsu', 'sukiyaki', 'shabushabu', 'kinoko'] as $slug) {
+    Route::redirect("/$slug", "/room/$slug", 301);
+}
+Route::redirect('/nabezo', '/', 301);
 
 Route::group(['prefix' => 'admin', 'middleware' => ['isAdmin', 'auth']], function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');

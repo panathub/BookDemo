@@ -152,7 +152,7 @@ class RoomController extends Controller
 
     public function getAllRooms()
     {
-        $rooms = Room::pluck('RoomName')->toArray();
+        $rooms = Room::orderBy('RoomName')->get();
 
         return view('welcome', compact('rooms'));
     }

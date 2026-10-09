@@ -16,6 +16,7 @@ class ExampleTest extends TestCase
 
         $this->get('/')
             ->assertOk()
-            ->assertViewHas('rooms', fn ($rooms) => count($rooms) === 10 && in_array('Karamiso', $rooms, true));
+            ->assertViewHas('rooms', fn ($rooms) => count($rooms) === 10 && $rooms->contains('RoomName', 'Karamiso'))
+            ->assertSee('/room/karamiso');
     }
 }

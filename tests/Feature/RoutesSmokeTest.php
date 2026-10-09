@@ -23,7 +23,6 @@ class RoutesSmokeTest extends TestCase
         '/getBookingSukiyaki2Test',
         '/getBookingShabu2Test',
         '/getBookingKinoko2Test',
-        '/notiModal',
         '/user/settings',
     ];
 
@@ -42,7 +41,7 @@ class RoutesSmokeTest extends TestCase
             if (! self::isAppGetRoute($route)) {
                 continue;
             }
-            $uri = '/'.preg_replace('/\{[^}]+\}/', '1', $route->uri());
+            $uri = '/'.preg_replace('/\{[^}]+\}/', '1', str_replace('{room}', 'karamiso', $route->uri()));
             if (in_array($uri, self::BROKEN_BEFORE_REBASE, true)) {
                 continue;
             }
@@ -65,7 +64,7 @@ class RoutesSmokeTest extends TestCase
 
         $status = $this->actingAs(User::find(1))->get($uri)->getStatusCode();
 
-        $this->assertContains($status, [200, 302], "GET $uri returned $status");
+        $this->assertContains($status, [200, 301, 302], "GET $uri returned $status");
     }
 
     public static function userGetRoutes(): array
