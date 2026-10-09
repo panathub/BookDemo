@@ -616,7 +616,12 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 								timer: 1500
 							})
 						} else {
-							toastr.error(data.msg);
+							Swal.fire({
+								icon: 'error',
+								title: (data.msg),
+								timerProgressBar: true,
+								timer: 1500
+							})
 						}
 					}, 'json');
 				}
