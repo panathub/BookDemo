@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BookingState;
+use App\Http\Requests\StoreBookingRequest;
 use App\Models\Bookings;
-use App\Models\Report;
-use App\Models\Room;
-use Carbon\Carbon;
-use DB;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -17,97 +16,13 @@ class BookingController extends Controller
         return view('dashboards.users.booking');
     }
 
-    // ADD NEW BOOKING
-    public function addUserBooking(Request $request)
+    public function addUserBooking(StoreBookingRequest $request): JsonResponse
     {
-        $validator = \Validator::make($request->all(), [
-            'BookingTitle' => 'required',
-            'RoomID' => 'required',
-            'BookingAmount' => 'required',
-            'Booking_start' => 'required|date|after_or_equal:now',
-            'Booking_end' => 'required|date|after:Booking_start',
-        ], [
-            'Booking_start.after_or_equal' => 'วันที่เริ่มต้นการจองต้องเป็นวันที่นับจากนี้เป็นต้นไป',
-            'Booking_end.after' => 'วันที่สิ้นสุดการจองจะต้องอยู่หลังวันที่เริ่มต้นการจอง',
-        ]);
+        Bookings::request($request->user(), $request->room(), $request->slot(), $request->attrs());
 
-        if (! $validator->passes()) {
-            return response()->json(['code' => 0, 'error' => $validator->errors()->toArray()]);
-        } else {
-
-            $check_start = Carbon::parse($request->Booking_start);
-            $check_end = Carbon::parse($request->Booking_end);
-            $check_room = $request->RoomID;
-            $check_amount = $request->BookingAmount;
-
-            // $checkRoomReserve = Bookings::where('RoomID', '=', $check_room)
-            // 	->where('RoomStatus', '!=', 0)
-            // 	->where(function ($query) use ($check_start, $check_end) {
-            // 		$query->where(function ($q) use ($check_start, $check_end) {
-            // 			$q->whereBetween('Booking_start', [$check_start, $check_end]);
-            // 		});
-            // 		$query->orWhere(function ($q2) use ($check_start, $check_end) {
-            // 			$q2->whereBetween('Booking_end', [$check_start, $check_end]);
-            // 		});
-            // 		$query->orWhere(function ($q3) use ($check_start) {
-            // 			$q3->whereRaw('? between Booking_start and Booking_end', $check_start);
-            // 		});
-            // 		$query->orWhere(function ($q4) use ($check_end) {
-            // 			$q4->whereRaw('? between Booking_start and Booking_end', $check_end);
-            // 		});
-            // 	})->exists();
-            $check = "SELECT * FROM `bookings` WHERE RoomID = '$check_room' AND RoomStatus != '0' AND VerifyStatus != '2'
-				AND ( 
-					(`Booking_start` BETWEEN '$check_start' AND '$check_end') 
-				OR 
-					(`Booking_end` BETWEEN '$check_start' AND '$check_end' )
-				OR
-					('$check_start' BETWEEN `Booking_start` AND `Booking_end`)
-				OR
-					('$check_end' BETWEEN `Booking_start` AND `Booking_end`))";
-
-            $datacheck = DB::select($check);
-            $check2 = Room::where('RoomID', $check_room)->first();
-
-            if ($check_amount > $check2->RoomAmount) {
-                return response()->json(['code' => 2, 'msg' => "ห้อง $check2->RoomName จำนวนคนต้องไม่เกิน $check2->RoomAmount คน"]);
-            } elseif (! empty($datacheck)) {
-                return response()->json(['code' => 3, 'msg' => 'มีการจองช่วงเวลานี้อยู่แล้ว']);
-            } else {
-                $addreport = new Report;
-                $addreport->id = \Auth::user()->id;
-                $addreport->RoomID = $request->RoomID;
-                $addreport->BookingTitle = $request->BookingTitle;
-                $addreport->BookingAmount = $request->BookingAmount;
-                $addreport->Booking_start = $request->Booking_start;
-                $addreport->Booking_end = $request->Booking_end;
-                $addreport->BookingDetail = $request->BookingDetail;
-                $addreport->RoomStatus = 1;
-                $addreport->save();
-
-                $addbook = new Bookings;
-                $addbook->ReportID = $addreport->ReportID;
-                $addbook->id = \Auth::user()->id;
-                $addbook->RoomID = $request->RoomID;
-                $addbook->BookingTitle = $request->BookingTitle;
-                $addbook->BookingAmount = $request->BookingAmount;
-                $addbook->Booking_start = $request->Booking_start;
-                $addbook->Booking_end = $request->Booking_end;
-                $addbook->BookingDetail = $request->BookingDetail;
-                $addbook->RoomStatus = 1;
-
-                $query = $addbook->save();
-
-                if (! $query) {
-                    return response()->json(['code' => 0, 'msg' => 'Something went wrong']);
-                } else {
-                    return response()->json(['code' => 1, 'msg' => 'เพิ่มการจองเรียบร้อย']);
-                }
-            }
-        }
+        return response()->json(['code' => 1, 'msg' => 'เพิ่มการจองเรียบร้อย']);
     }
 
-    // GET ALL BOOKING
     public function getUserBookingList()
     {
         $userID = \Auth::user()->id;
@@ -125,7 +40,7 @@ class BookingController extends Controller
                 if ($row->VerifyStatus == 1 || $row->VerifyStatus == 2) {
                     return '';
                 } else {
-                    return '      
+                    return '
                                  <button class="btn btn-sm btn-info" data-id="'.$row->BookingID.'" id="infoBookingBtn">
                                  <i class="fas fa-info-circle"></i></button>
                                  <button class="btn btn-sm btn-primary" data-id="'.$row->BookingID.'" id="editBookingBtn">
@@ -139,7 +54,6 @@ class BookingController extends Controller
             ->make(true);
     }
 
-    // GET BOOKING DETAILS
     public function getUserBookingDetails(Request $request)
     {
         $booking_id = $request->booking_id;
@@ -154,84 +68,26 @@ class BookingController extends Controller
         return response()->json(['details' => $dataUserBookingDetail]);
     }
 
-    // UPDATE BOOKING DETAILS
-    public function updateUserBookingDetails(Request $request)
+    public function updateUserBookingDetails(StoreBookingRequest $request): JsonResponse
     {
-        $booking_id = $request->bkid;
-        $report_id = $request->rpid;
-        $validator = \Validator::make($request->all(), [
-            'RoomID' => 'required',
-            'BookingTitle' => 'required',
-            'BookingAmount' => 'required',
-            'Booking_start' => 'required|date|after_or_equal:now',
-            'Booking_end' => 'required|date|after:Booking_start',
-        ], [
-            'Booking_start.after_or_equal' => 'วันที่เริ่มต้นการจองต้องเป็นวันที่นับจากนี้เป็นต้นไป',
-            'Booking_end.after' => 'วันที่สิ้นสุดการจองจะต้องอยู่หลังวันที่เริ่มต้นการจอง',
-        ]);
+        $this->ownPendingBooking($request, $request->integer('bkid'))
+            ->reschedule($request->room(), $request->slot(), $request->attrs());
 
-        if (! $validator->passes()) {
-            return response()->json(['code' => 0, 'error' => $validator->errors()->toArray()]);
-        } else {
-
-            $check_start = $request->Booking_start;
-            $check_end = $request->Booking_end;
-            $check_room = $request->RoomID;
-
-            $check = "SELECT * FROM `bookings` WHERE RoomID = '$check_room' AND BookingID != '$booking_id' AND VerifyStatus != '2'
-                AND ( 
-                    (`Booking_start` BETWEEN '$check_start' AND '$check_end') 
-                OR 
-                    (`Booking_end` BETWEEN '$check_start' AND '$check_end' )
-                OR
-                    ('$check_start' BETWEEN `Booking_start` AND `Booking_end`)
-                OR
-                    ('$check_end' BETWEEN `Booking_start` AND `Booking_end`))";
-
-            $datacheck = DB::select($check);
-
-            if (! empty($datacheck)) {
-                return response()->json(['code' => 2, 'msg' => 'มีการจองรอยืนยัน']);
-            } else {
-
-                $addbook = Bookings::find($booking_id);
-                $addbook->RoomID = $request->RoomID;
-                $addbook->BookingTitle = $request->BookingTitle;
-                $addbook->BookingAmount = $request->BookingAmount;
-                $addbook->Booking_start = $request->Booking_start;
-                $addbook->Booking_end = $request->Booking_end;
-                $addbook->BookingDetail = $request->BookingDetail;
-                $query = $addbook->save();
-
-                $addreport = Report::find($report_id);
-                $addreport->RoomID = $request->RoomID;
-                $addreport->BookingTitle = $request->BookingTitle;
-                $addreport->BookingAmount = $request->BookingAmount;
-                $addreport->Booking_start = $request->Booking_start;
-                $addreport->Booking_end = $request->Booking_end;
-                $addreport->BookingDetail = $request->BookingDetail;
-
-                $query = $addreport->save();
-
-                if ($query) {
-                    return response()->json(['code' => 1, 'msg' => 'อัพเดทการจองเรียบร้อย']);
-                } else {
-                    return response()->json(['code' => 0, 'msg' => 'Something went wrong']);
-                }
-            }
-        }
+        return response()->json(['code' => 1, 'msg' => 'อัพเดทการจองเรียบร้อย']);
     }
 
-    // DELETE BOOKING RECORD
-    public function deleteUserBooking(Request $request)
+    public function deleteUserBooking(Request $request): JsonResponse
     {
-        $booking_id = $request->booking_id;
-        $query = Bookings::find($booking_id)->forceDelete();
+        $this->ownPendingBooking($request, $request->integer('booking_id'))->forceDelete();
 
-        if ($query) {
-            return response()->json(['code' => 1, 'msg' => 'ลบการจองเรียบร้อย']);
-        } else {
-            return response()->json(['code' => 0, 'msg' => 'Something went wrong']);
-        }
+        return response()->json(['code' => 1, 'msg' => 'ลบการจองเรียบร้อย']);
+    }
+
+    private function ownPendingBooking(Request $request, int $id): Bookings
+    {
+        $booking = Bookings::findOrFail($id);
+        abort_unless($booking->ownedBy($request->user()) && $booking->state === BookingState::Requested, 403);
+
+        return $booking;
     }
 }
