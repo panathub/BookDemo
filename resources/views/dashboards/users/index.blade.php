@@ -206,6 +206,8 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 			locale: 'th',
 			allDaySlot: true,
 			fixedWeekCount: false,
+			height: 'auto',
+			weekends: false,
 			headerToolbar: {
 				left: 'prev,next today',
 				center: 'title',
@@ -219,6 +221,11 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 			dayMaxEvents: true,
 			eventMaxStack: true,
 			events: "{{route('index')}}",
+			eventDidMount: function (info) {
+				$(info.el).tooltip({
+					title: info.event.extendedProps.roomName,
+				});
+        	        },
 			eventClick: function() {
 				$('html, body').animate({
 					scrollTop: $("#bookings-table").offset().top
@@ -250,27 +257,12 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 				[5, 10, 25, 50, -1],
 				[5, 10, 25, 50, "All"]
 			],
+			"order": [
+				[2, "asc"]
+			],
 			columns: [{
-					data: 'RoomName',
-					render: function(data, type) {
-						switch (data) {
-							case 'Karamiso':
-								return '<span class="badge badge-md badge-karamiso">Karamiso</span>';
-								break;
-							case 'Sukiyaki':
-								return '<span class="badge badge-md badge-sukiyaki">Sukiyaki</span>';
-								break;
-							case 'Tonkotsu':
-								return '<span class="badge badge-md badge-tonkotsu">Tonkotsu</span>';
-								break;
-							case 'Kinoko':
-								return '<span class="badge badge-md badge-kinoko">Kinoko</span>';
-								break;
-							case 'Shabushabu':
-								return '<span class="badge badge-md badge-shabushabu">Shabushabu</span>';
-								break;
-						}
-					}
+					data: 'room_badge',
+					name: 'room_badge'
 				},
 				{
 					data: 'RoomName',
@@ -285,13 +277,13 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 				{
 					data: "Booking_start",
 					render: function(data) {
-						return moment(data).locale('th').format('DD MMM YY, HH:mm')
+						return moment(data).locale('th').add(543, 'year').format('DD MMM YY, HH:mm')
 					}
 				},
 				{
 					data: 'Booking_end',
 					render: function(data) {
-						return moment(data).locale('th').format('DD MMM YY, HH:mm')
+						return moment(data).locale('th').add(543, 'year').format('DD MMM YY, HH:mm')
 					}
 				},
 				{
@@ -333,8 +325,8 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 				$('.infoBooking').find('.BookingTitle').text(data.details.BookingTitle);
 				$('.infoBooking').find('.BookingAmount').text(data.details.BookingAmount + ' คน');
 				$('.infoBooking').find('.RoomName').text(data.details.RoomName);
-				$('.infoBooking').find('.Booking_start').text(moment(data.details.Booking_start).locale('th').format('Do MMM YY, HH:mm'));
-				$('.infoBooking').find('.Booking_end').text(moment(data.details.Booking_end).locale('th').format('Do MMM YY, HH:mm'));
+				$('.infoBooking').find('.Booking_start').text(moment(data.details.Booking_start).locale('th').add(543, 'year').format('DD MMM YY, HH:mm'));
+				$('.infoBooking').find('.Booking_end').text(moment(data.details.Booking_end).locale('th').add(543, 'year').format('DD MMM YY, HH:mm'));
 				$('.infoBooking').find('.BookingDetail').text(data.details.BookingDetail == null ? '-' : data.details.BookingDetail);
 				if (data.details.VerifyStatus == 1) {
 					$('.infoBooking').find('.VerifyStatus').html('<span class="badge badge-lg badge-success">อนุมัติแล้ว</span>');

@@ -33,7 +33,7 @@
 						<thead>
 							<th>#</th>
 							<th>ชื่อห้อง</th>
-							<th>เลขที่ห้อง</th>
+							<th>สีห้อง</th>
 							<th>Action</th>
 						</thead>
 						<tbody></tbody>
@@ -54,8 +54,8 @@
 							<span class="text-danger error-text RoomName_error"></span>
 						</div>
 						<div class="form-group">
-							<label for="">เลขที่ห้อง</label>
-							<input type="number" class="form-control" name="RoomNumber" placeholder="Enter room no.">
+							<label for="">สีห้อง</label>
+							<input type="color" class="form-control" name="RoomNumber" value="#ff0000">
 							<span class="text-danger error-text RoomNumber_error"></span>
 						</div>
 						<div class="form-group">
@@ -99,8 +99,8 @@
 						<span class="text-danger error-text RoomName_error"></span>
 					</div>
 					<div class="form-group">
-						<label for="">เลขที่ห้อง</label>
-						<input type="text" class="form-control" name="RoomNumber" placeholder="Enter room no.">
+						<label for="">สีห้อง</label>
+						<input type="color" class="form-control" name="RoomNumber">
 						<span class="text-danger error-text RoomNumber_error"></span>
 					</div>
 					<div class="form-group">
@@ -147,7 +147,7 @@
 				<p></p>
 				<div class="row">
 					<div class="col-6 col-md-5">
-						<h3 class="text-center">เลขที่ห้อง</h3>
+						<h3 class="text-center">สีห้อง</h3>
 					</div>
 					<div class="col-6 col-md-6">
 						<span class="text-center RoomNumber"></span>

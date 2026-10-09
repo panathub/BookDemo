@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use DB;
 use App\Jobs\RunBooking;
 use Phattarachai\LineNotify\Facade\Line;
+use App\Exports\BookingsExport;
 
 class ManageBookingController extends Controller
 {
@@ -28,9 +29,12 @@ class ManageBookingController extends Controller
 			'BookingTitle' => 'required',
 			'RoomID' => 'required',
 			'BookingAmount' => 'required',
-			'Booking_start' => 'required',
-			'Booking_end' => 'required',
-		]);
+                        'Booking_start' => 'required|date|after_or_equal:now',
+                        'Booking_end' => 'required|date|after:Booking_start',
+                 ], [
+                        'Booking_start.after_or_equal' => 'วันที่เริ่มต้นการจองต้องเป็นวันที่นับจากนี้เป็นต้นไป',
+                        'Booking_end.after' => 'วันที่สิ้นสุดการจองจะต้องอยู่หลังวันที่เริ่มต้นการจอง',
+                 ]);
 
 		if (!$validator->passes()) {
 			return response()->json(['code' => 0, 'error' => $validator->errors()->toArray()]);
@@ -110,7 +114,7 @@ class ManageBookingController extends Controller
 	public function getBookingList()
 	{
 
-		$databookings = Bookings::select('users.name', 'rooms.RoomName', 'department.DepartmentName', 'bookings.*')
+		$databookings = Bookings::select('users.name', 'rooms.RoomName', 'rooms.RoomNumber','department.DepartmentName', 'bookings.*')
 			->join('users', 'bookings.id', '=', 'users.id')
 			->join('rooms', 'bookings.RoomID', '=', 'rooms.RoomID')
 			->leftJoin('department', 'users.DepartmentID', '=', 'department.DepartmentID')
@@ -119,6 +123,11 @@ class ManageBookingController extends Controller
 			->get();
 		return DataTables::of($databookings)
 			->addIndexColumn()
+			->addColumn('room_badge', function ($data) {
+				return '<span class="badge badge-md" style="color: #fff; background-color: ' . $data->RoomNumber . ';">' 
+				. $data->RoomName . 
+				'</span>';
+			})
 			->addColumn('actions', function ($row) {
 				return '
                                  <button class="btn btn-sm btn-success" data-id="' . $row->BookingID . '" id="verifyBookingBtn">
@@ -131,7 +140,7 @@ class ManageBookingController extends Controller
                                  <i class="fas fa-edit"></i></button>
                                  ';
 			})
-			->rawColumns(['actions'])
+			->rawColumns(['actions', 'room_badge'])
 			->make(true);
 	}
 
@@ -161,10 +170,12 @@ class ManageBookingController extends Controller
 			'RoomID' => 'required',
 			'BookingTitle' => 'required',
 			'BookingAmount' => 'required',
-			'Booking_start' => 'required',
-			'Booking_end' => 'required',
-
-		]);
+                        'Booking_start' => 'required|date|after_or_equal:now',
+                        'Booking_end' => 'required|date|after:Booking_start',
+                 ], [
+                        'Booking_start.after_or_equal' => 'วันที่เริ่มต้นการจองต้องเป็นวันที่นับจากนี้เป็นต้นไป',
+                        'Booking_end.after' => 'วันที่สิ้นสุดการจองจะต้องอยู่หลังวันที่เริ่มต้นการจอง',
+                ]);
 
 		if (!$validator->passes()) {
 			return response()->json(['code' => 0, 'error' => $validator->errors()->toArray()]);
@@ -235,14 +246,14 @@ class ManageBookingController extends Controller
 		$userName = $pass2->user->name;
 		$departmentName = $pass2->user->DepartmentName;
 
-		$formatDelete = Carbon::parse($pass2->Booking_end)->timezone('Asia/Bangkok');
+		$formatDelete = Carbon::parse($pass->Booking_end)->timezone('Asia/Bangkok');
 		$query = $pass->save();
 		$sMessage = "📣ปุกาศ✨ " . "\n" . "หัวข้อประชุม: " . $title . "\n" . "ห้อง: " . $roomName . "\n"
 			. "ผู้จอง: " . $userName . "\n" . "แผนก: " . $departmentName . "\n" . "เวลาเริ่ม: " . $start . "\n"
 			. "เวลาสิ้นสุด: " . $end . "\n" . "รายละเอียด: " . $detail . "\n" . "ได้รับการอนุมัติจาก Admin 🔥";
 		if ($query) {
 			Line::sticker(446, 1989)->send($sMessage);
-			RunBooking::dispatch($pass2)->delay($formatDelete);
+			RunBooking::dispatch($pass)->onQueue('default')->delay($formatDelete);
 
 			return response()->json(['code' => 1, 'msg' => 'อนุมัตการจองเรียบร้อย']);
 		} else {
@@ -287,5 +298,10 @@ class ManageBookingController extends Controller
 		$booking->update(['VerifyStatus' => 2]);
 		$booking->delete();
 		return response()->json(['code' => 1, 'msg' => 'Bookings have been delete']);
+	}
+
+	public function exportExcel(Request $request) 
+	{
+		return (new BookingsExport($request->start_date, $request->end_date, $request->room))->download('รายงานการจองห้องประชุม ('. $request->start_date. '_'.  $request->end_date .').xlsx');
 	}
 }

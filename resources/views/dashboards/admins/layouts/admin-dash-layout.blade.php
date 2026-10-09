@@ -80,6 +80,12 @@
 								@endforeach
 							</li>
 
+                                                        <li class="nav-item">
+								<a href="{{ route('log-viewer.index') }}" is class="nav-link">
+									<i class="ni ni-tv-2 text-green"></i>
+									<span class="nav-link-text">Logs</span>
+								</a>
+							</li>
 							<li class="nav-item">
 								<a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
 									<i class="ni ni-bullet-list-67 text-default"></i>
@@ -92,30 +98,20 @@
 						<hr class="my-3">
 						<!-- Heading -->
 						<h6 class="navbar-heading p-0 text-muted">
-							<span class="docs-normal">Demo</span>
+							<span class="docs-normal">v1.0</span>
 						</h6>
 						<!-- Navigation -->
 					</div>
-					<span class="badge badge-dot badge-lg mr-4">
-						<i class="badge-tonkotsu"></i>
-						Tonkotsu
-					</span>
-					<span class="badge badge-dot badge-lg mr-4">
-						<i class="badge-karamiso"></i>
-						Karamiso
-					</span>
-					<span class="badge badge-dot badge-lg mr-4">
-						<i class="badge-sukiyaki"></i>
-						Sukiyaki
-					</span>
-					<span class="badge badge-dot badge-lg mr-4">
-						<i class="badge-shabushabu"></i>
-						Shabushabu
-					</span>
-					<span class="badge badge-dot badge-lg mr-4">
-						<i class="badge-kinoko"></i>
-						Kinoko
-					</span>
+                                        <div class="d-flex flex-wrap flex-column align-items-start">
+						<?php $partsR = DB::connection('mysql')->select('select * from rooms'); ?>
+						@foreach($partsR as $row)
+						<span class="badge badge-dot badge-lg mr-4">
+							<i style="background-color: {{$row->RoomNumber}}"></i>
+							{{$row->RoomName}}
+						</span>
+						@endforeach
+				        </div>
+				
 				</div>
 			</div>
 		</div>

@@ -29,13 +29,7 @@
 				<div class="collapse navbar-collapse" id="navbarNav">
 					<div class="mr-auto"></div>
 					<ul class="navbar-nav text-center">
-						@if (count($rooms) > 0)
-						@foreach ($rooms as $key => $room)
-						<li class="nav-item">
-							<a class="nav-link text-gradient{{$key}}" href="/{{strtolower($room)}}">{{$room}}</a>
-						</li>
-						@endforeach
-						@endif
+						
 						<li class="nav-item">
 							<a class="nav-link text-gradient5" href="{{ route('login') }}">Login</a>
 						</li>
