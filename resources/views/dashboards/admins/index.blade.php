@@ -263,6 +263,7 @@
 						</div>
 						<div class="col-6 ">
 							<textarea class="form-control" rows="3" name="BookingDetail"></textarea>
+							<span class="text-danger error-text BookingDetail_error"></span>
 						</div>
 					</div>
 					<p></p>

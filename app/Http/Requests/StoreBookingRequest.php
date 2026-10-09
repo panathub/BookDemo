@@ -22,8 +22,8 @@ class StoreBookingRequest extends FormRequest
             'RoomID' => 'required|integer|exists:rooms,RoomID',
             'BookingAmount' => 'required|integer|min:1',
             'BookingDetail' => 'nullable|string|max:255',
-            'Booking_start' => 'required|date|after_or_equal:now',
-            'Booking_end' => 'required|date|after:Booking_start',
+            'Booking_start' => 'bail|required|date|after_or_equal:now',
+            'Booking_end' => 'bail|required|date|after:Booking_start',
         ];
     }
 

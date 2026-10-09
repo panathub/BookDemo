@@ -12,6 +12,7 @@ use Carbon\CarbonImmutable;
 use Database\Seeders\DemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use Tests\TestCase;
 
@@ -119,8 +120,11 @@ class BookingLifecycleTest extends TestCase
         $this->assertSame(0, Bookings::expireDue());
 
         $this->travelTo(CarbonImmutable::parse($booking->Booking_end)->addMinute());
-        $this->assertGreaterThanOrEqual(1, Bookings::expireDue());
+        Log::spy();
+        $expired = Bookings::expireDue();
+        $this->assertGreaterThanOrEqual(1, $expired);
         $this->assertSame(0, Bookings::expireDue());
+        Log::shouldHaveReceived('info')->once()->with("bookings:expire expired {$expired}");
 
         $expired = Bookings::withTrashed()->find($booking->BookingID);
         $this->assertSame(BookingState::Expired, $expired->state);
@@ -140,6 +144,18 @@ class BookingLifecycleTest extends TestCase
         $this->assertSame(2, $cancelled->VerifyStatus);
         $this->assertNotNull($cancelled->deleted_at);
         $this->assertEquals($cancelled->deleted_at, $cancelled->cancel()->deleted_at);
+    }
+
+    public function test_admin_cancel_twice_answers_code_one_both_times(): void
+    {
+        $booking = $this->requested();
+
+        foreach ([1, 2] as $_) {
+            $this->actingAs($this->admin)->post('/admin/cancleBookingDetails', ['booking_id' => $booking->BookingID])
+                ->assertOk()->assertExactJson(['code' => 1, 'msg' => 'ยกเลิกการจองเรียบร้อย']);
+        }
+
+        $this->assertSame(BookingState::Cancelled, Bookings::withTrashed()->find($booking->BookingID)->state);
     }
 
     public function test_admin_approve_runs_without_a_queue(): void
@@ -213,6 +229,15 @@ class BookingLifecycleTest extends TestCase
             ->assertJson(['code' => 1, 'msg' => 'ยืนยันการจองห้องประชุม']);
 
         $this->assertSame(1, Bookings::find(1)->BookingStatus);
+    }
+
+    public function test_invalid_dates_show_one_message_each(): void
+    {
+        $response = $this->actingAs($this->user)->post('/user/add-booking', $this->payload(['Booking_start' => 'nope', 'Booking_end' => 'nope']));
+
+        $response->assertJson(['code' => 0]);
+        $this->assertCount(1, $response->json('error.Booking_start'));
+        $this->assertCount(1, $response->json('error.Booking_end'));
     }
 
     public function test_slot_must_end_after_it_starts(): void

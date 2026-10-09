@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BookingState;
 use App\Exports\BookingsExport;
 use App\Http\Requests\StoreBookingRequest;
 use App\Models\Bookings;
@@ -75,7 +76,7 @@ class ManageBookingController extends Controller
 
     public function deleteBooking(Request $request): JsonResponse
     {
-        Bookings::findOrFail($request->integer('booking_id'))->cancel();
+        $this->cancelBooking($request->integer('booking_id'));
 
         return response()->json(['code' => 1, 'msg' => 'ลบการจองเรียบร้อย']);
     }
@@ -89,7 +90,7 @@ class ManageBookingController extends Controller
 
     public function cancleBookingDetails(Request $request): JsonResponse
     {
-        Bookings::findOrFail($request->integer('booking_id'))->cancel();
+        $this->cancelBooking($request->integer('booking_id'));
 
         return response()->json(['code' => 1, 'msg' => 'ยกเลิกการจองเรียบร้อย']);
     }
@@ -106,6 +107,13 @@ class ManageBookingController extends Controller
         Bookings::findOrFail($request->integer('bkid'))->confirmMeeting();
 
         return response()->json(['code' => 1, 'msg' => 'ยืนยันการจองห้องประชุม']);
+    }
+
+    private function cancelBooking(int $id): void
+    {
+        $booking = Bookings::withTrashed()->findOrFail($id);
+        abort_if($booking->state === BookingState::Expired, 404);
+        $booking->cancel();
     }
 
     public function exportExcel(Request $request)

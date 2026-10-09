@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use LogicException;
 
 class Bookings extends Model
@@ -157,6 +158,9 @@ class Bookings extends Model
     {
         $due = static::inState(BookingState::Approved)->where('Booking_end', '<', now()->format('Y-m-d H:i:s'))->get();
         $due->each->expire();
+        if ($due->isNotEmpty()) {
+            Log::info("bookings:expire expired {$due->count()}");
+        }
 
         return $due->count();
     }
