@@ -2,49 +2,27 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\BookingState;
 use App\Models\Bookings;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class DeleteBookingNotVerify extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'cron:deletebooking';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
+    protected $description = 'Cancel bookings still unverified two days after their start';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function handle(): int
     {
-        parent::__construct();
-    }
+        $stale = Bookings::inState(BookingState::Requested)
+            ->whereDate('Booking_start', '<=', now()->subDays(2))
+            ->get();
+        $stale->each->cancel();
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
-    {
-        $today = Carbon::now()->subDays(2)->endOfDay();
-        $bookings = Bookings::whereDate('Booking_start', '<=', $today)->get();
-        foreach ($bookings as $booking) {
-            \Log::info('id '.$booking->BookingID.' start '.$booking->Booking_start.' end '.$booking->Booking_end.'is auto deleted');
-            $booking->update(['VerifyStatus' => 2]);
-            $booking->delete();
-        }
+        Log::info('cron:deletebooking cancelled unverified bookings', ['ids' => $stale->modelKeys()]);
+        $this->info("cancelled {$stale->count()} unverified bookings");
+
+        return self::SUCCESS;
     }
 }

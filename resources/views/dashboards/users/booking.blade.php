@@ -107,6 +107,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 							</div>
 							<div class="col-6 ">
 								<textarea class="form-control" rows="3" name="BookingDetail" placeholder="-"></textarea>
+								<span class="text-danger error-text BookingDetail_error"></span>
 							</div>
 						</div>
 						<p></p>
@@ -234,6 +235,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 						</div>
 						<div class="col-6 ">
 							<textarea class="form-control" rows="3" name="BookingDetail"></textarea>
+							<span class="text-danger error-text BookingDetail_error"></span>
 						</div>
 					</div>
 					<p></p>
@@ -614,7 +616,12 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 								timer: 1500
 							})
 						} else {
-							toastr.error(data.msg);
+							Swal.fire({
+								icon: 'error',
+								title: (data.msg),
+								timerProgressBar: true,
+								timer: 1500
+							})
 						}
 					}, 'json');
 				}
