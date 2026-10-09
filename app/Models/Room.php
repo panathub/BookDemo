@@ -15,6 +15,6 @@ class Room extends Model
     protected $fillable = ['RoomName','RoomNumber','RoomStatus','RoomAmount','Image_room'];
 
     public function bookings() {
-        return $this->hasMany(Bookings::class,'BookingID','RoomID');
+        return $this->hasMany(Bookings::class, 'RoomID', 'RoomID');
     }
 }
