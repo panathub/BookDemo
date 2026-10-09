@@ -167,7 +167,7 @@
 			function displayModal() {
 				var m_id = $(this).data('id');
 				//* -----------------------------------------------------------------------------
-				$.get('<?= route("karamiso.noti.modal") ?>', {
+				$.get('<?= route("notice.modal") ?>', {
 					m_id: m_id
 				}, function(data) {
 					//alert(room_id);   

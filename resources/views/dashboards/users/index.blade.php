@@ -183,9 +183,12 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 @if (Session::has('success'))
 <script>
 	var m_id = $(this).data('id');
-	$.get('<?= route("karamiso.noti.modal") ?>', {
+	$.get('{{ route('notice.modal') }}', {
 		m_id: m_id
 	}, function(data) {
+		if (data.details === null) {
+			return;
+		}
 		//alert(room_id);   
 		$('.NotiModal').find('input[name="mid"]').val(data.details.id);
 		$('.NotiModal').find('.text').text(data.details.text);

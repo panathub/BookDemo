@@ -45,6 +45,7 @@ Route::get('/', [RoomController::class, 'getAllRooms'])->name('all.room');
 // !-----------------------------------------Modal---------------------------------------
 Route::get('/getModalDetails', [AdminController::class, 'getModalDetails'])->name('get.modal.details');
 Route::post('/updateModalDetails', [AdminController::class, 'updateModalDetails'])->middleware(['auth', 'isAdmin'])->name('update.modal.details');
+Route::get('/notiModal', [AdminController::class, 'getNotice'])->name('notice.modal');
 
 // !-----------------------------------------FullCalendar-------------------------------
 Route::get('index', [FullCalendarController::class, 'index'])->name('index');
@@ -60,7 +61,6 @@ Route::get('/karamiso', [KaramisoController::class, 'index'])->name('get.karamis
 Route::get('/getBookingKara', [KaramisoController::class, 'getBookingKara'])->name('get.booking.kara');
 Route::get('/getBookingKara2Test', [KaramisoController::class, 'getBookingKara2TEST'])->name('get.booking.kara.test');
 Route::post('/deleteBookingKaramiso', [KaramisoController::class, 'deleteBookingKaramiso'])->middleware('auth')->name('delete.booking.karamiso');
-Route::get('/notiModal', [KaramisoController::class, 'getNotiModal'])->name('karamiso.noti.modal');
 
 // !-----------------------------------------Nabezo Index Room---------------------------------------
 Route::get('/nabezo', [NabezoController::class, 'index'])->name('get.nabezo');

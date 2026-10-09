@@ -290,7 +290,7 @@ display_c5();
         function displayModal() {
               var m_id = $(this).data('id');
               //* -----------------------------------------------------------------------------
-              $.get('<?= route("karamiso.noti.modal") ?>',{m_id:m_id}, function(data){
+              $.get('<?= route("notice.modal") ?>',{m_id:m_id}, function(data){
                 //alert(room_id);   
              $('.NotiModal').find('input[name="mid"]').val(data.details.id);
              $('.NotiModal').find('.text').text(data.details.text);
