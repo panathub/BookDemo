@@ -25,7 +25,6 @@ class SchemaTest extends TestCase
             'modal' => ['modal', ['id', 'image', 'text']],
             'accessories' => ['accessories', ['AccessoriesID', 'Name', 'Quantity', 'Image_acc']],
             'users' => ['users', ['id', 'name', 'email', 'picture', 'email_verified_at', 'password', 'remember_token', 'created_at', 'updated_at', 'DepartmentID', 'roleID']],
-            'jobs' => ['jobs', ['id', 'queue', 'payload', 'attempts', 'reserved_at', 'available_at', 'created_at']],
             'password_resets' => ['password_resets', ['email', 'token', 'created_at']],
         ];
     }

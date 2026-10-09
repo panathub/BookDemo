@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\RunBooking;
 use App\Models\Bookings;
-use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 
@@ -91,7 +89,6 @@ class TonkotsuController extends Controller
         $sql2 = " DELETE FROM bookings WHERE BookingID = $homeBookings ";
         // $sql2 = " UPDATE bookings SET BookingStatus = '3' WHERE BookingID = $homeBookings ";
         $Booking = DB::delete($sql2);
-        RunBooking::dispatch($Booking)->delay(Carbon::now()->addMinutes(5));
 
         return response()->json($Booking);
 
