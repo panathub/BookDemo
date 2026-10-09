@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class UserController extends Controller
 {
-   function index(){
+    public function index()
+    {
 
-    return view('dashboards.users.index');
-   }
+        return view('dashboards.users.index');
+    }
 
-   function profile(){
-       return view('dashboards.users.profile');
-   }
-   function settings(){
-       return view('dashboards.users.settings');
-   }
+    public function profile()
+    {
+        return view('dashboards.users.profile');
+    }
+
+    public function settings()
+    {
+        return view('dashboards.users.settings');
+    }
 }

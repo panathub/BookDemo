@@ -2,120 +2,124 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use DB;
-use Yajra\DataTables\Facades\DataTables;
-use App\Models\Department;
 use App\Models\User;
-
+use DB;
+use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class ManageUserController extends Controller
 {
-    public function addUser(Request $request){
-        $validator = \Validator::make($request->all(),[
-            'Name'=>'required',
-            'email'=>'required|email|max:100',
-            'password'=>'required',
-            'DepartmentID'=>'required',
-            'roleID'=>'required',
+    public function addUser(Request $request)
+    {
+        $validator = \Validator::make($request->all(), [
+            'Name' => 'required',
+            'email' => 'required|email|max:100',
+            'password' => 'required',
+            'DepartmentID' => 'required',
+            'roleID' => 'required',
         ]);
-    
-        if(!$validator->passes()){
-             return response()->json(['code'=>0,'error'=>$validator->errors()->toArray()]);
-        }else{
-           
-            $user = new User();
+
+        if (! $validator->passes()) {
+            return response()->json(['code' => 0, 'error' => $validator->errors()->toArray()]);
+        } else {
+
+            $user = new User;
             $user->Name = $request->Name;
             $user->email = $request->email;
             $user->password = \Hash::make($request->password);
             $user->roleID = $request->roleID;
             $user->DepartmentID = $request->DepartmentID;
-            
+
             $query = $user->save();
-            //echo $query;
-            if(!$query){
-                return response()->json(['code'=>0,'msg'=>'Something went wrong']);
-            }else{
-                return response()->json(['code'=>1,'msg'=>'เพิ่มผู้ใช้เรียบร้อย']);
+            // echo $query;
+            if (! $query) {
+                return response()->json(['code' => 0, 'msg' => 'Something went wrong']);
+            } else {
+                return response()->json(['code' => 1, 'msg' => 'เพิ่มผู้ใช้เรียบร้อย']);
             }
         }
     }
 
-        // GET ALL USER
-        public function getUserList(Request $request){
-            $users = DB::table('users')
-                     ->join('department', 'users.DepartmentID', '=', 'department.DepartmentID')
-                     ->join('role', 'users.roleID', '=', 'role.roleID')
-                     ->select('users.*','department.DepartmentName','role.roleName')
-                     ->get();   
-                     return DataTables::of($users)
-                     ->addIndexColumn()
-                     ->addColumn('actions', function($row){
-                         return '
+    // GET ALL USER
+    public function getUserList(Request $request)
+    {
+        $users = DB::table('users')
+            ->join('department', 'users.DepartmentID', '=', 'department.DepartmentID')
+            ->join('role', 'users.roleID', '=', 'role.roleID')
+            ->select('users.*', 'department.DepartmentName', 'role.roleName')
+            ->get();
+
+        return DataTables::of($users)
+            ->addIndexColumn()
+            ->addColumn('actions', function ($row) {
+                return '
                                  <button class="btn btn-sm btn-primary" data-id="'.$row->id.'" id="editUserBtn">
                                  <i class="fas fa-edit"></i></button>
                                  <button class="btn btn-sm btn-danger" data-id="'.$row->id.'" id="deleteUserBtn">
                                  <i class="fas fa-trash-alt"></i></button>
                                  ';
-                     })
-                     ->rawColumns(['actions'])
-                     ->make(true);    
-            
-      }
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
 
-      //GET USER DETAILS
-   public function getUserDetails(Request $request){
-    $user_id = $request->user_id;
-    $userDetails = DB::table('users')
-                ->join('department', 'users.DepartmentID', '=', 'department.DepartmentID')
-                ->join('role', 'users.roleID', '=', 'role.roleID')
-                ->select('users.*','department.DepartmentName','role.roleName')
-                ->find($user_id);
-    return response()->json(['details'=>$userDetails]);
-}
+    }
 
+    // GET USER DETAILS
+    public function getUserDetails(Request $request)
+    {
+        $user_id = $request->user_id;
+        $userDetails = DB::table('users')
+            ->join('department', 'users.DepartmentID', '=', 'department.DepartmentID')
+            ->join('role', 'users.roleID', '=', 'role.roleID')
+            ->select('users.*', 'department.DepartmentName', 'role.roleName')
+            ->find($user_id);
 
-    //UPDATE USER DETAILS
-    public function updateUserDetails(Request $request){
-    $user_id = $request->uid;
+        return response()->json(['details' => $userDetails]);
+    }
 
-    $validator = \Validator::make($request->all(),[
-        'Name'=>'required',
-        'email'=>'required|email|max:100',
-        'password'=>'required',
-        'DepartmentID'=>'required',
-        'roleID'=>'required',    
-    ]);
+    // UPDATE USER DETAILS
+    public function updateUserDetails(Request $request)
+    {
+        $user_id = $request->uid;
 
-    if(!$validator->passes()){
-           return response()->json(['code'=>0,'error'=>$validator->errors()->toArray()]);
-    }else{
-         
-        $user = User::find($user_id);
-        $user->Name = $request->Name;
-        $user->email = $request->email;
-        $user->password = \Hash::make($request->password);
-        $user->roleID = $request->roleID;
-        $user->DepartmentID = $request->DepartmentID;
-        $query = $user->save();
+        $validator = \Validator::make($request->all(), [
+            'Name' => 'required',
+            'email' => 'required|email|max:100',
+            'password' => 'required',
+            'DepartmentID' => 'required',
+            'roleID' => 'required',
+        ]);
 
-        if($query){
-            return response()->json(['code'=>1, 'msg'=>'อัพเดทผู้ใช้งานเรียบร้อย']);
-        }else{
-            return response()->json(['code'=>0, 'msg'=>'Something went wrong']);
+        if (! $validator->passes()) {
+            return response()->json(['code' => 0, 'error' => $validator->errors()->toArray()]);
+        } else {
+
+            $user = User::find($user_id);
+            $user->Name = $request->Name;
+            $user->email = $request->email;
+            $user->password = \Hash::make($request->password);
+            $user->roleID = $request->roleID;
+            $user->DepartmentID = $request->DepartmentID;
+            $query = $user->save();
+
+            if ($query) {
+                return response()->json(['code' => 1, 'msg' => 'อัพเดทผู้ใช้งานเรียบร้อย']);
+            } else {
+                return response()->json(['code' => 0, 'msg' => 'Something went wrong']);
+            }
         }
     }
-}
 
-// DELETE USER RECORD
-public function deleteUser(Request $request){
-    $user_id = $request->u_id;
-    $query = User::find($user_id)->delete();
+    // DELETE USER RECORD
+    public function deleteUser(Request $request)
+    {
+        $user_id = $request->u_id;
+        $query = User::find($user_id)->delete();
 
-    if($query){
-        return response()->json(['code'=>1, 'msg'=>'ลบผู้ใช้เรียบร้อย']);
-    }else{
-        return response()->json(['code'=>0, 'msg'=>'Something went wrong']);
+        if ($query) {
+            return response()->json(['code' => 1, 'msg' => 'ลบผู้ใช้เรียบร้อย']);
+        } else {
+            return response()->json(['code' => 0, 'msg' => 'Something went wrong']);
+        }
     }
-}
 }

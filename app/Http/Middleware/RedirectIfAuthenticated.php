@@ -11,8 +11,6 @@ class RedirectIfAuthenticated
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @param  string|null  ...$guards
      * @return mixed
      */
@@ -23,10 +21,9 @@ class RedirectIfAuthenticated
         foreach ($guards as $guard) {
             // if (Auth::guard($guard)->check()) {
             // }
-            if( Auth::guard($guard)->check() && Auth::user()->roleID == 1){
+            if (Auth::guard($guard)->check() && Auth::user()->roleID == 1) {
                 return redirect()->route('admin.dashboard');
-            }
-            elseif( Auth::guard($guard)->check() && Auth::user()->roleID == 2){
+            } elseif (Auth::guard($guard)->check() && Auth::user()->roleID == 2) {
                 return redirect()->route('user.dashboard');
             }
         }
