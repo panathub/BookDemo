@@ -89,6 +89,14 @@ class LogViewerAuthTest extends TestCase
         $this->get('/admin/log-viewer/api/folders', self::UI_HEADERS)->assertStatus(200);
     }
 
+    public function test_admin_reaches_log_viewer_api_in_production()
+    {
+        $this->app['env'] = 'production';
+        $this->signInWithSessionCookie(1);
+
+        $this->get('/admin/log-viewer/api/folders', self::UI_HEADERS)->assertStatus(200);
+    }
+
     public function test_non_admin_ui_request_to_api_is_rejected()
     {
         $this->signInWithSessionCookie(2);
