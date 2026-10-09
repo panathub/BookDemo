@@ -19,4 +19,11 @@ class NotiModalTest extends TestCase
             ->assertOk()
             ->assertJsonPath('details.image', 'logo1.jpg');
     }
+
+    public function test_empty_notice_table_answers_null_instead_of_500(): void
+    {
+        $this->get('/notiModal')
+            ->assertOk()
+            ->assertExactJson(['details' => null]);
+    }
 }

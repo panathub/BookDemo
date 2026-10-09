@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Room;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +23,7 @@ class DemoSeeder extends Seeder
         ]);
 
         DB::table('rooms')->insert(array_map(
-            fn ($room) => array_combine(['RoomID', 'RoomName', 'RoomNumber', 'RoomAmount', 'RoomStatus', 'Image_room'], $room),
+            fn ($room) => array_combine(['RoomID', 'RoomName', 'RoomNumber', 'RoomAmount', 'RoomStatus', 'Image_room', 'slug', 'theme'], [...$room, ...Room::LEGACY_PAGES_BY_ROOM_ID[$room[0]]]),
             [
                 [60, 'Tonkotsu', '#6af3f6', 9, 0, 'TONKOTSU.jpg'],
                 [63, 'Karamiso', '#ff512f', 9, 0, 'KARAMISO.jpg'],

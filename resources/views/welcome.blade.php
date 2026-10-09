@@ -29,12 +29,18 @@
 				<div class="collapse navbar-collapse" id="navbarNav">
 					<div class="mr-auto"></div>
 					<ul class="navbar-nav text-center">
-						
+						<li class="nav-item dropdown">
+							<div class="dropdown">
+								<a class="nav-link text-gradient5">Rooms</a>
+								<div class="dropdown-content">
+									@foreach ($rooms as $room)
+									<a href="{{ route('room.show', $room) }}">{{ $room->RoomName }}</a>
+									@endforeach
+								</div>
+							</div>
+						</li>
 						<li class="nav-item">
 							<a class="nav-link text-gradient5" href="{{ route('login') }}">Login</a>
-						</li>
-						<li>
-
 						</li>
 					</ul>
 				</div>
@@ -83,9 +89,12 @@
 
 			var m_id = $(this).data('id');
 			//* -----------------------------------------------------------------------------
-			$.get('<?= route("karamiso.noti.modal") ?>', {
+			$.get('{{ route('notice.modal') }}', {
 				m_id: m_id
 			}, function(data) {
+				if (data.details === null) {
+					return;
+				}
 				//alert(room_id);   
 				$('.NotiModal').find('input[name="mid"]').val(data.details.id);
 				$('.NotiModal').find('.text').text(data.details.text);

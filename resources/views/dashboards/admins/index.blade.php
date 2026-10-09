@@ -292,9 +292,12 @@
 @if (Session::has('success'))
 <script>
 	var m_id = $(this).data('id');
-	$.get('<?= route("karamiso.noti.modal") ?>', {
+	$.get('{{ route('notice.modal') }}', {
 		m_id: m_id
 	}, function(data) {
+		if (data.details === null) {
+			return;
+		}
 		//alert(room_id);   
 		$('.NotiModal').find('input[name="mid"]').val(data.details.id);
 		$('.NotiModal').find('.text').text(data.details.text);

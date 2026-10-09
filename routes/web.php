@@ -7,16 +7,11 @@ use App\Http\Controllers\CheckRoomController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FullCalendarController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\KaramisoController;
-use App\Http\Controllers\KinokoController;
 use App\Http\Controllers\ManageBookingController;
 use App\Http\Controllers\ManageUserController;
-use App\Http\Controllers\NabezoController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoomController;
-use App\Http\Controllers\ShabuController;
-use App\Http\Controllers\SukiyakiController;
-use App\Http\Controllers\TonkotsuController;
+use App\Http\Controllers\RoomDisplayController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -32,10 +27,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Route::middleware(['middleware' => 'PreventBackHistory'])->group(function () {
     Auth::routes();
 });
@@ -45,6 +36,7 @@ Route::get('/', [RoomController::class, 'getAllRooms'])->name('all.room');
 // !-----------------------------------------Modal---------------------------------------
 Route::get('/getModalDetails', [AdminController::class, 'getModalDetails'])->name('get.modal.details');
 Route::post('/updateModalDetails', [AdminController::class, 'updateModalDetails'])->middleware(['auth', 'isAdmin'])->name('update.modal.details');
+Route::get('/notiModal', [AdminController::class, 'getNotice'])->name('notice.modal');
 
 // !-----------------------------------------FullCalendar-------------------------------
 Route::get('index', [FullCalendarController::class, 'index'])->name('index');
@@ -55,42 +47,14 @@ Route::get('/getBookingIndexDetails', [FullCalendarController::class, 'getBookin
 
 Route::post('/verifyMeeting', [ManageBookingController::class, 'verifyMeeting'])->middleware('auth')->name('verify.meeting');
 
-// !-----------------------------------------Karamiso Index Room---------------------------------------
-Route::get('/karamiso', [KaramisoController::class, 'index'])->name('get.karamiso');
-Route::get('/getBookingKara', [KaramisoController::class, 'getBookingKara'])->name('get.booking.kara');
-Route::get('/getBookingKara2Test', [KaramisoController::class, 'getBookingKara2TEST'])->name('get.booking.kara.test');
-Route::post('/deleteBookingKaramiso', [KaramisoController::class, 'deleteBookingKaramiso'])->middleware('auth')->name('delete.booking.karamiso');
-Route::get('/notiModal', [KaramisoController::class, 'getNotiModal'])->name('karamiso.noti.modal');
+Route::get('/room/{room:slug}', [RoomDisplayController::class, 'show'])->name('room.show');
+Route::get('/room/{room:slug}/upcoming', [RoomDisplayController::class, 'upcoming'])->name('room.upcoming');
+Route::post('/room/{room:slug}/verify', [RoomDisplayController::class, 'verify'])->middleware('auth')->name('room.verify');
 
-// !-----------------------------------------Nabezo Index Room---------------------------------------
-Route::get('/nabezo', [NabezoController::class, 'index'])->name('get.nabezo');
-Route::get('/getBookingNabezo', [NabezoController::class, 'getBookingNabe'])->name('get.booking.nabezo');
-Route::get('/getBookingNabe2Test', [NabezoController::class, 'getBookingNabe2TEST'])->name('get.booking.nabezo.test');
-Route::post('/deleteBookingNabezo', [NabezoController::class, 'deleteBookingNabezo'])->middleware('auth')->name('delete.booking.nabezo');
-
-// !-----------------------------------------Tonkotsu Index Room---------------------------------------
-Route::get('/tonkotsu', [TonkotsuController::class, 'index'])->name('get.tonkotsu');
-Route::get('/getBookingTonkotsu', [TonkotsuController::class, 'getBookingTonkotsu'])->name('get.booking.tonkotsu');
-Route::get('/getBookingTonkotsu2Test', [TonkotsuController::class, 'getBookingTonkotsu2TEST'])->name('get.booking.tonkotsu.test');
-Route::post('/deleteBookingTonkotsu', [TonkotsuController::class, 'deleteBookingTonkotsu'])->middleware('auth')->name('delete.booking.tonkotsu');
-
-// !-----------------------------------------Sukiyaki Index Room---------------------------------------
-Route::get('/sukiyaki', [SukiyakiController::class, 'index'])->name('get.sukiyaki');
-Route::get('/getBookingSukiyaki', [SukiyakiController::class, 'getBookingSukiyaki'])->name('get.booking.sukiyaki');
-Route::get('/getBookingSukiyaki2Test', [SukiyakiController::class, 'getBookingSukiyaki2TEST'])->name('get.booking.sukiyaki.test');
-Route::post('/deleteBookingSukiyaki', [SukiyakiController::class, 'deleteBookingSukiyaki'])->middleware('auth')->name('delete.booking.sukiyaki');
-
-// !-----------------------------------------Shabushabu Index Room---------------------------------------
-Route::get('/shabushabu', [ShabuController::class, 'index'])->name('get.shabu');
-Route::get('/getBookingShabu', [ShabuController::class, 'getBookingShabu'])->name('get.booking.shabu');
-Route::get('/getBookingShabu2Test', [ShabuController::class, 'getBookingShabu2TEST'])->name('get.booking.shabu.test');
-Route::post('/deleteBookingShabu', [ShabuController::class, 'deleteBookingShabu'])->middleware('auth')->name('delete.booking.shabu');
-
-// !-----------------------------------------Kinoko Index Room---------------------------------------
-Route::get('/kinoko', [KinokoController::class, 'index'])->name('get.kinoko');
-Route::get('/getBookingKinoko', [KinokoController::class, 'getBookingKinoko'])->name('get.booking.kinoko');
-Route::get('/getBookingKinoko2Test', [KinokoController::class, 'getBookingKinoko2TEST'])->name('get.booking.kinoko.test');
-Route::post('/deleteBookingKinoko', [KinokoController::class, 'deleteBookingKinoko'])->middleware('auth')->name('delete.booking.kinoko');
+foreach (['karamiso', 'tonkotsu', 'sukiyaki', 'shabushabu', 'kinoko'] as $slug) {
+    Route::redirect("/$slug", "/room/$slug", 301);
+}
+Route::redirect('/nabezo', '/', 301);
 
 Route::group(['prefix' => 'admin', 'middleware' => ['isAdmin', 'auth']], function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');

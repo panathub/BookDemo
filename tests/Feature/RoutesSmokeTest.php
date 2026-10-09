@@ -18,12 +18,6 @@ class RoutesSmokeTest extends TestCase
     private const BROKEN_BEFORE_REBASE = [
         '/admin/profile',
         '/admin/accessories',
-        '/getBookingNabezo',
-        '/getBookingNabe2Test',
-        '/getBookingSukiyaki2Test',
-        '/getBookingShabu2Test',
-        '/getBookingKinoko2Test',
-        '/notiModal',
         '/user/settings',
     ];
 
@@ -42,7 +36,7 @@ class RoutesSmokeTest extends TestCase
             if (! self::isAppGetRoute($route)) {
                 continue;
             }
-            $uri = '/'.preg_replace('/\{[^}]+\}/', '1', $route->uri());
+            $uri = '/'.preg_replace('/\{[^}]+\}/', '1', str_replace('{room}', 'karamiso', $route->uri()));
             if (in_array($uri, self::BROKEN_BEFORE_REBASE, true)) {
                 continue;
             }

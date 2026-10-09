@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Modal;
 use App\Models\User;
 use Auth;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -114,6 +115,11 @@ class AdminController extends Controller
                 return response()->json(['status' => 1, 'msg' => 'Your password has been changed successfully']);
             }
         }
+    }
+
+    public function getNotice(): JsonResponse
+    {
+        return response()->json(['details' => Modal::query()->first()]);
     }
 
     // GET MODAL DETAILS

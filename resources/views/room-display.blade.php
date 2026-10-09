@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 	<meta http-equiv="refresh" content="900">
-	<title>Noble-MeetingsRoom</title>
+	<title>{{ $room->RoomName }} - Noble-MeetingsRoom</title>
 	<base href="{{ \URL::to('/') }}">
 	<link rel="icon" href="img/Noble.webp">
 	<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
 			<span class="loader-inner"></span>
 		</span>
 	</div>
-	<header style="background-image: linear-gradient(225deg, #FF3CAC 0%, #784BA0 50%, #2B86C5 100%);">
+	<header style="background: {{ $room->theme }};">
 		<div class="container-fluid p-3">
 			<nav class="navbar navbar-expand-lg">
 				<a class="navbar-brand" href="#">
@@ -39,12 +39,11 @@
 						</li>
 						<li class="nav-item dropdown">
 							<div class="dropdown">
-								<a class="nav-link" style="color: #F5F5F5">ห้องประชุม</a>
+								<a class="nav-link" style="color:#F5F5F5">ห้องประชุม</a>
 								<div class="dropdown-content">
-									<a href="{{ route('get.tonkotsu') }}">Tonkotsu</a>
-									<a href="{{ route('get.sukiyaki') }}">Sukiyaki</a>
-									<a href="{{ route('get.shabu') }}">ShabuShabu</a>
-									<a href="{{ route('get.karamiso') }}">Karamiso</a>
+									@foreach ($rooms as $other)
+									<a href="{{ route('room.show', $other) }}">{{ $other->RoomName }}</a>
+									@endforeach
 								</div>
 							</div>
 						</li>
@@ -58,15 +57,14 @@
 		<div class="container text-center" style="padding-top:20px; padding-bottom:40px;">
 			<div class="col-md-8 col-sm-12  text-white">
 				<h5>{{\Carbon\Carbon::now()->thaidate('lที่ j F พ.ศ. Y')}}<span id='ct5'></span></h5>
-				<form action="<?= route('verify.meeting') ?>" method="POST" enctype="multipart/form-data" id="verify-booking-form">
+				<form action="{{ route('room.verify', $room) }}" method="POST" id="verify-booking-form">
 					@csrf
+					<input type="hidden" name="bkid">
 					<div class="row justify-content-center">
-						<input type="hidden" name="bkid">
-						<input type="hidden" name="rid">
-						<h2>ห้องประชุม</h2>&nbsp;<h2>Kinoko</h2>
+						<h2>ห้องประชุม</h2>&nbsp;<h2>{{ $room->RoomName }}</h2>
 					</div>
 					<h6>สถานะ</h6>
-					<h3 class="BookingStatus"></h3>
+					<h3 class="BookingStatus">-</h3>
 			</div>
 		</div>
 	</header>
@@ -81,19 +79,20 @@
 						<div>
 							<h1 class="Booking_start">-</h1>
 							<h1 class="Booking_end">-</h1>
-							<h1 class="BookingTitle"></h1>
+							<h1 class="BookingTitle">-</h1>
 						</div>
 						<div>
 							<h3>By</h3>
 							<div class="row col">
 								<h3 class="name">-</h3>
 								&nbsp;&nbsp;&nbsp;
-								<h3 class="DepartmentName"><span style="display:none">d</span></h3>
+								<h3 class="DepartmentName">-</h3>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="container text-center">
+					<button type="submit" class="btn btn-light px-5 py-2 primary-btn" id="verifyHomeBtn" hidden>ยืนยันการใช้ห้อง</button>
 					</form>
 				</div>
 		</section>
@@ -117,7 +116,7 @@
 		}
 
 		function display_c5() {
-			var refresh = 1000; // Refresh rate in milli seconds
+			var refresh = 1000;
 			mytime = setTimeout('display_ct5()', refresh);
 		}
 		display_c5();
@@ -136,57 +135,58 @@
 			}
 		});
 		$(function() {
-			$(document).ready(function() {
-				var booking_id = $(this).data('id');
-				var today = new Date();
-				var presentTime = today.getFullYear() + "-" + ('0' + (today.getMonth() + 1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2) + " " + ('0' + today.getHours()).slice(-2) + ":" + ('0' + today.getMinutes()).slice(-2);
-				times = new Date(today.setMinutes(today.getMinutes() + 30));
-				var timeAfter30Mins = moment(times).locale('th').format('LT');
-				//* -----------------------------------------------------------------------------
-				$.get('<?= route("get.booking.kinoko") ?>', {
-					booking_id: booking_id
-				}, function(data) {
-					$('input[name="bkid"]').val(data.details.BookingID);
-					$('input[name="rid"]').val(data.details.RoomID);
+			function renderUpcoming(details) {
+				$('#verifyHomeBtn').prop('hidden', details === null);
+				if (details === null) {
+					$('.name, .DepartmentName, .BookingTitle, .Booking_start, .Booking_end, .BookingStatus').text('-');
+					return;
+				}
+				$('input[name="bkid"]').val(details.BookingID);
+				$('.name').text(details.name);
+				$('.DepartmentName').text(details.DepartmentName);
+				$('.BookingTitle').text(details.BookingTitle);
+				$('.Booking_start').text(moment(details.Booking_start).locale('th').format('DD-MM-YYYY เวลา LT'));
+				$('.Booking_end').text(moment(details.Booking_end).locale('th').format('DD-MM-YYYY เวลา LT'));
+				if (details.BookingStatus == 0) {
+					$('.BookingStatus').html('<span class="text-white"><i class="fas fa-check text-white"></i> รอยืนยันการใช้ห้องประชุม</span>');
+				} else {
+					$('.BookingStatus').html('<span class="text-white"><i class="fas fa-clock text-white"></i> กำลังดำเนินการประชุม</span>');
+				}
+			}
 
-					$('.name').text(data.details.name);
-					$('.DepartmentName').text(data.details.DepartmentName);
-					$('.BookingTitle').text(data.details.BookingTitle);
-					$('.Booking_start').text(moment(data.details.Booking_start).locale('th').format('DD-MM-YYYY เวลา LT'));
-					$('.Booking_end').text(moment(data.details.Booking_end).locale('th').format('DD-MM-YYYY เวลา LT'));
-					$('.BookingStatus').text('ไม่มีการจอง');
-					if (data.details.BookingStatus == 0) {
-						$('.BookingStatus').html('<span class="text-white">' + '<i class="fas fa-check text-white"></i>' + ' รอยืนยันการใช้ห้องประชุม' + '</span>');
-					} else {
-						$('.BookingStatus').html('<span class="text-white">' + '<i class="fas fa-clock text-white"></i>' + ' กำลังดำเนินการประชุม' + '</span>');
-					}
-				});
-				displayModal()
+			function loadUpcoming() {
+				$.get('{{ route('room.upcoming', $room) }}', function(data) {
+					renderUpcoming(data.details);
+				}, 'json');
+			}
+
+			$('#verify-booking-form').on('submit', function(e) {
+				e.preventDefault();
+				$.post($(this).attr('action'), $(this).serialize(), function(data) {
+					Swal.fire({ icon: data.code === 1 ? 'success' : 'error', title: data.msg, showConfirmButton: false, timer: 2000 });
+					loadUpcoming();
+				}, 'json');
 			});
 
 			function displayModal() {
-				var m_id = $(this).data('id');
-				//* -----------------------------------------------------------------------------
-				$.get('<?= route("karamiso.noti.modal") ?>', {
-					m_id: m_id
-				}, function(data) {
-					//alert(room_id);   
+				$.get('{{ route('notice.modal') }}', function(data) {
+					if (data.details === null) {
+						return;
+					}
 					$('.NotiModal').find('input[name="mid"]').val(data.details.id);
 					$('.NotiModal').find('.text').text(data.details.text);
 					$("#image").html(`<img src="{{ asset('storage/img/Image_Room') }}/${data.details.image}" width="55%" height="55%" class="img-center">`);
 					$('.NotiModal').modal('show');
+					setTimeout(function() {
+						$('.NotiModal').modal('hide')
+					}, 5000);
 				}, 'json');
-				setTimeout(function() {
-					$('.NotiModal').modal('hide')
-				}, 5000);
+			}
 
-			};
-
+			loadUpcoming();
+			displayModal();
 		});
 	</script>
-
-
-
 
 </body>
 
