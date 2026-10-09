@@ -26,6 +26,10 @@ return new class extends Migration
 
     public function down()
     {
+        if (app()->isProduction()) {
+            throw new RuntimeException('refusing to drop production tables');
+        }
+
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign('foreign key DepartmentID');
             $table->dropForeign('foreign key roleID');

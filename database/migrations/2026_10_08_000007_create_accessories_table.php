@@ -22,6 +22,10 @@ return new class extends Migration
 
     public function down()
     {
+        if (app()->isProduction()) {
+            throw new RuntimeException('refusing to drop production tables');
+        }
+
         Schema::dropIfExists('accessories');
     }
 };
