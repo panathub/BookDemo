@@ -59,7 +59,7 @@ class RoutesSmokeTest extends TestCase
 
         $status = $this->actingAs(User::find(1))->get($uri)->getStatusCode();
 
-        $this->assertContains($status, [200, 301, 302], "GET $uri returned $status");
+        $this->assertContains($status, [200, 302], "GET $uri returned $status");
     }
 
     public static function userGetRoutes(): array
