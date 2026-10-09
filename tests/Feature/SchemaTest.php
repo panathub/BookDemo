@@ -17,7 +17,7 @@ class SchemaTest extends TestCase
         $booking = ['BookingTitle', 'BookingAmount', 'Booking_start', 'Booking_end', 'BookingDetail', 'BookingStatus', 'RoomStatus', 'VerifyStatus', 'id', 'RoomID'];
 
         return [
-            'rooms' => ['rooms', ['RoomID', 'RoomName', 'RoomNumber', 'RoomAmount', 'RoomStatus', 'Image_room']],
+            'rooms' => ['rooms', ['RoomID', 'RoomName', 'RoomNumber', 'RoomAmount', 'RoomStatus', 'Image_room', 'slug', 'theme']],
             'department' => ['department', ['DepartmentID', 'DepartmentName']],
             'role' => ['role', ['roleID', 'roleName']],
             'reports' => ['reports', array_merge(['ReportID'], $booking)],
