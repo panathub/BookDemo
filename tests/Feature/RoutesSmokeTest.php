@@ -24,7 +24,10 @@ class RoutesSmokeTest extends TestCase
         '/getBookingShabu2Test',
         '/getBookingKinoko2Test',
         '/notiModal',
+        '/user/settings',
     ];
+
+    private const SEEDED_ROOM = 60;
 
     public static function appGetRoutes(): array
     {
@@ -63,5 +66,26 @@ class RoutesSmokeTest extends TestCase
         $status = $this->actingAs(User::find(1))->get($uri)->getStatusCode();
 
         $this->assertContains($status, [200, 302], "GET $uri returned $status");
+    }
+
+    public static function userGetRoutes(): array
+    {
+        $cases = [];
+        foreach (array_keys(self::appGetRoutes()) as $uri) {
+            if (str_starts_with($uri, '/user/')) {
+                $uri = str_replace('/checkroom/1', '/checkroom/'.self::SEEDED_ROOM, $uri);
+                $cases[$uri] = [$uri];
+            }
+        }
+
+        return $cases;
+    }
+
+    #[DataProvider('userGetRoutes')]
+    public function test_user_get_route_renders_for_user(string $uri): void
+    {
+        $this->seed(DemoSeeder::class);
+
+        $this->actingAs(User::find(2))->get($uri)->assertOk();
     }
 }
