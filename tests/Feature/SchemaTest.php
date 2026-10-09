@@ -5,13 +5,14 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class SchemaTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function liveTables()
+    public static function liveTables(): array
     {
         $booking = ['BookingTitle', 'BookingAmount', 'Booking_start', 'Booking_end', 'BookingDetail', 'BookingStatus', 'RoomStatus', 'VerifyStatus', 'id', 'RoomID'];
 
@@ -29,9 +30,7 @@ class SchemaTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider liveTables
-     */
+    #[DataProvider('liveTables')]
     public function test_table_has_exactly_the_live_columns($table, $columns)
     {
         $this->assertEqualsCanonicalizing($columns, Schema::getColumnListing($table));

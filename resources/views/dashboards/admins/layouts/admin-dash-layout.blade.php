@@ -71,7 +71,7 @@
 								</a>
 							</li>
 							<li class="nav-item">
-								<?php $partsm = DB::connection('mysql')->select('select * from modal'); ?>
+								<?php $partsm = DB::select('select * from modal'); ?>
 								@foreach($partsm as $partm)
 								<a href="#editModal" data-toggle="modal" is class="nav-link open-editModal" data-id="{{$partm->id}}">
 									<i class="ni ni-folder-17 text-danger"></i>
@@ -103,7 +103,7 @@
 						<!-- Navigation -->
 					</div>
                                         <div class="d-flex flex-wrap flex-column align-items-start">
-						<?php $partsR = DB::connection('mysql')->select('select * from rooms'); ?>
+						<?php $partsR = DB::select('select * from rooms'); ?>
 						@foreach($partsR as $row)
 						<span class="badge badge-dot badge-lg mr-4">
 							<i style="background-color: {{$row->RoomNumber}}"></i>

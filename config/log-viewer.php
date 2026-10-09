@@ -1,5 +1,8 @@
 <?php
 
+use Opcodes\LogViewer\Http\Middleware\AuthorizeLogViewer;
+use Opcodes\LogViewer\Http\Middleware\EnsureFrontendRequestsAreStateful;
+
 return [
 
     /*
@@ -31,7 +34,7 @@ return [
     |
     */
 
-    'route_path' => "/admin/log-viewer",
+    'route_path' => '/admin/log-viewer',
 
     /*
     |--------------------------------------------------------------------------
@@ -71,7 +74,7 @@ return [
         'web',
         'auth',
         'isAdmin',
-        \Opcodes\LogViewer\Http\Middleware\AuthorizeLogViewer::class,
+        AuthorizeLogViewer::class,
     ],
 
     /*
@@ -84,10 +87,10 @@ return [
     */
 
     'api_middleware' => [
-        \Opcodes\LogViewer\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        EnsureFrontendRequestsAreStateful::class,
         'auth',
         'isAdmin',
-        \Opcodes\LogViewer\Http\Middleware\AuthorizeLogViewer::class,
+        AuthorizeLogViewer::class,
     ],
 
     /*

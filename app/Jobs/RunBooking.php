@@ -2,13 +2,12 @@
 
 namespace App\Jobs;
 
+use App\Models\Bookings;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Bookings;
 use Illuminate\Support\Facades\Log;
 
 class RunBooking implements ShouldQueue
@@ -20,8 +19,8 @@ class RunBooking implements ShouldQueue
      *
      * @return void
      */
+    private $data;
 
-	private $data;
     public function __construct(Bookings $Booking)
     {
         $this->data = $Booking;
@@ -34,7 +33,7 @@ class RunBooking implements ShouldQueue
      */
     public function handle()
     {
-	   Log::info('id: '. $this->data->BookingID. ' deleted by job');	
-       $this->data->delete();
+        Log::info('id: '.$this->data->BookingID.' deleted by job');
+        $this->data->delete();
     }
 }

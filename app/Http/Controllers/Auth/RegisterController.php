@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-
-use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -31,7 +29,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
@@ -46,7 +44,6 @@ class RegisterController extends Controller
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
@@ -62,7 +59,7 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\Models\User
+     * @return User
      */
     // protected function create(array $data)
     // {
@@ -75,28 +72,27 @@ class RegisterController extends Controller
     //     ]);
     // }
 
-    function register(Request $request){
+    public function register(Request $request)
+    {
 
-         $request->validate([
+        $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-         ]);
+        ]);
 
-         $user = new User();
-         $user->name = $request->name;
-         $user->email = $request->email;
-         $user->roleID = 2;
-         $user->password = \Hash::make($request->password);
+        $user = new User;
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->roleID = 2;
+        $user->password = \Hash::make($request->password);
 
-         if( $user->save() ){
+        if ($user->save()) {
 
-            return redirect()->back()->with('success','You are now successfully registerd');
-         }else{
-             return redirect()->back()->with('error','Failed to register');
-         }
+            return redirect()->back()->with('success', 'You are now successfully registerd');
+        } else {
+            return redirect()->back()->with('error', 'Failed to register');
+        }
 
     }
-
-
 }

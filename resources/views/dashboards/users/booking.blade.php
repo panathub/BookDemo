@@ -54,7 +54,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 						</div>
 						<p></p>
 						<!-- php  -->
-						<?php $partsR = DB::connection('mysql')->select('select * from rooms'); ?>
+						<?php $partsR = DB::select('select * from rooms'); ?>
 						<!-- end php  -->
 						<div class="row">
 							<div class="col-6 col-md-5">
@@ -180,7 +180,7 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(
 					</div>
 					<p></p>
 					<!-- php  -->
-					<?php $partsR = DB::connection('mysql')->select('select * from rooms'); ?>
+					<?php $partsR = DB::select('select * from rooms'); ?>
 					<!-- end php  -->
 					<div class="row">
 						<div class="col-6 col-md-5">

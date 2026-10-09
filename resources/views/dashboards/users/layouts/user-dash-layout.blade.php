@@ -62,7 +62,7 @@
 							<div class="collapse {{(request()->is('user/checkroom/*')) ? 'show' : ''}}" id="navbar-examples" style="">
 								<ul class="nav nav-sm flex-column">
 									<!-- php  -->
-									<?php $partsR = DB::connection('mysql')->select('select * from rooms'); ?>
+									<?php $partsR = DB::select('select * from rooms'); ?>
 									<!-- end php  -->
 									@foreach($partsR as $row)
 									<li class="nav-item">
@@ -106,7 +106,7 @@
 						<!-- Navigation -->
 					</div>
 					<div class="d-flex flex-wrap flex-column align-items-start">
-						<?php $partsR = DB::connection('mysql')->select('select * from rooms'); ?>
+						<?php $partsR = DB::select('select * from rooms'); ?>
 						@foreach($partsR as $row)
 						<span class="badge badge-dot badge-lg mr-4">
 							<i style="background-color: {{$row->RoomNumber}}"></i>

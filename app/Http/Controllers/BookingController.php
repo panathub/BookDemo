@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Bookings;
-use App\Models\Room;
 use App\Models\Report;
-use DataTables;
+use App\Models\Room;
 use Carbon\Carbon;
 use DB;
+use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class BookingController extends Controller
 {
@@ -17,7 +17,7 @@ class BookingController extends Controller
         return view('dashboards.users.booking');
     }
 
-    //ADD NEW BOOKING
+    // ADD NEW BOOKING
     public function addUserBooking(Request $request)
     {
         $validator = \Validator::make($request->all(), [
@@ -31,7 +31,7 @@ class BookingController extends Controller
             'Booking_end.after' => 'วันที่สิ้นสุดการจองจะต้องอยู่หลังวันที่เริ่มต้นการจอง',
         ]);
 
-        if (!$validator->passes()) {
+        if (! $validator->passes()) {
             return response()->json(['code' => 0, 'error' => $validator->errors()->toArray()]);
         } else {
 
@@ -68,13 +68,13 @@ class BookingController extends Controller
 
             $datacheck = DB::select($check);
             $check2 = Room::where('RoomID', $check_room)->first();
-          
+
             if ($check_amount > $check2->RoomAmount) {
                 return response()->json(['code' => 2, 'msg' => "ห้อง $check2->RoomName จำนวนคนต้องไม่เกิน $check2->RoomAmount คน"]);
-            } else if (!empty($datacheck)) {
+            } elseif (! empty($datacheck)) {
                 return response()->json(['code' => 3, 'msg' => 'มีการจองช่วงเวลานี้อยู่แล้ว']);
             } else {
-                $addreport = new Report();
+                $addreport = new Report;
                 $addreport->id = \Auth::user()->id;
                 $addreport->RoomID = $request->RoomID;
                 $addreport->BookingTitle = $request->BookingTitle;
@@ -85,7 +85,7 @@ class BookingController extends Controller
                 $addreport->RoomStatus = 1;
                 $addreport->save();
 
-                $addbook = new Bookings();
+                $addbook = new Bookings;
                 $addbook->ReportID = $addreport->ReportID;
                 $addbook->id = \Auth::user()->id;
                 $addbook->RoomID = $request->RoomID;
@@ -98,7 +98,7 @@ class BookingController extends Controller
 
                 $query = $addbook->save();
 
-                if (!$query) {
+                if (! $query) {
                     return response()->json(['code' => 0, 'msg' => 'Something went wrong']);
                 } else {
                     return response()->json(['code' => 1, 'msg' => 'เพิ่มการจองเรียบร้อย']);
@@ -106,6 +106,7 @@ class BookingController extends Controller
             }
         }
     }
+
     // GET ALL BOOKING
     public function getUserBookingList()
     {
@@ -125,11 +126,11 @@ class BookingController extends Controller
                     return '';
                 } else {
                     return '      
-                                 <button class="btn btn-sm btn-info" data-id="' . $row->BookingID . '" id="infoBookingBtn">
+                                 <button class="btn btn-sm btn-info" data-id="'.$row->BookingID.'" id="infoBookingBtn">
                                  <i class="fas fa-info-circle"></i></button>
-                                 <button class="btn btn-sm btn-primary" data-id="' . $row->BookingID . '" id="editBookingBtn">
+                                 <button class="btn btn-sm btn-primary" data-id="'.$row->BookingID.'" id="editBookingBtn">
                                  <i class="fas fa-edit"></i></button>
-                                 <button class="btn btn-sm btn-danger" data-id="' . $row->BookingID . '" id="deleteBookingBtn">
+                                 <button class="btn btn-sm btn-danger" data-id="'.$row->BookingID.'" id="deleteBookingBtn">
                                  <i class="fas fa-trash-alt"></i></button>
                                  ';
                 }
@@ -138,7 +139,7 @@ class BookingController extends Controller
             ->make(true);
     }
 
-    //GET BOOKING DETAILS
+    // GET BOOKING DETAILS
     public function getUserBookingDetails(Request $request)
     {
         $booking_id = $request->booking_id;
@@ -153,7 +154,7 @@ class BookingController extends Controller
         return response()->json(['details' => $dataUserBookingDetail]);
     }
 
-    //UPDATE BOOKING DETAILS
+    // UPDATE BOOKING DETAILS
     public function updateUserBookingDetails(Request $request)
     {
         $booking_id = $request->bkid;
@@ -169,7 +170,7 @@ class BookingController extends Controller
             'Booking_end.after' => 'วันที่สิ้นสุดการจองจะต้องอยู่หลังวันที่เริ่มต้นการจอง',
         ]);
 
-        if (!$validator->passes()) {
+        if (! $validator->passes()) {
             return response()->json(['code' => 0, 'error' => $validator->errors()->toArray()]);
         } else {
 
@@ -189,7 +190,7 @@ class BookingController extends Controller
 
             $datacheck = DB::select($check);
 
-            if (!empty($datacheck)) {
+            if (! empty($datacheck)) {
                 return response()->json(['code' => 2, 'msg' => 'มีการจองรอยืนยัน']);
             } else {
 

@@ -58,7 +58,7 @@
 						</div>
 						<p></p>
 						<!-- php  -->
-						<?php $partsR = DB::connection('mysql')->select('select * from rooms'); ?>
+						<?php $partsR = DB::select('select * from rooms'); ?>
 						<!-- end php  -->
 						<div class="row">
 							<div class="col-6 col-md-5">
@@ -276,7 +276,7 @@
 					</div>
 					<p></p>
 					<!-- php  -->
-					<?php $partsR = DB::connection('mysql')->select('select * from rooms'); ?>
+					<?php $partsR = DB::select('select * from rooms'); ?>
 					<!-- end php  -->
 					<div class="row">
 						<div class="col-6 col-md-5">

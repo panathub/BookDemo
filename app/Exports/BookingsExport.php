@@ -3,18 +3,21 @@
 namespace App\Exports;
 
 use App\Models\Bookings;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\Exportable;
 
-class BookingsExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize
+class BookingsExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping
 {
     use Exportable;
 
     protected $startDate;
+
     protected $endDate;
+
     protected $room;
 
     public function __construct($startDate, $endDate, $room)
@@ -23,7 +26,8 @@ class BookingsExport implements FromCollection, WithHeadings, WithMapping, Shoul
         $this->endDate = $endDate;
         $this->room = $room;
     }
-    public function collection()
+
+    public function collection(): Collection
     {
         $query = Bookings::query()
             ->with(['user.department', 'room'])
@@ -31,13 +35,13 @@ class BookingsExport implements FromCollection, WithHeadings, WithMapping, Shoul
             ->whereBetween('Booking_start', [$this->startDate, $this->endDate])
             ->orderBy('Booking_start', 'asc');
 
-            if ($this->room) {
-                $query->whereHas('room', function ($query) {
-                    $query->where('RoomName', $this->room);
-                });
-            }
+        if ($this->room) {
+            $query->whereHas('room', function ($query) {
+                $query->where('RoomName', $this->room);
+            });
+        }
 
-            return $query->get();
+        return $query->get();
 
     }
 
@@ -72,7 +76,7 @@ class BookingsExport implements FromCollection, WithHeadings, WithMapping, Shoul
             'หัวข้อการประชุม',
             'จำนวนผู้เข้าประชุม',
             'รายละเอียดการประชุม',
-            'สถานะการอนุมัติ'
+            'สถานะการอนุมัติ',
         ];
     }
 }

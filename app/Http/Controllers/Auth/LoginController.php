@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-
 use Illuminate\Http\Request;
 
 class LoginController extends Controller
@@ -28,19 +26,18 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
-      protected function redirectTo(){
-          if( Auth()->user()->roleID == 1){
-              return route('admin.dashboard');
-          }
-          elseif( Auth()->user()->roleID == 2){
-              return route('user.dashboard');
-          }
-          elseif( Auth()->user()->roleID == 3){
+    protected $redirectTo = '/home';
+
+    protected function redirectTo()
+    {
+        if (Auth()->user()->roleID == 1) {
+            return route('admin.dashboard');
+        } elseif (Auth()->user()->roleID == 2) {
+            return route('user.dashboard');
+        } elseif (Auth()->user()->roleID == 3) {
             return route('headuser.dashboard');
         }
-      }
-
+    }
 
     /**
      * Create a new controller instance.
@@ -52,28 +49,27 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function login(Request $request){
-       $input = $request->all();
-       $this->validate($request,[
-           'email'=>'required|email',
-           'password'=>'required'
-       ]);
+    public function login(Request $request)
+    {
+        $input = $request->all();
+        $this->validate($request, [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-       if( auth()->attempt(array('email'=>$input['email'], 'password'=>$input['password'])) ){
+        if (auth()->attempt(['email' => $input['email'], 'password' => $input['password']])) {
 
-        if( auth()->user()->roleID == 1 ){
-            return redirect()->route('admin.dashboard')->with('success','dd');
-        }
-        elseif( auth()->user()->roleID == 2 ){
-            return redirect()->route('user.dashboard')->with('success','dd');
-        }
-        elseif( auth()->user()->roleID == 3 ){
-            return redirect()->route('headuser.dashboard');
-        }
+            if (auth()->user()->roleID == 1) {
+                return redirect()->route('admin.dashboard')->with('success', 'dd');
+            } elseif (auth()->user()->roleID == 2) {
+                return redirect()->route('user.dashboard')->with('success', 'dd');
+            } elseif (auth()->user()->roleID == 3) {
+                return redirect()->route('headuser.dashboard');
+            }
 
-       }else{
-           return redirect()->route('login')->with('fail','Email and password are wrong')->withInput();
-           
-       }
+        } else {
+            return redirect()->route('login')->with('fail', 'Email and password are wrong')->withInput();
+
+        }
     }
 }

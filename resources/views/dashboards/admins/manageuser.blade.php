@@ -164,7 +164,7 @@
                                 </-div>
                                 <div-- class="img-holder"></div-->
 						<!-- php  -->
-						<?php $partsD = DB::connection('mysql')->select('select * from department'); ?>
+						<?php $partsD = DB::select('select * from department'); ?>
 						<!-- end php  -->
 
 						<div class="form-group">
@@ -179,7 +179,7 @@
 						</div>
 
 						<!-- php  -->
-						<?php $partsR = DB::connection('mysql')->select('select * from role'); ?>
+						<?php $partsR = DB::select('select * from role'); ?>
 						<!-- end php  -->
 
 						<div class="form-group">
@@ -238,7 +238,7 @@
 						</div>
 
 						<!-- php  -->
-						<?php $partsD = DB::connection('mysql')->select('select * from department'); ?>
+						<?php $partsD = DB::select('select * from department'); ?>
 						<!-- end php  -->
 
 						<div class="form-group">
@@ -254,7 +254,7 @@
 						</div>
 
 						<!-- php  -->
-						<?php $partsR = DB::connection('mysql')->select('select * from role'); ?>
+						<?php $partsR = DB::select('select * from role'); ?>
 						<!-- end php  -->
 
 						<div class="form-group">

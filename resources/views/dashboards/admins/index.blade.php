@@ -26,7 +26,7 @@
 </div>
 </div>
 <!-- php  -->
-<?php $partsR = DB::connection('mysql')->select('select * from rooms'); ?>
+<?php $partsR = DB::select('select * from rooms'); ?>
 <!-- end php  -->
 <div class="container-fluid mt--6">
 	<div class="row justify-content-center">

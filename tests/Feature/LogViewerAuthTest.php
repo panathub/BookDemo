@@ -28,7 +28,8 @@ class LogViewerAuthTest extends TestCase
         $user->id = 1;
 
         Auth::provider('in-memory', function () use ($user) {
-            return new class($user) implements UserProvider {
+            return new class($user) implements UserProvider
+            {
                 private $user;
 
                 public function __construct(User $user)
@@ -46,9 +47,7 @@ class LogViewerAuthTest extends TestCase
                     return null;
                 }
 
-                public function updateRememberToken(Authenticatable $user, $token)
-                {
-                }
+                public function updateRememberToken(Authenticatable $user, $token) {}
 
                 public function retrieveByCredentials(array $credentials)
                 {
@@ -59,6 +58,8 @@ class LogViewerAuthTest extends TestCase
                 {
                     return false;
                 }
+
+                public function rehashPasswordIfRequired(Authenticatable $user, array $credentials, bool $force = false) {}
             };
         });
         config(['auth.providers.users.driver' => 'in-memory']);
@@ -66,7 +67,7 @@ class LogViewerAuthTest extends TestCase
         $sessionId = Str::random(40);
         $this->app['session']->driver()->getHandler()->write(
             $sessionId,
-            serialize([Auth::guard()->getName() => $user->id])
+            json_encode([Auth::guard()->getName() => $user->id])
         );
         $this->withCookie(config('session.cookie'), $sessionId);
     }

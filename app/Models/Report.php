@@ -9,8 +9,10 @@ class Report extends Model
 {
     use HasFactory;
 
-    protected $table='reports';//Ignore automatically add "s" into class name to be table name    
-    protected $primaryKey='ReportID'; //Ignore automatically query with id as primary key
+    protected $table = 'reports'; // Ignore automatically add "s" into class name to be table name
+
+    protected $primaryKey = 'ReportID'; // Ignore automatically query with id as primary key
+
     public $timestamps = false; // Ignore automatically add creat
 
     protected $fillable = [
@@ -19,23 +21,25 @@ class Report extends Model
         'Booking_start',
         'Booking_end',
         'BookingDetail',
-        'BookingStatus', 
+        'BookingStatus',
         'RoomStatus',
         'VerifyStatus',
         'id',
         'RoomID',
     ];
 
-    
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class, 'id');
     }
 
-    public function room() {
+    public function room()
+    {
         return $this->belongsTo(Room::class, 'RoomID');
     }
 
-    public function bookings() {
+    public function bookings()
+    {
         return $this->hasOne(Bookings::class, 'ReportID', 'ReportID');
     }
 }

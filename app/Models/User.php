@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
 
 class User extends Authenticatable
 {
@@ -47,7 +45,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-
     /*public function getPictureAttribute($value){
         if($value){
             return asset('users/images/'.$value);
@@ -56,16 +53,18 @@ class User extends Authenticatable
         }
     }*/
 
-    public function bookings() {
+    public function bookings()
+    {
         return $this->hasMany(Bookings::class, 'id');
     }
 
-    public function department() {
+    public function department()
+    {
         return $this->belongsTo(Department::class, 'DepartmentID');
     }
 
-	public function role() {
-		return $this->belongsTo(Role::class, 'roleID');
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'roleID');
     }
-
 }

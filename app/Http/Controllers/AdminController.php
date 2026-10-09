@@ -2,176 +2,176 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Modal;
+use App\Models\User;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Auth;
-use App\Models\User;
-use App\Models\Modal;
 
 class AdminController extends Controller
 {
-	public function index()
-	{
-		return view('dashboards.admins.index');
-	}
+    public function index()
+    {
+        return view('dashboards.admins.index');
+    }
 
-	public function profile()
-	{
-		return view('dashboards.admins.profile');
-	}
+    public function profile()
+    {
+        return view('dashboards.admins.profile');
+    }
 
-	public function updateInfo(Request $request)
-	{
+    public function updateInfo(Request $request)
+    {
 
-		$validator = \Validator::make($request->all(), [
-			'name' => 'required',
-			'email' => 'required|email|unique:users,email,' . Auth::user()->id,
-			'favoritecolor' => 'required',
-		]);
+        $validator = \Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,'.Auth::user()->id,
+            'favoritecolor' => 'required',
+        ]);
 
-		if (!$validator->passes()) {
-			return response()->json(['status' => 0, 'error' => $validator->errors()->toArray()]);
-		} else {
-			$query = User::find(Auth::user()->id)->update([
-				'name' => $request->name,
-				'email' => $request->email,
-				'favoriteColor' => $request->favoritecolor,
-			]);
+        if (! $validator->passes()) {
+            return response()->json(['status' => 0, 'error' => $validator->errors()->toArray()]);
+        } else {
+            $query = User::find(Auth::user()->id)->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'favoriteColor' => $request->favoritecolor,
+            ]);
 
-			if (!$query) {
-				return response()->json(['status' => 0, 'msg' => 'Something went wrong.']);
-			} else {
-				return response()->json(['status' => 1, 'msg' => 'Your profile info has been update successfuly.']);
-			}
-		}
-	}
+            if (! $query) {
+                return response()->json(['status' => 0, 'msg' => 'Something went wrong.']);
+            } else {
+                return response()->json(['status' => 1, 'msg' => 'Your profile info has been update successfuly.']);
+            }
+        }
+    }
 
-	function updatePicture(Request $request)
-	{
-		$path = 'users/images/';
-		$file = $request->file('admin_image');
-		$new_name = 'UIMG_' . date('Ymd') . uniqid() . '.jpg';
+    public function updatePicture(Request $request)
+    {
+        $path = 'users/images/';
+        $file = $request->file('admin_image');
+        $new_name = 'UIMG_'.date('Ymd').uniqid().'.jpg';
 
-		//Upload new image
-		$upload = Storage::disk('public')->putFileAs($path, $file, $new_name);
+        // Upload new image
+        $upload = Storage::disk('public')->putFileAs($path, $file, $new_name);
 
-		if (!$upload) {
-			return response()->json(['status' => 0, 'msg' => 'Something went wrong, upload new picture failed.']);
-		} else {
-			//Get Old picture
-			$oldPicture = User::find(Auth::user()->id)->getAttributes()['picture'];
+        if (! $upload) {
+            return response()->json(['status' => 0, 'msg' => 'Something went wrong, upload new picture failed.']);
+        } else {
+            // Get Old picture
+            $oldPicture = User::find(Auth::user()->id)->getAttributes()['picture'];
 
-			if ($oldPicture != '') {
-				Storage::disk('public')->delete($path . $oldPicture);
-			}
+            if ($oldPicture != '') {
+                Storage::disk('public')->delete($path.$oldPicture);
+            }
 
-			//Update DB
-			$update = User::find(Auth::user()->id)->update(['picture' => $new_name]);
+            // Update DB
+            $update = User::find(Auth::user()->id)->update(['picture' => $new_name]);
 
-			if (!$upload) {
-				return response()->json(['status' => 0, 'msg' => 'Something went wrong, updating picture in db failed.']);
-			} else {
-				return response()->json(['status' => 1, 'msg' => 'Your profile picture has been updated successfully']);
-			}
-		}
-	}
+            if (! $upload) {
+                return response()->json(['status' => 0, 'msg' => 'Something went wrong, updating picture in db failed.']);
+            } else {
+                return response()->json(['status' => 1, 'msg' => 'Your profile picture has been updated successfully']);
+            }
+        }
+    }
 
+    public function changePassword(Request $request)
+    {
+        // Validate form
+        $validator = \Validator::make($request->all(), [
+            'oldpassword' => [
+                'required', function ($attribute, $value, $fail) {
+                    if (! \Hash::check($value, Auth::user()->password)) {
+                        return $fail(__('The current password is incorrect'));
+                    }
+                },
+                'min:8',
+                'max:30',
+            ],
+            'newpassword' => 'required|min:8|max:30',
+            'cnewpassword' => 'required|same:newpassword',
+        ], [
+            'oldpassword.required' => 'Enter your current password',
+            'oldpassword.min' => 'Old password must have atleast 8 characters',
+            'oldpassword.max' => 'Old password must not be greater than 30 characters',
+            'newpassword.required' => 'Enter new password',
+            'newpassword.min' => 'New password must have atleast 8 characters',
+            'newpassword.max' => 'New password must not be greater than 30 characters',
+            'cnewpassword.required' => 'ReEnter your new password',
+            'cnewpassword.same' => 'New password and Confirm new password must match',
+        ]);
 
-	function changePassword(Request $request)
-	{
-		//Validate form
-		$validator = \Validator::make($request->all(), [
-			'oldpassword' => [
-				'required', function ($attribute, $value, $fail) {
-					if (!\Hash::check($value, Auth::user()->password)) {
-						return $fail(__('The current password is incorrect'));
-					}
-				},
-				'min:8',
-				'max:30'
-			],
-			'newpassword' => 'required|min:8|max:30',
-			'cnewpassword' => 'required|same:newpassword'
-		], [
-			'oldpassword.required' => 'Enter your current password',
-			'oldpassword.min' => 'Old password must have atleast 8 characters',
-			'oldpassword.max' => 'Old password must not be greater than 30 characters',
-			'newpassword.required' => 'Enter new password',
-			'newpassword.min' => 'New password must have atleast 8 characters',
-			'newpassword.max' => 'New password must not be greater than 30 characters',
-			'cnewpassword.required' => 'ReEnter your new password',
-			'cnewpassword.same' => 'New password and Confirm new password must match'
-		]);
+        if (! $validator->passes()) {
+            return response()->json(['status' => 0, 'error' => $validator->errors()->toArray()]);
+        } else {
 
-		if (!$validator->passes()) {
-			return response()->json(['status' => 0, 'error' => $validator->errors()->toArray()]);
-		} else {
+            $update = User::find(Auth::user()->id)->update(['password' => \Hash::make($request->newpassword)]);
 
-			$update = User::find(Auth::user()->id)->update(['password' => \Hash::make($request->newpassword)]);
+            if (! $update) {
+                return response()->json(['status' => 0, 'msg' => 'Something went wrong, Failed to update password in db']);
+            } else {
+                return response()->json(['status' => 1, 'msg' => 'Your password has been changed successfully']);
+            }
+        }
+    }
 
-			if (!$update) {
-				return response()->json(['status' => 0, 'msg' => 'Something went wrong, Failed to update password in db']);
-			} else {
-				return response()->json(['status' => 1, 'msg' => 'Your password has been changed successfully']);
-			}
-		}
-	}
+    // GET MODAL DETAILS
+    public function getModalDetails(Request $request)
+    {
+        $m_id = $request->m_id;
 
-	//GET MODAL DETAILS
-	public function getModalDetails(Request $request)
-	{
-		$m_id = $request->m_id;
+        $modalDetails = Modal::where('id', $m_id)->first();
 
-		$modalDetails = Modal::where('id', $m_id)->first();
-		return response()->json(['details' => $modalDetails]);
-	}
+        return response()->json(['details' => $modalDetails]);
+    }
 
-	//UPDATE MODAL DETAILS
-	public function updateModalDetails(Request $request)
-	{
-		$m_id = $request->mid;
-		$modal = Modal::find($m_id);
-		$path = 'img/Image_Room/';
+    // UPDATE MODAL DETAILS
+    public function updateModalDetails(Request $request)
+    {
+        $m_id = $request->mid;
+        $modal = Modal::find($m_id);
+        $path = 'img/Image_Room/';
 
-		$validator = \Validator::make($request->all(), [
-			'Image_modal_update' => 'image',
-			'text' => 'required'
-		]);
+        $validator = \Validator::make($request->all(), [
+            'Image_modal_update' => 'image',
+            'text' => 'required',
+        ]);
 
-		if (!$validator->passes()) {
-			return response()->json(['code' => 0, 'error' => $validator->errors()->toArray()]);
-		} else {
-			//Update Room
-			if ($request->hasFile('Image_modal_update')) {
-				$file_path = $path . $modal->image;
-				//DELETE oldPicture
-				if ($modal->image != null) {
-					Storage::disk('public')->delete($file_path);
-				}
-				//Upload new picture
-				$file = $request->file('Image_modal_update');
-				$file_name = $file->getClientOriginalName();
-				$upload = Storage::disk('public')->putFileAs($path, $file, $file_name);
+        if (! $validator->passes()) {
+            return response()->json(['code' => 0, 'error' => $validator->errors()->toArray()]);
+        } else {
+            // Update Room
+            if ($request->hasFile('Image_modal_update')) {
+                $file_path = $path.$modal->image;
+                // DELETE oldPicture
+                if ($modal->image != null) {
+                    Storage::disk('public')->delete($file_path);
+                }
+                // Upload new picture
+                $file = $request->file('Image_modal_update');
+                $file_name = $file->getClientOriginalName();
+                $upload = Storage::disk('public')->putFileAs($path, $file, $file_name);
 
-				if ($upload) {
-					$modal->update([
-						'text' => $request->text,
-						'image' => $file_name,
-					]);
+                if ($upload) {
+                    $modal->update([
+                        'text' => $request->text,
+                        'image' => $file_name,
+                    ]);
 
-					return response()->json(['code' => 1, 'msg' => 'อัพเดทเรียบร้อย']);
-				}
-			} else {
+                    return response()->json(['code' => 1, 'msg' => 'อัพเดทเรียบร้อย']);
+                }
+            } else {
 
-				$modal->text = $request->text;
-				$query = $modal->save();
+                $modal->text = $request->text;
+                $query = $modal->save();
 
-				if ($query) {
-					return response()->json(['code' => 1, 'msg' => 'อัพเดทเรียบร้อย']);
-				} else {
-					return response()->json(['code' => 0, 'msg' => 'Something went wrong']);
-				}
-			}
-		}
-	}
+                if ($query) {
+                    return response()->json(['code' => 1, 'msg' => 'อัพเดทเรียบร้อย']);
+                } else {
+                    return response()->json(['code' => 0, 'msg' => 'Something went wrong']);
+                }
+            }
+        }
+    }
 }
