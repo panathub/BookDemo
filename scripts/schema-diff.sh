@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [[ ${1:-} == -h || ${1:-} == --help ]]; then
+  echo "usage: scripts/schema-diff.sh (needs vendor/ in the checkout, or a compose override that mounts one)"
+  exit 0
+fi
+
 cd "$(dirname "$0")/.."
 export MSYS_NO_PATHCONV=1
 : "${COMPOSE_FILE:=docker/compose.dev.yml}"
@@ -16,15 +21,20 @@ declare -A ONLY_IN_MIGRATIONS=(
 )
 
 docker compose up -d --wait db >/dev/null
-db_secret=$(docker compose exec -T db printenv MYSQL_ROOT_PASSWORD)
+MYSQL_PWD="$(docker compose exec -T db printenv MYSQL_ROOT_PASSWORD)"
+DB_PASSWORD="$MYSQL_PWD"
+export MYSQL_PWD DB_PASSWORD
 db_name=$(docker compose exec -T db printenv MYSQL_DATABASE)
 
-docker compose run --rm -T \
+if ! migrate_out=$(docker compose run --rm -T \
   -e DB_CONNECTION=mysql -e DB_HOST=db -e DB_PORT=3306 \
-  -e DB_DATABASE="$db_name" -e DB_USERNAME=root -e DB_PASSWORD="$db_secret" \
-  app php artisan migrate:fresh --force >/dev/null
+  -e DB_DATABASE="$db_name" -e DB_USERNAME=root -e DB_PASSWORD \
+  app php artisan migrate:fresh --force 2>&1); then
+  printf '%s\n' "$migrate_out" >&2
+  exit 1
+fi
 
-fresh() { docker compose exec -T -e MYSQL_PWD="$db_secret" db mysql -uroot -N "$db_name" -e "SHOW $1" </dev/null; }
+fresh() { docker compose exec -T -e MYSQL_PWD db mysql -uroot -N "$db_name" -e "SHOW $1" </dev/null; }
 live() {
   docker run --rm --add-host host.docker.internal:host-gateway mysql:8 \
     mysql -h "$LIVE_HOST" -P "$LIVE_PORT" -u "$LIVE_USER" -N "$LIVE_DB" -e "SHOW $1" </dev/null
