@@ -184,13 +184,14 @@ class BookingLifecycleTest extends TestCase
     {
         $response = $this->actingAs($this->otherUser())->post('/user/updateUserBookingDetails', $this->payload(['bkid' => 3, 'rpid' => 3, 'BookingTitle' => 'Hijacked']));
 
-        $response->assertForbidden();
+        $response->assertOk()->assertExactJson(['code' => 2, 'msg' => 'ไม่สามารถแก้ไขหรือลบการจองของผู้อื่นหรือการจองที่อนุมัติแล้ว']);
         $this->assertSame('Demo review', Bookings::find(3)->BookingTitle);
     }
 
     public function test_user_cannot_delete_another_users_booking(): void
     {
-        $this->actingAs($this->otherUser())->post('/user/deleteUserBooking', ['booking_id' => 3])->assertForbidden();
+        $this->actingAs($this->otherUser())->post('/user/deleteUserBooking', ['booking_id' => 3])
+            ->assertOk()->assertExactJson(['code' => 2, 'msg' => 'ไม่สามารถแก้ไขหรือลบการจองของผู้อื่นหรือการจองที่อนุมัติแล้ว']);
 
         $this->assertNotNull(Bookings::find(3));
     }

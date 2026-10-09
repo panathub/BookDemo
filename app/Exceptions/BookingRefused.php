@@ -29,6 +29,11 @@ final class BookingRefused extends DomainException implements ShouldntReport
         return new self(2, 'มีการจองรอยืนยัน');
     }
 
+    public static function notEditable(): self
+    {
+        return new self(2, 'ไม่สามารถแก้ไขหรือลบการจองของผู้อื่นหรือการจองที่อนุมัติแล้ว');
+    }
+
     public function render(): JsonResponse
     {
         return response()->json(['code' => $this->getCode(), 'msg' => $this->getMessage()]);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\BookingState;
+use App\Exceptions\BookingRefused;
 use App\Http\Requests\StoreBookingRequest;
 use App\Models\Bookings;
 use Illuminate\Http\JsonResponse;
@@ -86,7 +87,9 @@ class BookingController extends Controller
     private function ownPendingBooking(Request $request, int $id): Bookings
     {
         $booking = Bookings::findOrFail($id);
-        abort_unless($booking->ownedBy($request->user()) && $booking->state === BookingState::Requested, 403);
+        if (! $booking->ownedBy($request->user()) || $booking->state !== BookingState::Requested) {
+            throw BookingRefused::notEditable();
+        }
 
         return $booking;
     }
